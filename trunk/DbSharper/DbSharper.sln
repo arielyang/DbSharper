@@ -1,0 +1,108 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper.Library", "DbSharper.Library\DbSharper.Library.csproj", "{9CF97DD2-B4B3-498F-A48B-663920542F12}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1420B6DC-DB53-40D4-967F-5D7D57C2647D}"
+	ProjectSection(SolutionItems) = preProject
+		DbSharper.snk = DbSharper.snk
+		DbSharper.vsmdi = DbSharper.vsmdi
+		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
+		ProductInfo.cs = ProductInfo.cs
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper.Schema", "DbSharper.Schema\DbSharper.Schema.csproj", "{7EA88513-4A69-48C8-8783-284D04A731FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper.CodeGenerator", "DbSharper.CodeGenerator\DbSharper.CodeGenerator.csproj", "{F1CE569A-4BB4-437F-A598-9A9FE4F72BC1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{55ECEAC9-484A-42FB-A08B-C0BC31ED6E73}"
+	ProjectSection(SolutionItems) = preProject
+		Resources\DbSharper.com.url = Resources\DbSharper.com.url
+		Resources\DbSharper.ico = Resources\DbSharper.ico
+		Resources\DbSharperMappingTemplate.zip = Resources\DbSharperMappingTemplate.zip
+		Resources\Dbsx.ico = Resources\Dbsx.ico
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper.Updater", "DbSharper.Updater\DbSharper.Updater.csproj", "{7509ED71-9F9D-4035-A17F-114D97BCD756}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{423E51A4-2641-4F71-B956-CA2C6D05BD29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper.Library.Test", "DbSharper.Library.Test\DbSharper.Library.Test.csproj", "{0743BECB-FD47-494A-8298-E02889B842DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper.Schema.Test", "DbSharper.Schema.Test\DbSharper.Schema.Test.csproj", "{4C5B906D-96C1-499B-818D-02DF7DD91B2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper.CodeGenerator.Test", "DbSharper.CodeGenerator.Test\DbSharper.CodeGenerator.Test.csproj", "{2849B611-2D25-4A5E-BFC9-5CEFCB2ACB48}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper.Updater.Test", "DbSharper.Updater.Test\DbSharper.Updater.Test.csproj", "{C301E989-D48E-4BE2-9B1B-81AD2D549043}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper.Data.Sql", "DbSharper.Data.Sql\DbSharper.Data.Sql.csproj", "{1D334A94-C8AC-48AC-8D1C-1E81F723EA5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper.Data.MySql", "DbSharper.Data.MySql\DbSharper.Data.MySql.csproj", "{BE919DB8-5354-4C6E-B4A5-5A716075C98C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{81CB4D85-AEAA-4AB0-B0B3-EB3FE97DA6D6}"
+	ProjectSection(SolutionItems) = preProject
+		Lib\Moq.dll = Lib\Moq.dll
+		Lib\Moq.pdb = Lib\Moq.pdb
+		Lib\Moq.xml = Lib\Moq.xml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper.Data.Oracle", "DbSharper.Data.Oracle\DbSharper.Data.Oracle.csproj", "{44C11FB9-3480-4D14-BDA2-30859BDC17AC}"
+EndProject
+Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = DMedia.FetionCMS.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9CF97DD2-B4B3-498F-A48B-663920542F12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CF97DD2-B4B3-498F-A48B-663920542F12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CF97DD2-B4B3-498F-A48B-663920542F12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CF97DD2-B4B3-498F-A48B-663920542F12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EA88513-4A69-48C8-8783-284D04A731FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EA88513-4A69-48C8-8783-284D04A731FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EA88513-4A69-48C8-8783-284D04A731FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EA88513-4A69-48C8-8783-284D04A731FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1CE569A-4BB4-437F-A598-9A9FE4F72BC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1CE569A-4BB4-437F-A598-9A9FE4F72BC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1CE569A-4BB4-437F-A598-9A9FE4F72BC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7509ED71-9F9D-4035-A17F-114D97BCD756}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7509ED71-9F9D-4035-A17F-114D97BCD756}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7509ED71-9F9D-4035-A17F-114D97BCD756}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0743BECB-FD47-494A-8298-E02889B842DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0743BECB-FD47-494A-8298-E02889B842DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0743BECB-FD47-494A-8298-E02889B842DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C5B906D-96C1-499B-818D-02DF7DD91B2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C5B906D-96C1-499B-818D-02DF7DD91B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C5B906D-96C1-499B-818D-02DF7DD91B2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2849B611-2D25-4A5E-BFC9-5CEFCB2ACB48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2849B611-2D25-4A5E-BFC9-5CEFCB2ACB48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2849B611-2D25-4A5E-BFC9-5CEFCB2ACB48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C301E989-D48E-4BE2-9B1B-81AD2D549043}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C301E989-D48E-4BE2-9B1B-81AD2D549043}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C301E989-D48E-4BE2-9B1B-81AD2D549043}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D334A94-C8AC-48AC-8D1C-1E81F723EA5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D334A94-C8AC-48AC-8D1C-1E81F723EA5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D334A94-C8AC-48AC-8D1C-1E81F723EA5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE919DB8-5354-4C6E-B4A5-5A716075C98C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE919DB8-5354-4C6E-B4A5-5A716075C98C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE919DB8-5354-4C6E-B4A5-5A716075C98C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44C11FB9-3480-4D14-BDA2-30859BDC17AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44C11FB9-3480-4D14-BDA2-30859BDC17AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44C11FB9-3480-4D14-BDA2-30859BDC17AC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0743BECB-FD47-494A-8298-E02889B842DA} = {423E51A4-2641-4F71-B956-CA2C6D05BD29}
+		{4C5B906D-96C1-499B-818D-02DF7DD91B2C} = {423E51A4-2641-4F71-B956-CA2C6D05BD29}
+		{2849B611-2D25-4A5E-BFC9-5CEFCB2ACB48} = {423E51A4-2641-4F71-B956-CA2C6D05BD29}
+		{C301E989-D48E-4BE2-9B1B-81AD2D549043} = {423E51A4-2641-4F71-B956-CA2C6D05BD29}
+	EndGlobalSection
+EndGlobal
