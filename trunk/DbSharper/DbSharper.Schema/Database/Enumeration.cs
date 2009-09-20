@@ -1,45 +1,45 @@
-﻿namespace DbSharper.Schema.Database
+﻿using DbSharper.Schema.Collections;
+
+namespace DbSharper.Schema.Database
 {
-    using DbSharper.Schema.Collections;
-
 	public class Enumeration : IName
-    {
-        #region Constructors
+	{
+		#region Constructors
 
-        public Enumeration()
-        {
-            this.Members = new NamedCollection<EnumerationMember>();
-        }
+		public Enumeration()
+		{
+			this.Members = new NamedCollection<EnumerationMember>();
+		}
 
-        #endregion Constructors
+		#endregion Constructors
 
-        #region Properties
+		#region Properties
 
-        public string BaseType
-        {
-            get; set;
-        }
+		public string BaseType
+		{
+			get; set;
+		}
 
-        public string Description
-        {
-            get; set;
-        }
+		public string Description
+		{
+			get; set;
+		}
 
-        public bool HasFlagsAttribute
-        {
-            get; set;
-        }
+		public bool HasFlagsAttribute
+		{
+			get; set;
+		}
 
-        public NamedCollection<EnumerationMember> Members
-        {
-            get; set;
-        }
+		public NamedCollection<EnumerationMember> Members
+		{
+			get; set;
+		}
 
-        public string Name
-        {
-            get; set;
-        }
+		public string Name
+		{
+			get; set;
+		}
 
-        #endregion Properties
-    }
+		#endregion Properties
+	}
 }

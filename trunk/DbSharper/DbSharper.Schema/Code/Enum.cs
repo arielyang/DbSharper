@@ -1,56 +1,56 @@
-﻿namespace DbSharper.Schema.Code
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
+
+using DbSharper.Schema.Collections;
+
+namespace DbSharper.Schema.Code
 {
-    using System.ComponentModel;
-    using System.Xml.Serialization;
+	[XmlType("enum")]
+	[DefaultValue("Name")]
+	public class Enum : IName
+	{
+		#region Constructors
 
-    using DbSharper.Schema.Collections;
+		public Enum()
+		{
+			this.Members = new NamedCollection<EnumMember>();
+		}
 
-    [XmlType("enum")]
-    [DefaultValue("Name")]
-    public class Enum : IName
-    {
-        #region Constructors
+		#endregion Constructors
 
-        public Enum()
-        {
-            this.Members = new NamedCollection<EnumMember>();
-        }
+		#region Properties
 
-        #endregion Constructors
+		[XmlAttribute("baseType")]
+		public string BaseType
+		{
+			get; set;
+		}
 
-        #region Properties
+		[XmlAttribute("description")]
+		[ReadOnly(true)]
+		public string Description
+		{
+			get; set;
+		}
 
-        [XmlAttribute("baseType")]
-        public string BaseType
-        {
-            get; set;
-        }
+		[XmlAttribute("hasFlagsAttribute")]
+		public bool HasFlagsAttribute
+		{
+			get; set;
+		}
 
-        [XmlAttribute("description")]
-        [ReadOnly(true)]
-        public string Description
-        {
-            get; set;
-        }
+		[XmlElement("member")]
+		public NamedCollection<EnumMember> Members
+		{
+			get; set;
+		}
 
-        [XmlAttribute("hasFlagsAttribute")]
-        public bool HasFlagsAttribute
-        {
-            get; set;
-        }
+		[XmlAttribute("name")]
+		public string Name
+		{
+			get; set;
+		}
 
-        [XmlElement("member")]
-        public NamedCollection<EnumMember> Members
-        {
-            get; set;
-        }
-
-        [XmlAttribute("name")]
-        public string Name
-        {
-            get; set;
-        }
-
-        #endregion Properties
-    }
+		#endregion Properties
+	}
 }

@@ -30,7 +30,7 @@
 			{<xsl:call-template name="ExecuteParameters" />
 				result = new <xsl:choose><xsl:when test="$resultsCount=1"><xsl:value-of select="$resultType" /></xsl:when><xsl:when test="$resultsCount&gt;1"><xsl:value-of select="$resultClass" /></xsl:when></xsl:choose>();
 
-				using (global::System.Data.SqlClient.SqlDataReader reader = SqlHelper.ExecuteReader(ConnectionStrings.<xsl:value-of select="/mapping/@connectionStringName" />, global::System.Data.CommandType.<xsl:value-of select="./@commandType" />, "<xsl:value-of select="./@commandText" />"<xsl:if test="$sqlParametersCount!=0">, parms</xsl:if>))
+				using (global::System.Data.SqlClient.SqlDataReader reader = SqlHelper.ExecuteReader(connectionString, global::System.Data.CommandType.<xsl:value-of select="./@commandType" />, "<xsl:value-of select="./@commandText" />"<xsl:if test="$sqlParametersCount!=0">, parms</xsl:if>))
 				{<xsl:for-each select="$results">
 					<xsl:if test="position()!=1">
 

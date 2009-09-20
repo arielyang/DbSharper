@@ -1,47 +1,47 @@
-﻿namespace DbSharper.Schema.Code
+﻿using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing.Design;
+using System.Xml.Serialization;
+
+using DbSharper.Schema.Collections;
+
+namespace DbSharper.Schema.Code
 {
-    using System.ComponentModel;
-    using System.ComponentModel.Design;
-    using System.Drawing.Design;
-    using System.Xml.Serialization;
+	[XmlType("resultItem")]
+	[DefaultProperty("Description")]
+	public class Result : IName
+	{
+		#region Properties
 
-    using DbSharper.Schema.Collections;
+		[XmlAttribute("type")]
+		[ReadOnly(true)]
+		public string CommonType
+		{
+			get; set;
+		}
 
-    [XmlType("resultItem")]
-    [DefaultProperty("Description")]
-    public class Result : IName
-    {
-        #region Properties
+		[XmlAttribute("description")]
+		[Category("Extension")]
+		[Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
+		public string Description
+		{
+			get; set;
+		}
 
-        [XmlAttribute("type")]
-        [ReadOnly(true)]
-        public string CommonType
-        {
-            get; set;
-        }
+		[XmlAttribute("isOutputParameter")]
+		[ReadOnly(true)]
+		public bool IsOutputParameter
+		{
+			get; set;
+		}
 
-        [XmlAttribute("description")]
-        [Category("Extension")]
-        [Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
-        public string Description
-        {
-            get; set;
-        }
+		[XmlAttribute("name")]
+		[ReadOnly(true)]
+		public string Name
+		{
+			get; set;
+		}
 
-        [XmlAttribute("isOutputParameter")]
-        [ReadOnly(true)]
-        public bool IsOutputParameter
-        {
-            get; set;
-        }
-
-        [XmlAttribute("name")]
-        [ReadOnly(true)]
-        public string Name
-        {
-            get; set;
-        }
-
-        #endregion Properties
-    }
+		#endregion Properties
+	}
 }

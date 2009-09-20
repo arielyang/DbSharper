@@ -1,44 +1,44 @@
-﻿namespace DbSharper.Schema.Database
+﻿using System.Xml.Serialization;
+
+using DbSharper.Schema.Collections;
+
+namespace DbSharper.Schema.Database
 {
-    using System.Xml.Serialization;
-
-    using DbSharper.Schema.Collections;
-
-    [XmlType("index")]
+	[XmlType("index")]
 	public class Index : IName
-    {
-        #region Constructors
+	{
+		#region Constructors
 
-        public Index()
-        {
-            this.Columns = new NamedCollection<Column>();
-        }
+		public Index()
+		{
+			this.Columns = new NamedCollection<Column>();
+		}
 
-        #endregion Constructors
+		#endregion Constructors
 
-        #region Properties
+		#region Properties
 
-        [XmlElement("parameter")]
-        public NamedCollection<Column> Columns
-        {
-            get; set;
-        }
+		[XmlElement("parameter")]
+		public NamedCollection<Column> Columns
+		{
+			get; set;
+		}
 
-        [XmlAttribute("name")]
-        public string Name
-        {
-            get; set;
-        }
+		[XmlAttribute("name")]
+		public string Name
+		{
+			get; set;
+		}
 
-        #endregion Properties
+		#endregion Properties
 
-        #region Methods
+		#region Methods
 
-        public override string ToString()
-        {
-            return this.Name;
-        }
+		public override string ToString()
+		{
+			return this.Name;
+		}
 
-        #endregion Methods
-    }
+		#endregion Methods
+	}
 }

@@ -1,72 +1,72 @@
-﻿namespace DbSharper.Schema.Database
+﻿using System.Xml.Serialization;
+
+using DbSharper.Schema.Collections;
+
+namespace DbSharper.Schema.Database
 {
-    using System.Xml.Serialization;
-
-    using DbSharper.Schema.Collections;
-
-    [XmlType("view")]
+	[XmlType("view")]
 	public class View : ISchema
-    {
-        #region Constructors
+	{
+		#region Constructors
 
-        public View()
-        {
-            this.Columns = new NamedCollection<Column>();
-            this.Indexes = new NamedCollection<Index>();
-        }
+		public View()
+		{
+			this.Columns = new NamedCollection<Column>();
+			this.Indexes = new NamedCollection<Index>();
+		}
 
-        #endregion Constructors
+		#endregion Constructors
 
-        #region Properties
+		#region Properties
 
-        [XmlArray("columns")]
-        [XmlArrayItem("column")]
-        public NamedCollection<Column> Columns
-        {
-            get; set;
-        }
+		[XmlArray("columns")]
+		[XmlArrayItem("column")]
+		public NamedCollection<Column> Columns
+		{
+			get; set;
+		}
 
-        [XmlAttribute("description")]
-        public string Description
-        {
-            get; set;
-        }
+		[XmlAttribute("description")]
+		public string Description
+		{
+			get; set;
+		}
 
-        [XmlArray("indexes")]
-        [XmlArrayItem("index")]
-        public NamedCollection<Index> Indexes
-        {
-            get; set;
-        }
+		[XmlArray("indexes")]
+		[XmlArrayItem("index")]
+		public NamedCollection<Index> Indexes
+		{
+			get; set;
+		}
 
-        [XmlAttribute("name")]
-        public string Name
-        {
-            get; set;
-        }
+		[XmlAttribute("name")]
+		public string Name
+		{
+			get; set;
+		}
 
-        [XmlAttribute("schema")]
-        public string Schema
-        {
-            get; set;
-        }
+		[XmlAttribute("schema")]
+		public string Schema
+		{
+			get; set;
+		}
 
-        #endregion Properties
+		#endregion Properties
 
-        #region Methods
+		#region Methods
 
-        public override string ToString()
-        {
-            if (string.IsNullOrEmpty(this.Schema))
-            {
-                return this.Name;
-            }
-            else
-            {
-                return this.Schema + "." + this.Name;
-            }
-        }
+		public override string ToString()
+		{
+			if (string.IsNullOrEmpty(this.Schema))
+			{
+				return this.Name;
+			}
+			else
+			{
+				return this.Schema + "." + this.Name;
+			}
+		}
 
-        #endregion Methods
-    }
+		#endregion Methods
+	}
 }

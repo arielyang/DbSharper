@@ -1,14 +1,14 @@
 ﻿namespace DbSharper.Schema.Collections
 {
-    public interface ISchema : IName
-    {
-        #region Properties
+	public interface ISchema : IName
+	{
+		#region Properties
 
-        string Schema
-        {
-            get; set;
-        }
+		string Schema
+		{
+			get; set;
+		}
 
-        #endregion Properties
-    }
+		#endregion Properties
+	}
 }

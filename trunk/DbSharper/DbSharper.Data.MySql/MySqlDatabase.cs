@@ -1,9 +1,7 @@
 ﻿////namespace DbSharper.Data.MySql
 ////{
 ////    using DbSharper.Library.Data;
-
 ////    using global::MySql.Data.MySqlClient;
-
 ////    /// <summary>
 ////    /// <para>Represents a MySql database.</para>
 ////    /// </summary>
@@ -15,7 +13,6 @@
 ////    public class MySqlDatabase : Database
 ////    {
 ////        #region Constructors
-
 ////        /// <summary>
 ////        /// Initializes a new instance of the <see cref="MySqlDatabase"/> class with a connection string.
 ////        /// </summary>
@@ -23,11 +20,8 @@
 ////            : base(MySqlClientFactory.Instance)
 ////        {
 ////        }
-
 ////        #endregion Constructors
-
 ////        #region Methods
-
 ////        /// <summary>
 ////        /// Builds a value parameter name for the current database.
 ////        /// </summary>
@@ -39,10 +33,8 @@
 ////            {
 ////                return "?" + name;
 ////            }
-
 ////            return name;
 ////        }
-
 ////        #endregion Methods
 ////    }
 ////}

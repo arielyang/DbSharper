@@ -1,121 +1,121 @@
-﻿namespace DbSharper.Library.Data
+﻿using System;
+using System.Text;
+using System.Xml;
+
+namespace DbSharper.Library.Data
 {
-    using System;
-	using System.Text;
-    using System.Xml;
+	public class XmlBuilder
+	{
+		#region Fields
 
-    public class XmlBuilder
-    {
-        #region Fields
+		private string rowElement;
+		private StringBuilder sb;
+		private string tableElement;
+		private XmlWriter xmlWriter;
 
-        private string rowElement;
-        private StringBuilder sb;
-        private string tableElement;
-        private XmlWriter xmlWriter;
+		#endregion Fields
 
-        #endregion Fields
+		#region Constructors
 
-        #region Constructors
+		public XmlBuilder()
+			: this("t", "r")
+		{
+		}
 
-        public XmlBuilder()
-            : this("t", "r")
-        {
-        }
+		public XmlBuilder(string tableElement, string rowElement)
+		{
+			if (string.IsNullOrEmpty(tableElement))
+			{
+				throw new ArgumentNullException("tableElement");
+			}
 
-        public XmlBuilder(string tableElement, string rowElement)
-        {
-            if (string.IsNullOrEmpty(tableElement))
-            {
-                throw new ArgumentNullException("tableElement");
-            }
+			if (string.IsNullOrEmpty(rowElement))
+			{
+				throw new ArgumentNullException("rowElement");
+			}
 
-            if (string.IsNullOrEmpty(rowElement))
-            {
-                throw new ArgumentNullException("rowElement");
-            }
+			this.tableElement = tableElement;
+			this.rowElement = rowElement;
 
-            this.tableElement = tableElement;
-            this.rowElement = rowElement;
+			sb = new StringBuilder();
 
-            sb = new StringBuilder();
+			xmlWriter = XmlTextWriter.Create(sb);
 
-            xmlWriter = XmlTextWriter.Create(sb);
+			xmlWriter.WriteStartDocument();
+			xmlWriter.WriteStartElement(this.tableElement);
+		}
 
-            xmlWriter.WriteStartDocument();
-            xmlWriter.WriteStartElement(this.tableElement);
-        }
+		#endregion Constructors
 
-        #endregion Constructors
+		#region Methods
 
-        #region Methods
+		public void Append(string name, object value)
+		{
+			if (string.IsNullOrEmpty(name))
+			{
+				throw new ArgumentNullException("name");
+			}
 
-        public void Append(string name, object value)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException("name");
-            }
+			xmlWriter.WriteStartElement(this.rowElement);
 
-            xmlWriter.WriteStartElement(this.rowElement);
+			if (value != null)
+			{
+				xmlWriter.WriteAttributeString(name, value.ToString());
+			}
+			else
+			{
+				xmlWriter.WriteAttributeString(name, string.Empty);
+			}
 
-            if (value != null)
-            {
-                xmlWriter.WriteAttributeString(name, value.ToString());
-            }
-            else
-            {
-                xmlWriter.WriteAttributeString(name, string.Empty);
-            }
+			xmlWriter.WriteEndElement();
+		}
 
-            xmlWriter.WriteEndElement();
-        }
+		public void Append(string[] names, object[] values)
+		{
+			int length = names.Length;
 
-        public void Append(string[] names, object[] values)
-        {
-            int length = names.Length;
+			if (length != values.Length)
+			{
+				throw new ArgumentException("Length of names is not equal to length of values.");
+			}
 
-            if (length != values.Length)
-            {
-                throw new ArgumentException("Length of names is not equal to length of values.");
-            }
+			for (int i = 0; i < length; i++)
+			{
+				if (string.IsNullOrEmpty(names[i]))
+				{
+					throw new ArgumentNullException("names");
+				}
+			}
 
-            for (int i = 0; i < length; i++)
-            {
-                if (string.IsNullOrEmpty(names[i]))
-                {
-                    throw new ArgumentNullException("names");
-                }
-            }
+			xmlWriter.WriteStartElement(this.rowElement);
 
-            xmlWriter.WriteStartElement(this.rowElement);
+			for (int i = 0; i < length; i++)
+			{
+				xmlWriter.WriteAttributeString(names[i], values[i].ToString());
 
-            for (int i = 0; i < length; i++)
-            {
-                xmlWriter.WriteAttributeString(names[i], values[i].ToString());
+				if (values[i] != null)
+				{
+					xmlWriter.WriteAttributeString(names[i], values[i].ToString());
+				}
+				else
+				{
+					xmlWriter.WriteAttributeString(names[i], string.Empty);
+				}
+			}
 
-                if (values[i] != null)
-                {
-                    xmlWriter.WriteAttributeString(names[i], values[i].ToString());
-                }
-                else
-                {
-                    xmlWriter.WriteAttributeString(names[i], string.Empty);
-                }
-            }
+			xmlWriter.WriteEndElement();
+		}
 
-            xmlWriter.WriteEndElement();
-        }
+		public override string ToString()
+		{
+			xmlWriter.WriteEndElement();
+			xmlWriter.WriteEndDocument();
 
-        public override string ToString()
-        {
-            xmlWriter.WriteEndElement();
-            xmlWriter.WriteEndDocument();
+			xmlWriter.Close();
 
-            xmlWriter.Close();
+			return sb.ToString();
+		}
 
-            return sb.ToString();
-        }
-
-        #endregion Methods
-    }
+		#endregion Methods
+	}
 }

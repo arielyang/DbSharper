@@ -12,7 +12,7 @@
 <xsl:variable name="resultClass" select="concat(./@name, 'Results')" />
 <xsl:call-template name="ExecuteHeader" />
 		{<xsl:call-template name="ExecuteParameters" />
-				SqlHelper.ExecuteNonQuery(ConnectionStrings.<xsl:value-of select="/mapping/@connectionStringName" />, global::System.Data.CommandType.<xsl:value-of select="./@commandType" />, "<xsl:value-of select="./@commandText" />"<xsl:if test="$sqlParametersCount!=0">, parms</xsl:if>);
+	SqlHelper.ExecuteNonQuery(connectionString, global::System.Data.CommandType.<xsl:value-of select="./@commandType" />, "<xsl:value-of select="./@commandText" />"<xsl:if test="$sqlParametersCount!=0">, parms</xsl:if>);
 				
 				<xsl:choose>
 				<xsl:when test="$resultsCount=1">

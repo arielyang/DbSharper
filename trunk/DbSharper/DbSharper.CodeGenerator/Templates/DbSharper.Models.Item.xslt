@@ -199,7 +199,7 @@
 				return this.<xsl:value-of select="script:GetCamelCase(@name)" />;
 			}
 
-			private set
+			set
 			{
 				<xsl:choose><xsl:when test="../@isView='false'">this.<xsl:value-of select="script:GetCamelCase(@name)" /> = value;</xsl:when>
 				<xsl:otherwise>

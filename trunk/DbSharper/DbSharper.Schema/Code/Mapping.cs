@@ -1,95 +1,95 @@
-﻿namespace DbSharper.Schema.Code
+﻿using System.Xml.Serialization;
+
+using DbSharper.Schema.Collections;
+
+namespace DbSharper.Schema.Code
 {
-    using System.Xml.Serialization;
+	[XmlRoot("mapping")]
+	public class Mapping
+	{
+		#region Constructors
 
-    using DbSharper.Schema.Collections;
+		internal Mapping()
+		{
+			this.ModelNamespaces = new NamedCollection<ModelNamespace>();
+			this.DataAccessNamespaces = new NamedCollection<DataAccessNamespace>();
+			this.Enums = new NamedCollection<Enum>();
+		}
 
-    [XmlRoot("mapping")]
-    public class Mapping
-    {
-        #region Constructors
+		#endregion Constructors
 
-        internal Mapping()
-        {
-            this.ModelNamespaces = new NamedCollection<ModelNamespace>();
-            this.DataAccessNamespaces = new NamedCollection<DataAccessNamespace>();
-            this.Enums = new NamedCollection<Enum>();
-        }
+		#region Properties
 
-        #endregion Constructors
+		[XmlAttribute("connectionStringName")]
+		public string ConnectionStringName
+		{
+			get; set;
+		}
 
-        #region Properties
+		[XmlArray("dataAccesses")]
+		[XmlArrayItem("namespace")]
+		public NamedCollection<DataAccessNamespace> DataAccessNamespaces
+		{
+			get; set;
+		}
 
-        [XmlAttribute("connectionStringName")]
-        public string ConnectionStringName
-        {
-            get; set;
-        }
+		[XmlElement("database")]
+		public Database.Database Database
+		{
+			get; set;
+		}
 
-        [XmlArray("dataAccesses")]
-        [XmlArrayItem("namespace")]
-        public NamedCollection<DataAccessNamespace> DataAccessNamespaces
-        {
-            get; set;
-        }
+		[XmlArray("enums")]
+		[XmlArrayItem("enum")]
+		public NamedCollection<Enum> Enums
+		{
+			get; set;
+		}
 
-        [XmlElement("database")]
-        public Database.Database Database
-        {
-            get; set;
-        }
+		[XmlArray("models")]
+		[XmlArrayItem("namespace")]
+		public NamedCollection<ModelNamespace> ModelNamespaces
+		{
+			get; set;
+		}
 
-        [XmlArray("enums")]
-        [XmlArrayItem("enum")]
-        public NamedCollection<Enum> Enums
-        {
-            get; set;
-        }
+		#endregion Properties
 
-        [XmlArray("models")]
-        [XmlArrayItem("namespace")]
-        public NamedCollection<ModelNamespace> ModelNamespaces
-        {
-            get; set;
-        }
+		#region Methods
 
-        #endregion Properties
+		internal Model GetModel(string schema, string name)
+		{
+			if (!this.ModelNamespaces.Contains(schema))
+			{
+				return null;
+			}
 
-        #region Methods
+			ModelNamespace nameSpace = this.ModelNamespaces[schema];
 
-        internal Model GetModel(string schema, string name)
-        {
-            if (!this.ModelNamespaces.Contains(schema))
-            {
-                return null;
-            }
+			if (!nameSpace.Models.Contains(name))
+			{
+				return null;
+			}
 
-            ModelNamespace nameSpace = this.ModelNamespaces[schema];
+			return nameSpace.Models[name];
+		}
 
-            if (!nameSpace.Models.Contains(name))
-            {
-                return null;
-            }
+		internal Model GetModel(string name)
+		{
+			foreach (var nameSpace in this.ModelNamespaces)
+			{
+				foreach (var m in nameSpace.Models)
+				{
+					if (m.Name == name)
+					{
+						return m;
+					}
+				}
+			}
 
-            return nameSpace.Models[name];
-        }
+			return null;
+		}
 
-        internal Model GetModel(string name)
-        {
-            foreach (var nameSpace in this.ModelNamespaces)
-            {
-                foreach (var m in nameSpace.Models)
-                {
-                    if (m.Name == name)
-                    {
-                        return m;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        #endregion Methods
-    }
+		#endregion Methods
+	}
 }

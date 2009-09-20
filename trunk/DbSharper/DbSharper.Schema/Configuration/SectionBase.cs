@@ -1,12 +1,12 @@
-﻿namespace DbSharper.Schema.Configuration
+﻿using System;
+using System.Collections.ObjectModel;
+
+using DbSharper.Schema.Collections;
+using DbSharper.Schema.Database;
+using DbSharper.Schema.Enums;
+
+namespace DbSharper.Schema.Configuration
 {
-	using System;
-	using System.Collections.ObjectModel;
-
-	using DbSharper.Schema.Collections;
-	using DbSharper.Schema.Database;
-	using DbSharper.Schema.Enums;
-
 	internal abstract class SectionBase
 	{
 		#region Constructors
@@ -173,7 +173,7 @@
 			return false;
 		}
 
-		private bool ValidateCoditionType(Condition condition, IName databaseObject)
+		private static bool ValidateCoditionType(Condition condition, IName databaseObject)
 		{
 			switch (condition.ConditionType)
 			{

@@ -64,6 +64,7 @@
     <Compile Include="Data\Database.cs" />
     <Compile Include="Data\DatabaseFactory.cs" />
     <Compile Include="Data\EnumHelper.cs" />
+    <Compile Include="Data\IPagedResults.cs" />
     <Compile Include="Data\ReturnResult.cs" />
     <Compile Include="Data\TransactionScopeConnections.cs" />
     <Compile Include="Data\XmlBuilder.cs" />

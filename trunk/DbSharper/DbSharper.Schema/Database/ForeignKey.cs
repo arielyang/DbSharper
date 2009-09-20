@@ -1,27 +1,27 @@
-﻿namespace DbSharper.Schema.Database
+﻿using System.Xml.Serialization;
+
+namespace DbSharper.Schema.Database
 {
-    using System.Xml.Serialization;
-
-    [XmlType("foreignKey")]
+	[XmlType("foreignKey")]
 	public class ForeignKey : Constraint
-    {
-        #region Constructors
+	{
+		#region Constructors
 
-        public ForeignKey()
-            : base()
-        {
-        }
+		public ForeignKey()
+			: base()
+		{
+		}
 
-        #endregion Constructors
+		#endregion Constructors
 
-        #region Properties
+		#region Properties
 
-        [XmlAttribute("referentialTable")]
-        public string ReferentialTable
-        {
-            get; set;
-        }
+		[XmlAttribute("referentialTable")]
+		public string ReferentialTable
+		{
+			get; set;
+		}
 
-        #endregion Properties
-    }
+		#endregion Properties
+	}
 }

@@ -1,17 +1,17 @@
-﻿namespace DbSharper.Schema.Database
+﻿using System.Xml.Serialization;
+
+namespace DbSharper.Schema.Database
 {
-    using System.Xml.Serialization;
-
-    [XmlType("primaryKey")]
+	[XmlType("primaryKey")]
 	public class PrimaryKey : Constraint
-    {
-        #region Constructors
+	{
+		#region Constructors
 
-        public PrimaryKey()
-            : base()
-        {
-        }
+		public PrimaryKey()
+			: base()
+		{
+		}
 
-        #endregion Constructors
-    }
+		#endregion Constructors
+	}
 }

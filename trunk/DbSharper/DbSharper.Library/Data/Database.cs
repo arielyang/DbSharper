@@ -4,9 +4,7 @@
 ////    using System.Data;
 ////    using System.Data.Common;
 ////    using System.Transactions;
-
 ////    using DbSharper.Library.Properties;
-
 ////    /// <summary>
 ////    /// Represents an abstract database that commands can be run against. 
 ////    /// </summary>
@@ -17,15 +15,10 @@
 ////    public abstract class Database
 ////    {
 ////        #region Fields
-
 ////        private readonly DbProviderFactory dbProviderFactory;
-
 ////        private string connectionString;
-
 ////        #endregion Fields
-
 ////        #region Constructors
-
 ////        /// <summary>
 ////        /// Initializes a new instance of the <see cref="Database"/> class with a connection string and a <see cref="DbProviderFactory"/>.
 ////        /// </summary>
@@ -33,14 +26,10 @@
 ////        protected Database(DbProviderFactory dbProviderFactory)
 ////        {
 ////            if (dbProviderFactory == null) throw new ArgumentNullException("dbProviderFactory");
-
 ////            this.dbProviderFactory = dbProviderFactory;
 ////        }
-
 ////        #endregion Constructors
-
 ////        #region Properties
-
 ////        /// <summary>
 ////        /// <para>Gets or sets the string used to open a database.</para>
 ////        /// </summary>
@@ -53,11 +42,8 @@
 ////            get { return this.connectionString; }
 ////            set { this.connectionString = value; }
 ////        }
-
 ////        #endregion Properties
-
 ////        #region Methods
-
 ////        /// <summary>
 ////        /// Adds a new In <see cref="DbParameter"/> object to the given <paramref name="command"/>.
 ////        /// </summary>
@@ -72,7 +58,6 @@
 ////        {
 ////            AddParameter(command, name, dbType, ParameterDirection.Input, String.Empty, DataRowVersion.Default, value);
 ////        }
-
 ////        /// <summary>
 ////        /// Adds a new Out <see cref="DbParameter"/> object to the given <paramref name="command"/>.
 ////        /// </summary>
@@ -87,7 +72,6 @@
 ////        {
 ////            AddParameter(command, name, dbType, size, ParameterDirection.Output, true, 0, 0, String.Empty, DataRowVersion.Default, DBNull.Value);
 ////        }
-
 ////        /// <summary>
 ////        /// Adds a new Out <see cref="DbParameter"/> object to the given <paramref name="command"/>.
 ////        /// </summary>
@@ -100,7 +84,6 @@
 ////        {
 ////            AddOutParameter(command, name, dbType, 0);
 ////        }
-
 ////        /// <summary>
 ////        /// Builds a value parameter name for the current database.
 ////        /// </summary>
@@ -110,7 +93,6 @@
 ////        {
 ////            return name;
 ////        }
-
 ////        /// <summary>
 ////        /// <para>Creates a connection for this database.</para>
 ////        /// </summary>
@@ -122,10 +104,8 @@
 ////        {
 ////            DbConnection newConnection = dbProviderFactory.CreateConnection();
 ////            newConnection.ConnectionString = ConnectionString;
-
 ////            return newConnection;
 ////        }
-
 ////        /// <summary>
 ////        /// <para>Executes the <paramref name="command"/> and returns the number of rows affected.</para>
 ////        /// </summary>
@@ -141,7 +121,6 @@
 ////                return DoExecuteNonQuery(command);
 ////            }
 ////        }
-
 ////        /// <summary>
 ////        /// <para>Executes the <paramref name="command"/> within the given <paramref name="transaction" />, and returns the number of rows affected.</para>
 ////        /// </summary>
@@ -158,7 +137,6 @@
 ////            PrepareCommand(command, transaction);
 ////            return DoExecuteNonQuery(command);
 ////        }
-
 ////        /// <summary>
 ////        /// <para>Executes the <paramref name="command"/> and returns an <see cref="IDataReader"></see> through which the result can be read.
 ////        /// It is the responsibility of the caller to close the connection and reader when finished.</para>
@@ -172,14 +150,12 @@
 ////        public virtual IDataReader ExecuteReader(DbCommand command)
 ////        {
 ////            ConnectionWrapper wrapper = GetOpenConnection(false);
-
 ////            try
 ////            {
 ////                //
 ////                // JS-L: I moved the PrepareCommand inside the try because it can fail.
 ////                //
 ////                PrepareCommand(command, wrapper.Connection);
-
 ////                //
 ////                // If there is a current transaction, we'll be using a shared connection, so we don't
 ////                // want to close the connection when we're done with the reader.
@@ -195,7 +171,6 @@
 ////                throw;
 ////            }
 ////        }
-
 ////        /// <summary>
 ////        /// <para>Executes the <paramref name="command"/> within a transaction and returns an <see cref="IDataReader"></see> through which the result can be read.
 ////        /// It is the responsibility of the caller to close the connection and reader when finished.</para>
@@ -215,7 +190,6 @@
 ////            PrepareCommand(command, transaction);
 ////            return DoExecuteReader(command, CommandBehavior.Default);
 ////        }
-
 ////        /// <summary>
 ////        /// <para>Creates a <see cref="DbCommand"/> for a SQL query.</para>
 ////        /// </summary>
@@ -224,10 +198,8 @@
 ////        public DbCommand GetSqlStringCommand(string query)
 ////        {
 ////            if (string.IsNullOrEmpty(query)) throw new ArgumentException(Resources.ExceptionNullOrEmptyString, "query");
-
 ////            return CreateCommandByCommandType(CommandType.Text, query);
 ////        }
-
 ////        /// <summary>
 ////        /// <para>Creates a <see cref="DbCommand"/> for a stored procedure.</para>
 ////        /// </summary>
@@ -236,10 +208,8 @@
 ////        public virtual DbCommand GetStoredProcCommand(string storedProcedureName)
 ////        {
 ////            if (string.IsNullOrEmpty(storedProcedureName)) throw new ArgumentException(Resources.ExceptionNullOrEmptyString, "storedProcedureName");
-
 ////            return CreateCommandByCommandType(CommandType.StoredProcedure, storedProcedureName);
 ////        }
-
 ////        internal DbConnection GetNewOpenConnection()
 ////        {
 ////            DbConnection connection = null;
@@ -252,13 +222,10 @@
 ////            {
 ////                if (connection != null)
 ////                    connection.Close();
-
 ////                throw;
 ////            }
-
 ////            return connection;
 ////        }
-
 ////        /// <summary>
 ////        /// Executes the query for <paramref name="command"/>.
 ////        /// </summary>
@@ -267,10 +234,8 @@
 ////        protected static int DoExecuteNonQuery(DbCommand command)
 ////        {
 ////            int rowsAffected = command.ExecuteNonQuery();
-
 ////            return rowsAffected;
 ////        }
-
 ////        /// <summary>
 ////        /// <para>Assigns a <paramref name="connection"/> to the <paramref name="command"/> and discovers parameters if needed.</para>
 ////        /// </summary>
@@ -281,10 +246,8 @@
 ////        {
 ////            if (command == null) throw new ArgumentNullException("command");
 ////            if (connection == null) throw new ArgumentNullException("connection");
-
 ////            command.Connection = connection;
 ////        }
-
 ////        /// <summary>
 ////        /// <para>Assigns a <paramref name="transaction"/> to the <paramref name="command"/> and discovers parameters if needed.</para>
 ////        /// </summary>
@@ -295,11 +258,9 @@
 ////        {
 ////            if (command == null) throw new ArgumentNullException("command");
 ////            if (transaction == null) throw new ArgumentNullException("transaction");
-
 ////            PrepareCommand(command, transaction.Connection);
 ////            command.Transaction = transaction;
 ////        }
-
 ////        /// <summary>
 ////        /// Adds a new In <see cref="DbParameter"/> object to the given <paramref name="command"/>.
 ////        /// </summary>
@@ -329,7 +290,6 @@
 ////            DbParameter parameter = CreateParameter(name, dbType, size, direction, nullable, precision, scale, sourceColumn, sourceVersion, value);
 ////            command.Parameters.Add(parameter);
 ////        }
-
 ////        /// <summary>
 ////        /// Configures a given <see cref="DbParameter"/>.
 ////        /// </summary>
@@ -364,7 +324,6 @@
 ////            param.SourceColumn = sourceColumn;
 ////            param.SourceVersion = sourceVersion;
 ////        }
-
 ////        /// <summary>
 ////        /// <para>Adds a new instance of a <see cref="DbParameter"/> object.</para>
 ////        /// </summary>
@@ -394,7 +353,6 @@
 ////            ConfigureParameter(param, name, dbType, size, direction, nullable, precision, scale, sourceColumn, sourceVersion, value);
 ////            return param;
 ////        }
-
 ////        /// <summary>
 ////        /// <para>Adds a new instance of a <see cref="DbParameter"/> object.</para>
 ////        /// </summary>
@@ -404,10 +362,8 @@
 ////        {
 ////            DbParameter param = dbProviderFactory.CreateParameter();
 ////            param.ParameterName = BuildParameterName(name);
-
 ////            return param;
 ////        }
-
 ////        /// <summary>
 ////        ///		Get's a "wrapped" connection that will be not be disposed if a transaction is
 ////        ///		active (created by creating a <see cref="TransactionScope"/> instance). The
@@ -418,7 +374,6 @@
 ////        {
 ////            return GetOpenConnection(true);
 ////        }
-
 ////        /// <summary>
 ////        ///		Get's a "wrapped" connection that will be not be disposed if a transaction is
 ////        ///		active (created by creating a <see cref="TransactionScope"/> instance). The
@@ -437,15 +392,12 @@
 ////            else
 ////                return new ConnectionWrapper(GetNewOpenConnection(), disposeInnerConnection);
 ////        }
-
 ////        private static IDataReader DoExecuteReader(DbCommand command,
 ////            CommandBehavior cmdBehavior)
 ////        {
 ////            IDataReader reader = command.ExecuteReader(cmdBehavior);
-
 ////            return reader;
 ////        }
-
 ////        /// <summary>
 ////        /// <para>Adds a new instance of a <see cref="DbParameter"/> object to the command.</para>
 ////        /// </summary>
@@ -466,21 +418,16 @@
 ////        {
 ////            AddParameter(command, name, dbType, 0, direction, false, 0, 0, sourceColumn, sourceVersion, value);
 ////        }
-
 ////        private DbCommand CreateCommandByCommandType(CommandType commandType,
 ////            string commandText)
 ////        {
 ////            DbCommand command = dbProviderFactory.CreateCommand();
 ////            command.CommandType = commandType;
 ////            command.CommandText = commandText;
-
 ////            return command;
 ////        }
-
 ////        #endregion Methods
-
 ////        #region Nested Types
-
 ////        /// <summary>
 ////        ///		This is a helper class that is used to manage the lifetime of a connection for various
 ////        ///		Execute methods. We needed this class to support implicit transactions created with
@@ -491,14 +438,10 @@
 ////        protected sealed class ConnectionWrapper : IDisposable
 ////        {
 ////            #region Fields
-
 ////            readonly DbConnection connection;
 ////            readonly bool disposeConnection;
-
 ////            #endregion Fields
-
 ////            #region Constructors
-
 ////            /// <summary>
 ////            ///		Create a new "lifetime" container for a <see cref="DbConnection"/> instance.
 ////            /// </summary>
@@ -512,11 +455,8 @@
 ////                this.connection = connection;
 ////                this.disposeConnection = disposeConnection;
 ////            }
-
 ////            #endregion Constructors
-
 ////            #region Properties
-
 ////            /// <summary>
 ////            ///		Gets the actual connection.
 ////            /// </summary>
@@ -524,11 +464,8 @@
 ////            {
 ////                get { return connection; }
 ////            }
-
 ////            #endregion Properties
-
 ////            #region Methods
-
 ////            /// <summary>
 ////            ///		Dispose the wrapped connection, if appropriate.
 ////            /// </summary>
@@ -537,10 +474,8 @@
 ////                if (disposeConnection)
 ////                    connection.Dispose();
 ////            }
-
 ////            #endregion Methods
 ////        }
-
 ////        #endregion Nested Types
 ////    }
 ////}

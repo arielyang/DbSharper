@@ -28,7 +28,7 @@
 
 			if (result == null)
 			{<xsl:call-template name="ExecuteParameters" />
-				SqlHelper.ExecuteNonQuery(ConnectionStrings.<xsl:value-of select="/mapping/@connectionStringName" />, global::System.Data.CommandType.<xsl:value-of select="./@commandType" />, "<xsl:value-of select="./@commandText" />"<xsl:if test="$sqlParametersCount!=0">, parms</xsl:if>);
+				SqlHelper.ExecuteNonQuery(connectionString, global::System.Data.CommandType.<xsl:value-of select="./@commandType" />, "<xsl:value-of select="./@commandText" />"<xsl:if test="$sqlParametersCount!=0">, parms</xsl:if>);
 				<xsl:if test="$resultsCount&gt;1">
 				result = new <xsl:value-of select="$resultClass" />();
 				</xsl:if>

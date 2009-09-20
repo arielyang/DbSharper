@@ -1,257 +1,266 @@
-﻿namespace DbSharper.Library.Providers.MemcachedClient
+﻿using System;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+
+namespace DbSharper.Library.Providers.MemcachedClient
 {
-    using System;
-    using System.IO;
-    using System.Net;
-    using System.Net.Sockets;
-    using System.Text;
+	internal class PooledSocket : IDisposable
+	{
+		#region Fields
 
-    internal class PooledSocket : IDisposable
-    {
-        private SocketPool socketPool;
-        private Socket socket;
-        private Stream stream;
+		/// <summary>
+		/// 
+		/// </summary>
+		public readonly DateTime CreatedTime;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public readonly DateTime CreatedTime;
+		private Socket socket;
+		private SocketPool socketPool;
+		private Stream stream;
 
-        /// <summary>
-        /// Checks if the underlying socket and stream is connected and available.
-        /// </summary>
-        public bool IsAlive
-        {
-            get
-            {
-                return socket != null && socket.Connected && stream.CanRead;
-            }
-        }
+		#endregion Fields
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="socketPool"></param>
-        /// <param name="endPoint"></param>
-        /// <param name="sendReceiveTimeout"></param>
-        public PooledSocket(SocketPool socketPool, IPEndPoint endPoint, int sendReceiveTimeout)
-        {
-            this.socketPool = socketPool;
-            CreatedTime = DateTime.Now;
+		#region Constructors
 
-            socket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="socketPool"></param>
+		/// <param name="endPoint"></param>
+		/// <param name="sendReceiveTimeout"></param>
+		public PooledSocket(SocketPool socketPool, IPEndPoint endPoint, int sendReceiveTimeout)
+		{
+			this.socketPool = socketPool;
+			CreatedTime = DateTime.Now;
 
-            socket.ReceiveTimeout = sendReceiveTimeout;
-            socket.SendTimeout = sendReceiveTimeout;
-            socket.NoDelay = true;
+			socket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, sendReceiveTimeout);
-            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, sendReceiveTimeout);
+			socket.ReceiveTimeout = sendReceiveTimeout;
+			socket.SendTimeout = sendReceiveTimeout;
+			socket.NoDelay = true;
 
+			socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, sendReceiveTimeout);
+			socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, sendReceiveTimeout);
 
-            socket.Connect(endPoint);
+			socket.Connect(endPoint);
 
-            stream = new BufferedStream(new NetworkStream(socket, false));
-        }
+			stream = new BufferedStream(new NetworkStream(socket, false));
+		}
 
-        #region IDisposable Members
+		#endregion Constructors
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public void Dispose()
-        {
-            socketPool.Return(this);
-        }
+		#region Properties
 
-        #endregion
+		/// <summary>
+		/// Checks if the underlying socket and stream is connected and available.
+		/// </summary>
+		public bool IsAlive
+		{
+			get
+			{
+				return socket != null && socket.Connected && stream.CanRead;
+			}
+		}
 
+		#endregion Properties
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public void Close()
-        {
-            if (stream != null)
-            {
-                try
-                {
-                    stream.Close();
-                }
-                catch
-                {
+		#region Methods
 
-                }
-                stream = null;
-            }
-            if (socket != null)
-            {
-                try
-                {
-                    socket.Shutdown(SocketShutdown.Both);
-                }
-                catch
-                {
+		/// <summary>
+		/// 
+		/// </summary>
+		public void Close()
+		{
+			if (stream != null)
+			{
+				try
+				{
+					stream.Close();
+				}
+				catch
+				{
 
-                }
+				}
+				stream = null;
+			}
+			if (socket != null)
+			{
+				try
+				{
+					socket.Shutdown(SocketShutdown.Both);
+				}
+				catch
+				{
 
-                try
-                {
-                    socket.Close();
-                }
-                catch
-                {
+				}
 
-                }
+				try
+				{
+					socket.Close();
+				}
+				catch
+				{
 
-                socket = null;
-            }
-        }
+				}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="str"></param>
-        public void Write(string str)
-        {
-            Write(Encoding.UTF8.GetBytes(str));
-        }
+				socket = null;
+			}
+		}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="bytes"></param>
-        public void Write(byte[] bytes)
-        {
-            stream.Write(bytes, 0, bytes.Length);
-            stream.Flush();
-        }
+		/// <summary>
+		/// 
+		/// </summary>
+		public void Dispose()
+		{
+			socketPool.Return(this);
+		}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public string ReadLine()
-        {
-            MemoryStream buffer = new MemoryStream();
-            int b;
-            bool gotReturn = false;
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="bytes"></param>
+		public void Read(byte[] bytes)
+		{
+			if (bytes == null)
+			{
+				return;
+			}
 
-            while ((b = stream.ReadByte()) != -1)
-            {
-                if (gotReturn)
-                {
-                    if (b == 10)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        buffer.WriteByte(13);
+			int readBytes = 0;
 
-                        gotReturn = false;
-                    }
-                }
-                if (b == 13)
-                {
-                    gotReturn = true;
-                }
-                else
-                {
-                    buffer.WriteByte((byte)b);
-                }
-            }
+			while (readBytes < bytes.Length)
+			{
+				readBytes += stream.Read(bytes, readBytes, (bytes.Length - readBytes));
+			}
+		}
 
-            return Encoding.UTF8.GetString(buffer.GetBuffer());
-        }
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public string ReadLine()
+		{
+			MemoryStream buffer = new MemoryStream();
+			int b;
+			bool gotReturn = false;
 
+			while ((b = stream.ReadByte()) != -1)
+			{
+				if (gotReturn)
+				{
+					if (b == 10)
+					{
+						break;
+					}
+					else
+					{
+						buffer.WriteByte(13);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public string ReadResponse()
-        {
-            string response = ReadLine();
+						gotReturn = false;
+					}
+				}
+				if (b == 13)
+				{
+					gotReturn = true;
+				}
+				else
+				{
+					buffer.WriteByte((byte)b);
+				}
+			}
 
-            if (string.IsNullOrEmpty(response))
-            {
-                throw new MemcachedClientException("Received empty response.");
-            }
+			return Encoding.UTF8.GetString(buffer.GetBuffer());
+		}
 
-            if (response.StartsWith("ERROR")
-                || response.StartsWith("CLIENT_ERROR")
-                || response.StartsWith("SERVER_ERROR"))
-            {
-                throw new MemcachedClientException("Server returned " + response);
-            }
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public string ReadResponse()
+		{
+			string response = ReadLine();
 
-            return response;
-        }
+			if (string.IsNullOrEmpty(response))
+			{
+				throw new MemcachedClientException("Received empty response.");
+			}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="bytes"></param>
-        public void Read(byte[] bytes)
-        {
-            if (bytes == null)
-            {
-                return;
-            }
+			if (response.StartsWith("ERROR")
+				|| response.StartsWith("CLIENT_ERROR")
+				|| response.StartsWith("SERVER_ERROR"))
+			{
+				throw new MemcachedClientException("Server returned " + response);
+			}
 
-            int readBytes = 0;
+			return response;
+		}
 
-            while (readBytes < bytes.Length)
-            {
-                readBytes += stream.Read(bytes, readBytes, (bytes.Length - readBytes));
-            }
-        }
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public bool Reset()
+		{
+			if (socket.Available > 0)
+			{
+				byte[] b = new byte[socket.Available];
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public void SkipUntilEndOfLine()
-        {
-            int b;
-            bool gotReturn = false;
+				Read(b);
 
-            while ((b = stream.ReadByte()) != -1)
-            {
-                if (gotReturn)
-                {
-                    if (b == 10)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        gotReturn = false;
-                    }
-                }
-                if (b == 13)
-                {
-                    gotReturn = true;
-                }
-            }
-        }
+				return true;
+			}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public bool Reset()
-        {
-            if (socket.Available > 0)
-            {
-                byte[] b = new byte[socket.Available];
+			return false;
+		}
 
-                Read(b);
+		/// <summary>
+		/// 
+		/// </summary>
+		public void SkipUntilEndOfLine()
+		{
+			int b;
+			bool gotReturn = false;
 
-                return true;
-            }
+			while ((b = stream.ReadByte()) != -1)
+			{
+				if (gotReturn)
+				{
+					if (b == 10)
+					{
+						break;
+					}
+					else
+					{
+						gotReturn = false;
+					}
+				}
+				if (b == 13)
+				{
+					gotReturn = true;
+				}
+			}
+		}
 
-            return false;
-        }
-    }
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="str"></param>
+		public void Write(string str)
+		{
+			Write(Encoding.UTF8.GetBytes(str));
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="bytes"></param>
+		public void Write(byte[] bytes)
+		{
+			stream.Write(bytes, 0, bytes.Length);
+			stream.Flush();
+		}
+
+		#endregion Methods
+	}
 }

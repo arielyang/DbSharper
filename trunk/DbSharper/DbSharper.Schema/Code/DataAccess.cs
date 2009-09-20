@@ -1,50 +1,50 @@
-﻿namespace DbSharper.Schema.Code
+﻿using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing.Design;
+using System.Xml.Serialization;
+
+using DbSharper.Schema.Collections;
+
+namespace DbSharper.Schema.Code
 {
-    using System.ComponentModel;
-    using System.ComponentModel.Design;
-    using System.Drawing.Design;
-    using System.Xml.Serialization;
+	public class DataAccess : IName
+	{
+		#region Constructors
 
-    using DbSharper.Schema.Collections;
+		public DataAccess()
+		{
+			this.Methods = new NamedCollection<Method>();
+		}
 
-    public class DataAccess : IName
-    {
-        #region Constructors
+		#endregion Constructors
 
-        public DataAccess()
-        {
-            this.Methods = new NamedCollection<Method>();
-        }
+		#region Properties
 
-        #endregion Constructors
+		[XmlAttribute("description")]
+		[Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
+		public string Description
+		{
+			get; set;
+		}
 
-        #region Properties
+		[XmlElement("method")]
+		public NamedCollection<Method> Methods
+		{
+			get; set;
+		}
 
-        [XmlAttribute("description")]
-        [Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
-        public string Description
-        {
-            get; set;
-        }
+		[XmlAttribute("name")]
+		public string Name
+		{
+			get; set;
+		}
 
-        [XmlElement("method")]
-        public NamedCollection<Method> Methods
-        {
-            get; set;
-        }
+		[XmlAttribute("schema")]
+		public string Schema
+		{
+			get; set;
+		}
 
-        [XmlAttribute("name")]
-        public string Name
-        {
-            get; set;
-        }
-
-        [XmlAttribute("schema")]
-        public string Schema
-        {
-            get; set;
-        }
-
-        #endregion Properties
-    }
+		#endregion Properties
+	}
 }

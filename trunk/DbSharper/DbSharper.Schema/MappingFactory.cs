@@ -1,18 +1,18 @@
-﻿namespace DbSharper.Schema
+﻿using System;
+using System.Data;
+using System.Globalization;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Xml;
+
+using DbSharper.Schema.Code;
+using DbSharper.Schema.Collections;
+using DbSharper.Schema.Configuration;
+using DbSharper.Schema.Database;
+using DbSharper.Schema.Enums;
+
+namespace DbSharper.Schema
 {
-	using System;
-	using System.Data;
-	using System.Globalization;
-	using System.IO;
-	using System.Text.RegularExpressions;
-	using System.Xml;
-
-	using DbSharper.Schema.Code;
-	using DbSharper.Schema.Collections;
-	using DbSharper.Schema.Configuration;
-	using DbSharper.Schema.Database;
-	using DbSharper.Schema.Enums;
-
 	public static class MappingFactory
 	{
 		#region Fields

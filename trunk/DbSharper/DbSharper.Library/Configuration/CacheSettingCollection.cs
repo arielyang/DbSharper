@@ -1,43 +1,43 @@
-﻿namespace DbSharper.Library.Configuration
+﻿using System;
+using System.Configuration;
+
+namespace DbSharper.Library.Configuration
 {
-    using System;
-    using System.Configuration;
+	public sealed class CacheSettingCollection : ConfigurationElementCollection
+	{
+		#region Constructors
 
-    public sealed class CacheSettingCollection : ConfigurationElementCollection
-    {
-        #region Constructors
+		public CacheSettingCollection()
+			: base(StringComparer.OrdinalIgnoreCase)
+		{
+		}
 
-        public CacheSettingCollection()
-            : base(StringComparer.OrdinalIgnoreCase)
-        {
-        }
+		#endregion Constructors
 
-        #endregion Constructors
+		#region Indexers
 
-        #region Indexers
+		public new CacheSetting this[string name]
+		{
+			get
+			{
+				return (CacheSetting)BaseGet(name);
+			}
+		}
 
-        public new CacheSetting this[string name]
-        {
-            get
-            {
-                return (CacheSetting)BaseGet(name);
-            }
-        }
+		#endregion Indexers
 
-        #endregion Indexers
+		#region Methods
 
-        #region Methods
+		protected override ConfigurationElement CreateNewElement()
+		{
+			return new CacheSetting();
+		}
 
-        protected override ConfigurationElement CreateNewElement()
-        {
-            return new CacheSetting();
-        }
+		protected override object GetElementKey(ConfigurationElement element)
+		{
+			return ((CacheSetting)element).Name;
+		}
 
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((CacheSetting)element).Name;
-        }
-
-        #endregion Methods
-    }
+		#endregion Methods
+	}
 }

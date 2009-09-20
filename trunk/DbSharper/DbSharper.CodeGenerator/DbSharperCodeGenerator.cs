@@ -1,19 +1,19 @@
-﻿namespace DbSharper.CodeGenerator
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Xsl;
+
+using DbSharper.Schema;
+using DbSharper.Schema.Code;
+
+namespace DbSharper.CodeGenerator
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.IO;
-	using System.Reflection;
-	using System.Runtime.InteropServices;
-	using System.Text;
-	using System.Windows.Forms;
-	using System.Xml;
-	using System.Xml.Xsl;
-
-	using DbSharper.Schema;
-	using DbSharper.Schema.Code;
-
 	[Guid("7EF57AF1-ED7A-48F6-B4A2-8BF0C4521375")]
 	public class DbSharperCodeGenerator : VsMultipleFileGenerator<string>
 	{

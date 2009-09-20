@@ -1,113 +1,111 @@
-﻿namespace DbSharper.Library.Data
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.Reflection;
+
+namespace DbSharper.Library.Data
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Globalization;
-    using System.Reflection;
-
 	/// <summary>
-	/// A helper class to get additional information from a enum type.
+	/// A helper class to get additional information from an enum type.
 	/// </summary>
-    public static class EnumHelper
-    {
-        #region Fields
+	public static class EnumHelper
+	{
+		#region Fields
 
-        private static volatile Dictionary<string, Dictionary<string, string>> cache = new Dictionary<string, Dictionary<string, string>>();
-        private static object syncRoot = new object();
+		private static volatile Dictionary<string, Dictionary<string, string>> cache = new Dictionary<string, Dictionary<string, string>>();
+		private static object syncRoot = new object();
 
-        #endregion Fields
+		#endregion Fields
 
-        #region Methods
+		#region Methods
 
-        /// <summary>
-        /// Convert a enum type to a data binding object.
-        /// </summary>
-        /// <param name="enumType">Type of enum.</param>
-        /// <returns>Data binding object.</returns>
-        public static IList<KeyValuePair<string, int>> GetDataSource(Type enumType)
-        {
-            if (enumType.BaseType != typeof(Enum))
-            {
-                throw new ArgumentException("Type enumType must inherit from System.Enum.");
-            }
+		/// <summary>
+		/// Convert an enum type to a data binding object.
+		/// </summary>
+		/// <param name="enumType">Type of enum.</param>
+		/// <returns>Data binding object.</returns>
+		public static IList<KeyValuePair<string, int>> GetDataSource(Type enumType)
+		{
+			if (enumType.BaseType != typeof(Enum))
+			{
+				throw new ArgumentException("Type enumType must inherit from System.Enum.");
+			}
 
-            DescriptionAttribute att;
-            FieldInfo field;
-            int value;
+			// Get all fields of the enum.
+			FieldInfo[] fields = enumType.GetFields(BindingFlags.Static | BindingFlags.Public);
 
-            FieldInfo[] fields = enumType.GetFields(BindingFlags.Static | BindingFlags.Public);
+			// Create a new instance of binding object.
+			IList<KeyValuePair<string, int>> list = new List<KeyValuePair<string, int>>();
 
-            IList<KeyValuePair<string, int>> list = new List<KeyValuePair<string, int>>();
+			DescriptionAttribute attribute;
+			int enumValue;
 
-            for (int i = 0, length = fields.Length; i < length; i++)
-            {
-                field = fields[i];
+			foreach (var field in fields)
+			{
+				// Get attribute of the enum field.
+				attribute = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
 
-                value = Convert.ToInt32(Enum.Parse(enumType, field.Name), CultureInfo.InvariantCulture);
+				// Get value of the enum field.
+				enumValue = Convert.ToInt32(Enum.Parse(enumType, field.Name), CultureInfo.InvariantCulture);
 
-                att = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+				if (attribute != null)
+				{
+					list.Add(new KeyValuePair<string, int>(attribute.Description, enumValue));
+				}
+				else // If the enum has not description information, using it's field name instead.
+				{
+					list.Add(new KeyValuePair<string, int>(field.Name, enumValue));
+				}
+			}
 
-                if (att != null)
-                {
-                    list.Add(new KeyValuePair<string, int>(att.Description, value));
-                }
-                else
-                {
-                    list.Add(new KeyValuePair<string, int>(field.Name, value));
-                }
-            }
+			return list;
+		}
 
-            return list;
-        }
+		/// <summary>
+		/// Get description attribute of relative enum type and member name.
+		/// </summary>
+		/// <param name="enumType">Enum type.</param>
+		/// <param name="memberName">Enum member name.</param>
+		/// <returns>Description of enum member.</returns>
+		public static string GetDescription(Type enumType, string memberName)
+		{
+			string enumTypeName = enumType.FullName;
 
-        /// <summary>
-        /// Get description attribute of relative enum type and member name.
-        /// </summary>
-        /// <param name="enumType">Enum type.</param>
-        /// <param name="memberName">Enum member name.</param>
-        /// <returns>Description of enum member.</returns>
-        public static string GetDescription(Type enumType, string memberName)
-        {
-            string typeName = enumType.FullName;
+			if (!cache.ContainsKey(enumTypeName))
+			{
+				lock (syncRoot)
+				{
+					if (!cache.ContainsKey(enumTypeName))
+					{
+						FieldInfo[] fields = enumType.GetFields(BindingFlags.Static | BindingFlags.Public);
 
-            if (!cache.ContainsKey(typeName))
-            {
-                lock (syncRoot)
-                {
-                    if (!cache.ContainsKey(typeName))
-                    {
-                        DescriptionAttribute att;
-                        FieldInfo field;
+						Dictionary<string, string> descriptions = new Dictionary<string, string>();
 
-                        FieldInfo[] fields = enumType.GetFields(BindingFlags.Static | BindingFlags.Public);
+						DescriptionAttribute attribute;
 
-                        Dictionary<string, string> descriptions = new Dictionary<string, string>();
+						foreach (var field in fields)
+						{
+							attribute = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
 
-                        for (int i = 0, length = fields.Length; i < length; i++)
-                        {
-                            field = fields[i];
+							if (attribute != null)
+							{
+								descriptions.Add(field.Name, attribute.Description);
+							}
+							else
+							{
+								descriptions.Add(field.Name, field.Name);
+							}
+						}
 
-                            att = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+						cache.Add(enumTypeName, descriptions);
+					}
+				}
+			}
 
-                            if (att != null)
-                            {
-                                descriptions.Add(field.Name, att.Description);
-                            }
-                            else
-                            {
-                                descriptions.Add(field.Name, field.Name);
-                            }
-                        }
+			return cache[enumTypeName][memberName];
+		}
 
-                        cache.Add(typeName, descriptions);
-                    }
-                }
-            }
-
-            return cache[typeName][memberName];
-        }
-
-        #endregion Methods
-    }
+		#endregion Methods
+	}
 }
