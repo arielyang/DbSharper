@@ -1,32 +1,32 @@
-﻿namespace DbSharper.Schema
+﻿using System;
+using System.Runtime.Serialization;
+
+namespace DbSharper.Schema
 {
-    using System;
-    using System.Runtime.Serialization;
+	[Serializable]
+	public sealed class DbSharperException : Exception
+	{
+		#region Constructors
 
-    [Serializable]
-    public sealed class DbSharperException : Exception
-    {
-        #region Constructors
+		public DbSharperException()
+		{
+		}
 
-        public DbSharperException()
-        {
-        }
+		public DbSharperException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
 
-        public DbSharperException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+		public DbSharperException(string message)
+			: base(message)
+		{
+		}
 
-        public DbSharperException(string message)
-            : base(message)
-        {
-        }
+		private DbSharperException(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+		}
 
-        private DbSharperException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
-
-        #endregion Constructors
-    }
+		#endregion Constructors
+	}
 }

@@ -1,37 +1,37 @@
-﻿namespace DbSharper.Schema.Code
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
+
+using DbSharper.Schema.Collections;
+
+namespace DbSharper.Schema.Code
 {
-    using System.ComponentModel;
-    using System.Xml.Serialization;
+	[XmlType("member")]
+	[DefaultProperty("Name")]
+	public class EnumMember : IName
+	{
+		#region Properties
 
-    using DbSharper.Schema.Collections;
+		[XmlAttribute("description")]
+		[ReadOnly(true)]
+		public string Description
+		{
+			get; set;
+		}
 
-    [XmlType("member")]
-    [DefaultProperty("Name")]
-    public class EnumMember : IName
-    {
-        #region Properties
+		[XmlAttribute("name")]
+		[ReadOnly(true)]
+		public string Name
+		{
+			get; set;
+		}
 
-        [XmlAttribute("description")]
-        [ReadOnly(true)]
-        public string Description
-        {
-            get; set;
-        }
+		[XmlAttribute("value")]
+		[ReadOnly(true)]
+		public int Value
+		{
+			get; set;
+		}
 
-        [XmlAttribute("name")]
-        [ReadOnly(true)]
-        public string Name
-        {
-            get; set;
-        }
-
-        [XmlAttribute("value")]
-        [ReadOnly(true)]
-        public int Value
-        {
-            get; set;
-        }
-
-        #endregion Properties
-    }
+		#endregion Properties
+	}
 }

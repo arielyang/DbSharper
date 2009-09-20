@@ -1,12 +1,12 @@
 ﻿namespace DbSharper.Schema.Enums
 {
-    #region Enumerations
+	#region Enumerations
 
-    public enum MethodType
-    {
-        ExecuteNonQuery,
-        ExecuteReader
-    }
+	public enum MethodType
+	{
+		ExecuteNonQuery,
+		ExecuteReader
+	}
 
-    #endregion Enumerations
+	#endregion Enumerations
 }

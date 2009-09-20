@@ -1,10 +1,10 @@
-﻿namespace DbSharper.Schema.Configuration
+﻿using System.Collections.ObjectModel;
+using System.Xml;
+
+using DbSharper.Schema.Enums;
+
+namespace DbSharper.Schema.Configuration
 {
-	using System.Collections.ObjectModel;
-	using System.Xml;
-
-	using DbSharper.Schema.Enums;
-
 	internal class MappingConfiguration
 	{
 		#region Fields

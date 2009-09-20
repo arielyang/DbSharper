@@ -1,66 +1,66 @@
-﻿namespace DbSharper.Schema.Code
+﻿using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing.Design;
+using System.Xml.Serialization;
+
+using DbSharper.Schema.Collections;
+
+namespace DbSharper.Schema.Code
 {
-    using System.ComponentModel;
-    using System.ComponentModel.Design;
-    using System.Drawing.Design;
-    using System.Xml.Serialization;
+	[XmlType("model")]
+	public class Model : IName
+	{
+		#region Constructors
 
-    using DbSharper.Schema.Collections;
+		public Model()
+		{
+			this.Properties = new NamedCollection<Property>();
+		}
 
-    [XmlType("model")]
-    public class Model : IName
-    {
-        #region Constructors
+		#endregion Constructors
 
-        public Model()
-        {
-            this.Properties = new NamedCollection<Property>();
-        }
+		#region Properties
 
-        #endregion Constructors
+		[XmlAttribute("description")]
+		[Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
+		public string Description
+		{
+			get; set;
+		}
 
-        #region Properties
+		[XmlAttribute("isView")]
+		[ReadOnly(true)]
+		public bool IsView
+		{
+			get; set;
+		}
 
-        [XmlAttribute("description")]
-        [Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
-        public string Description
-        {
-            get; set;
-        }
+		[XmlAttribute("name")]
+		public string Name
+		{
+			get; set;
+		}
 
-        [XmlAttribute("isView")]
-        [ReadOnly(true)]
-        public bool IsView
-        {
-            get; set;
-        }
+		[XmlElement("property")]
+		[Browsable(false)]
+		public NamedCollection<Property> Properties
+		{
+			get; set;
+		}
 
-        [XmlAttribute("name")]
-        public string Name
-        {
-            get; set;
-        }
+		[XmlAttribute("schema")]
+		public string Schema
+		{
+			get; set;
+		}
 
-        [XmlElement("property")]
-        [Browsable(false)]
-        public NamedCollection<Property> Properties
-        {
-            get; set;
-        }
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		[XmlIgnore]
+		internal string MappingSource
+		{
+			get; set;
+		}
 
-        [XmlAttribute("schema")]
-        public string Schema
-        {
-            get; set;
-        }
-
-        [XmlIgnore]
-        internal string MappingSource
-        {
-            get;
-            set;
-        }
-
-        #endregion Properties
-    }
+		#endregion Properties
+	}
 }

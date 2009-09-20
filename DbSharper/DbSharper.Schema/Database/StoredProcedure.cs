@@ -1,69 +1,69 @@
-﻿namespace DbSharper.Schema.Database
+﻿using System.Xml.Serialization;
+
+using DbSharper.Schema.Collections;
+
+namespace DbSharper.Schema.Database
 {
-    using System.Xml.Serialization;
-
-    using DbSharper.Schema.Collections;
-
-    [XmlType("storedProcedure")]
+	[XmlType("storedProcedure")]
 	public class StoredProcedure : ISchema
-    {
-        #region Constructors
+	{
+		#region Constructors
 
-        public StoredProcedure()
-        {
-            this.Parameters = new NamedCollection<Parameter>();
-        }
+		public StoredProcedure()
+		{
+			this.Parameters = new NamedCollection<Parameter>();
+		}
 
-        #endregion Constructors
+		#endregion Constructors
 
-        #region Properties
+		#region Properties
 
-        [XmlIgnore]
-        public string Definition
-        {
-            get; set;
-        }
+		[XmlIgnore]
+		public string Definition
+		{
+			get; set;
+		}
 
-        [XmlAttribute("description")]
-        public string Description
-        {
-            get; set;
-        }
+		[XmlAttribute("description")]
+		public string Description
+		{
+			get; set;
+		}
 
-        [XmlAttribute("name")]
-        public string Name
-        {
-            get; set;
-        }
+		[XmlAttribute("name")]
+		public string Name
+		{
+			get; set;
+		}
 
-        [XmlElement("parameter")]
-        public NamedCollection<Parameter> Parameters
-        {
-            get; set;
-        }
+		[XmlElement("parameter")]
+		public NamedCollection<Parameter> Parameters
+		{
+			get; set;
+		}
 
-        [XmlAttribute("schema")]
-        public string Schema
-        {
-            get; set;
-        }
+		[XmlAttribute("schema")]
+		public string Schema
+		{
+			get; set;
+		}
 
-        #endregion Properties
+		#endregion Properties
 
-        #region Methods
+		#region Methods
 
-        public override string ToString()
-        {
-            if (string.IsNullOrEmpty(this.Schema))
-            {
-                return this.Name;
-            }
-            else
-            {
-                return this.Schema + "." + this.Name;
-            }
-        }
+		public override string ToString()
+		{
+			if (string.IsNullOrEmpty(this.Schema))
+			{
+				return this.Name;
+			}
+			else
+			{
+				return this.Schema + "." + this.Name;
+			}
+		}
 
-        #endregion Methods
-    }
+		#endregion Methods
+	}
 }

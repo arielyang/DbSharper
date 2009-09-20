@@ -51,6 +51,26 @@
 			</xsl:if>
 		</xsl:for-each>)
 		{
+			<xsl:if test="$resultsCount&gt;0">return </xsl:if><xsl:value-of select="$methodName" />(item<xsl:for-each select="$inputSqlParameters">
+			<xsl:variable name="parameterName" select="./@name" />
+			<xsl:if test="not(boolean($model/property[@columnName=$parameterName]))">, <xsl:value-of select="script:GetCamelCase(./@name)" /></xsl:if>
+			</xsl:for-each>, ConnectionStrings.<xsl:value-of select="/mapping/@connectionStringName" />);
+		}
+		
+		/// &lt;summary&gt;
+<xsl:value-of select="script:GetSummary(./@description, 2)" />
+<xsl:if test="./@description=''">		/// Summary of <xsl:value-of select="$methodName" />.</xsl:if>
+		/// &lt;/summary&gt;
+		public static <xsl:choose>
+			<xsl:when test="$resultsCount=0">void</xsl:when>
+			<xsl:when test="$resultsCount=1"><xsl:value-of select="$resultType" /></xsl:when>
+			<xsl:when test="$resultsCount&gt;1"><xsl:value-of select="$resultClass" /></xsl:when>
+		</xsl:choose><xsl:text> </xsl:text><xsl:value-of select="$methodName" />(Models.<xsl:value-of select="$model/@schema" />.<xsl:value-of select="$model/@name" />Item item<xsl:for-each select="$inputSqlParameters">
+			<xsl:variable name="parameterName" select="./@name" />
+			<xsl:if test="not(boolean($model/property[@columnName=$parameterName]))">, <xsl:value-of select="script:CSharpAlias(./@type)" /><xsl:text> </xsl:text><xsl:value-of select="script:GetCamelCase(./@name)" />
+			</xsl:if>
+		</xsl:for-each>, string connectionString)
+		{
 			Before_<xsl:value-of select="$methodName" />(ref item<xsl:for-each select="$inputSqlParameters">
 				<xsl:variable name="parameterName" select="./@name" />
 				<xsl:if test="not(boolean($model/property[@columnName=$parameterName]))">, ref <xsl:value-of select="script:GetCamelCase(./@name)" />
@@ -70,7 +90,7 @@
 			</xsl:choose>;</xsl:when><xsl:otherwise>
 			parms[<xsl:value-of select="position()-1" />].Direction = global::System.Data.ParameterDirection.<xsl:value-of select="./@direction" />;</xsl:otherwise></xsl:choose></xsl:for-each><xsl:text>
 			</xsl:text></xsl:if>
-			SqlHelper.ExecuteNonQuery(ConnectionStrings.<xsl:value-of select="/mapping/@connectionStringName" />, global::System.Data.CommandType.<xsl:value-of select="./@commandType" />, "<xsl:value-of select="./@commandText" />"<xsl:if test="$sqlParametersCount!=0">, parms</xsl:if>);
+	SqlHelper.ExecuteNonQuery(connectionString, global::System.Data.CommandType.<xsl:value-of select="./@commandType" />, "<xsl:value-of select="./@commandText" />"<xsl:if test="$sqlParametersCount!=0">, parms</xsl:if>);
 			<xsl:if test="$resultsCount&gt;1"><xsl:text>
 			</xsl:text>
 			<xsl:value-of select="$resultClass" /> result = new <xsl:value-of select="$resultClass" />();

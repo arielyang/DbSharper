@@ -1,12 +1,12 @@
-﻿namespace DbSharper.Library.Providers
-{
-	using System;
-	using System.Collections;
-	using System.Collections.Specialized;
-	using System.Configuration.Provider;
-	using System.Web;
-	using System.Web.Caching;
+﻿using System;
+using System.Collections;
+using System.Collections.Specialized;
+using System.Configuration.Provider;
+using System.Web;
+using System.Web.Caching;
 
+namespace DbSharper.Library.Providers
+{
 	/// <summary>
 	/// Cache provider using System.Web.HttpContext.Current.Cache.
 	/// </summary>

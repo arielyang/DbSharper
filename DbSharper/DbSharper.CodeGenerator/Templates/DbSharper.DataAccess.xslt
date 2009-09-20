@@ -44,7 +44,7 @@ namespace <xsl:value-of select="$defaultNamespace" />.DataAccess.<xsl:value-of s
 		/// Results of method <xsl:value-of select="./@name" />.
 		/// &lt;/summary&gt;
 		[Serializable]
-		public class <xsl:value-of select="./@name" />Results : IJson
+		public partial class <xsl:value-of select="./@name" />Results : IJson
 		{<xsl:for-each select="./results/result">
 			public <xsl:value-of select="script:CSharpAlias(./@type)" /><xsl:text> </xsl:text><xsl:value-of select="./@name" /> { get; set; }</xsl:for-each>
 

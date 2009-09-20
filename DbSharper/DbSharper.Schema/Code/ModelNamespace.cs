@@ -1,34 +1,34 @@
-﻿namespace DbSharper.Schema.Code
+﻿using System.Xml.Serialization;
+
+using DbSharper.Schema.Collections;
+
+namespace DbSharper.Schema.Code
 {
-    using System.Xml.Serialization;
+	public class ModelNamespace : IName
+	{
+		#region Constructors
 
-    using DbSharper.Schema.Collections;
+		public ModelNamespace()
+		{
+			this.Models = new NamedCollection<Model>();
+		}
 
-    public class ModelNamespace : IName
-    {
-        #region Constructors
+		#endregion Constructors
 
-        public ModelNamespace()
-        {
-            this.Models = new NamedCollection<Model>();
-        }
+		#region Properties
 
-        #endregion Constructors
+		[XmlElement("model")]
+		public NamedCollection<Model> Models
+		{
+			get; set;
+		}
 
-        #region Properties
+		[XmlAttribute("name")]
+		public string Name
+		{
+			get; set;
+		}
 
-        [XmlElement("model")]
-        public NamedCollection<Model> Models
-        {
-            get; set;
-        }
-
-        [XmlAttribute("name")]
-        public string Name
-        {
-            get; set;
-        }
-
-        #endregion Properties
-    }
+		#endregion Properties
+	}
 }

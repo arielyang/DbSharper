@@ -1,174 +1,174 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+using System.Xml;
+
+using EnvDTE;
+
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+
 namespace DbSharper.CodeGenerator
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Text.RegularExpressions;
-    using System.Xml;
+	internal static class VsHelper
+	{
+		#region Methods
 
-    using EnvDTE;
+		public static EnvDTE.ProjectItem FindProjectItem(EnvDTE.Project project, string file)
+		{
+			return FindProjectItem(project.ProjectItems, file);
+		}
 
-    using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Shell.Interop;
+		public static EnvDTE.ProjectItem FindProjectItem(EnvDTE.ProjectItems items, string file)
+		{
+			string atom = file.Substring(0, file.IndexOf("\\") + 1);
 
-    internal static class VsHelper
-    {
-        #region Methods
+			foreach (EnvDTE.ProjectItem item in items)
+			{
+				//if ( item
+				//if (item.ProjectItems.Count > 0)
+				if (atom.StartsWith(item.Name))
+				{
+					// then step in
+					EnvDTE.ProjectItem ritem = FindProjectItem(item.ProjectItems, file.Substring(file.IndexOf("\\") + 1));
 
-        public static EnvDTE.ProjectItem FindProjectItem(EnvDTE.Project project, string file)
-        {
-            return FindProjectItem(project.ProjectItems, file);
-        }
+					if (ritem != null)
+					{
+						return ritem;
+					}
+				}
 
-        public static EnvDTE.ProjectItem FindProjectItem(EnvDTE.ProjectItems items, string file)
-        {
-            string atom = file.Substring(0, file.IndexOf("\\") + 1);
+				if (Regex.IsMatch(item.Name, file))
+				{
+					return item;
+				}
 
-            foreach (EnvDTE.ProjectItem item in items)
-            {
-                //if ( item
-                //if (item.ProjectItems.Count > 0)
-                if (atom.StartsWith(item.Name))
-                {
-                    // then step in
-                    EnvDTE.ProjectItem ritem = FindProjectItem(item.ProjectItems, file.Substring(file.IndexOf("\\") + 1));
+				if (item.ProjectItems.Count > 0)
+				{
+					EnvDTE.ProjectItem ritem = FindProjectItem(item.ProjectItems, file.Substring(file.IndexOf("\\") + 1));
 
-                    if (ritem != null)
-                    {
-                        return ritem;
-                    }
-                }
+					if (ritem != null)
+					{
+						return ritem;
+					}
+				}
+			}
 
-                if (Regex.IsMatch(item.Name, file))
-                {
-                    return item;
-                }
+			return null;
+		}
 
-                if (item.ProjectItems.Count > 0)
-                {
-                    EnvDTE.ProjectItem ritem = FindProjectItem(item.ProjectItems, file.Substring(file.IndexOf("\\") + 1));
+		public static List<EnvDTE.ProjectItem> FindProjectItems(EnvDTE.ProjectItems items, string match)
+		{
+			List<EnvDTE.ProjectItem> values = new List<EnvDTE.ProjectItem>();
 
-                    if (ritem != null)
-                    {
-                        return ritem;
-                    }
-                }
-            }
+			foreach (EnvDTE.ProjectItem item in items)
+			{
+				if (Regex.IsMatch(item.Name, match))
+				{
+					values.Add(item);
+				}
 
-            return null;
-        }
+				if (item.ProjectItems.Count > 0)
+				{
+					values.AddRange(FindProjectItems(item.ProjectItems, match));
+				}
+			}
 
-        public static List<EnvDTE.ProjectItem> FindProjectItems(EnvDTE.ProjectItems items, string match)
-        {
-            List<EnvDTE.ProjectItem> values = new List<EnvDTE.ProjectItem>();
+			return values;
+		}
 
-            foreach (EnvDTE.ProjectItem item in items)
-            {
-                if (Regex.IsMatch(item.Name, match))
-                {
-                    values.Add(item);
-                }
+		public static IVsHierarchy GetCurrentHierarchy(IServiceProvider provider)
+		{
+			DTE vs = (DTE)provider.GetService(typeof(DTE));
 
-                if (item.ProjectItems.Count > 0)
-                {
-                    values.AddRange(FindProjectItems(item.ProjectItems, match));
-                }
-            }
+			if (vs == null)
+			{
+				throw new InvalidOperationException("DTE not found.");
+			}
 
-            return values;
-        }
+			return ToHierarchy(vs.SelectedItems.Item(1).ProjectItem.ContainingProject);
+		}
 
-        public static IVsHierarchy GetCurrentHierarchy(IServiceProvider provider)
-        {
-            DTE vs = (DTE)provider.GetService(typeof(DTE));
+		public static EnvDTE.Project ToDteProject(IVsHierarchy hierarchy)
+		{
+			if (hierarchy == null)
+			{
+				throw new ArgumentNullException("hierarchy");
+			}
 
-            if (vs == null)
-            {
-                throw new InvalidOperationException("DTE not found.");
-            }
+			object prjObject = null;
 
-            return ToHierarchy(vs.SelectedItems.Item(1).ProjectItem.ContainingProject);
-        }
+			if (hierarchy.GetProperty(0xfffffffe, -2027, out prjObject) >= 0)
+			{
+				return (EnvDTE.Project)prjObject;
+			}
+			else
+			{
+				throw new ArgumentException("Hierarchy is not a project.");
+			}
+		}
 
-        public static EnvDTE.Project ToDteProject(IVsHierarchy hierarchy)
-        {
-            if (hierarchy == null)
-            {
-                throw new ArgumentNullException("hierarchy");
-            }
+		public static EnvDTE.Project ToDteProject(IVsProject project)
+		{
+			if (project == null)
+			{
+				throw new ArgumentNullException("project");
+			}
 
-            object prjObject = null;
+			return ToDteProject(project as IVsHierarchy);
+		}
 
-            if (hierarchy.GetProperty(0xfffffffe, -2027, out prjObject) >= 0)
-            {
-                return (EnvDTE.Project)prjObject;
-            }
-            else
-            {
-                throw new ArgumentException("Hierarchy is not a project.");
-            }
-        }
+		public static IVsHierarchy ToHierarchy(EnvDTE.Project project)
+		{
+			if (project == null)
+			{
+				// DTE does not expose the project GUID that exists at in the msbuild project file.
+				// Cannot use MSBuild object model because it uses a static instance of the Engine,
+				// and using the Project will cause it to be unloaded from the engine when the
+				// GC collects the variable that we declare.
+				throw new ArgumentNullException("project");
+			}
 
-        public static EnvDTE.Project ToDteProject(IVsProject project)
-        {
-            if (project == null)
-            {
-                throw new ArgumentNullException("project");
-            }
+			string projectGuid = null;
 
-            return ToDteProject(project as IVsHierarchy);
-        }
+			using (XmlReader projectReader = XmlReader.Create(project.FileName))
+			{
+				projectReader.MoveToContent();
+				object nodeName = projectReader.NameTable.Add("ProjectGuid");
 
-        public static IVsHierarchy ToHierarchy(EnvDTE.Project project)
-        {
-            if (project == null)
-            {
-                // DTE does not expose the project GUID that exists at in the msbuild project file.
-                // Cannot use MSBuild object model because it uses a static instance of the Engine,
-                // and using the Project will cause it to be unloaded from the engine when the
-                // GC collects the variable that we declare.
-                throw new ArgumentNullException("project");
-            }
+				while (projectReader.Read())
+				{
+					if (Object.Equals(projectReader.LocalName, nodeName))
+					{
+						projectGuid = (String)projectReader.ReadElementContentAsString(); break;
+					}
+				}
+			}
 
-            string projectGuid = null;
+			Debug.Assert(!String.IsNullOrEmpty(projectGuid));
+			IServiceProvider serviceProvider = new ServiceProvider(project.DTE as Microsoft.VisualStudio.OLE.Interop.IServiceProvider);
 
-            using (XmlReader projectReader = XmlReader.Create(project.FileName))
-            {
-                projectReader.MoveToContent();
-                object nodeName = projectReader.NameTable.Add("ProjectGuid");
-
-                while (projectReader.Read())
-                {
-                    if (Object.Equals(projectReader.LocalName, nodeName))
-                    {
-                        projectGuid = (String)projectReader.ReadElementContentAsString(); break;
-                    }
-                }
-            }
-
-            Debug.Assert(!String.IsNullOrEmpty(projectGuid));
-            IServiceProvider serviceProvider = new ServiceProvider(project.DTE as Microsoft.VisualStudio.OLE.Interop.IServiceProvider);
-			
 			return VsShellUtilities.GetHierarchy(serviceProvider, new Guid(projectGuid));
-        }
+		}
 
-        public static IVsProject ToVsProject(EnvDTE.Project project)
-        {
-            if (project == null)
-            {
-                throw new ArgumentNullException("project");
-            }
+		public static IVsProject ToVsProject(EnvDTE.Project project)
+		{
+			if (project == null)
+			{
+				throw new ArgumentNullException("project");
+			}
 
-            IVsProject vsProject = ToHierarchy(project) as IVsProject;
+			IVsProject vsProject = ToHierarchy(project) as IVsProject;
 
-            if (vsProject == null)
-            {
-                throw new ArgumentException("Project is not a VS project.");
-            }
+			if (vsProject == null)
+			{
+				throw new ArgumentException("Project is not a VS project.");
+			}
 
-            return vsProject;
-        }
+			return vsProject;
+		}
 
-        #endregion Methods
-    }
+		#endregion Methods
+	}
 }

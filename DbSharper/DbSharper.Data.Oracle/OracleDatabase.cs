@@ -1,9 +1,7 @@
 ﻿////namespace DbSharper.Data.Sql
 ////{
 ////    using System.Data.OracleClient;
-
 ////    using DbSharper.Library.Data;
-
 ////    /// <summary>
 ////    /// <para>Represents a Oracle database.</para>
 ////    /// </summary>
@@ -15,7 +13,6 @@
 ////    public class OracleDatabase : Database
 ////    {
 ////        #region Constructors
-
 ////        /// <summary>
 ////        /// Initializes a new instance of the <see cref="OracleDatabase"/> class with a connection string.
 ////        /// </summary>
@@ -23,11 +20,8 @@
 ////            : base(OracleClientFactory.Instance)
 ////        {
 ////        }
-
 ////        #endregion Constructors
-
 ////        #region Methods
-
 ////        /// <summary>
 ////        /// Builds a value parameter name for the current database.
 ////        /// </summary>
@@ -39,10 +33,8 @@
 ////            {
 ////                return "@" + name;
 ////            }
-
 ////            return name;
 ////        }
-
 ////        #endregion Methods
 ////    }
 ////}

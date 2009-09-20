@@ -1,10 +1,10 @@
-﻿namespace DbSharper.Updater
-{
-	using System;
-	using System.Diagnostics;
-	using System.Net;
-	using System.Windows.Forms;
+﻿using System;
+using System.Diagnostics;
+using System.Net;
+using System.Windows.Forms;
 
+namespace DbSharper.Updater
+{
 	public partial class FormMain : Form
 	{
 		#region Fields
@@ -35,7 +35,7 @@
 
 			labelVersion.Text = string.Format(message, UpdateService.GetExecutingVersion(), service.GetLatestVersion());
 			textBoxSummary.Text = service.GetLatestUpdateSummary();
-	
+
 			if (service.IsLatestVersion())
 			{
 				Application.Exit();
