@@ -7,6 +7,6 @@ Add some new features.
 
 = Details =
 
-# Change modifier of sub-item type property to public.
-# Can pass through a connectioin string into a data access method.
-# Add a partial keyword to the data access results class.
+  # Change modifier of sub-item type property to public.
+  # Can pass through a connectioin string into a data access method.
+  # Add a partial keyword to the data access results class.
