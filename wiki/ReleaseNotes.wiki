@@ -1,0 +1,12 @@
+#labels Featured
+#Release Notes
+
+= DbSharper 0.8.7 =
+
+Add your content here.
+
+= Details =
+
+1. Change modifier of sub-item type property to public.
+2. Can pass through a connectioin string into a data access method.
+3. Add a partial keyword to the data access results class.
