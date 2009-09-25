@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		DbSharper.vsmdi = DbSharper.vsmdi
 		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
 		ProductInfo.cs = ProductInfo.cs
+		ReleaseNotes.txt = ReleaseNotes.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper.Schema", "DbSharper.Schema\DbSharper.Schema.csproj", "{7EA88513-4A69-48C8-8783-284D04A731FC}"
