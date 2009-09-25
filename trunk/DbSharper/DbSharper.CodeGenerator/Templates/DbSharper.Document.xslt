@@ -378,7 +378,7 @@
 					</table>
 				</xsl:for-each>
 				<hr />
-				<h2>Stored Procedure Detail Information</h2>
+				<h2>Stored Procedures Detail Information</h2>
 				<xsl:for-each select="$storedProcedures">
 					<a>
 						<xsl:attribute name="name">
