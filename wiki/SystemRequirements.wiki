@@ -1,13 +1,14 @@
-#summary One-sentence summary of this page.
+#summary System requirements.
+#labels Phase-Requirements
 
-= Introduction =
+= IDE =
 
-Add your content here.
+  * Visual Studio 2005 (all versions)
+  * Visual Studio 2008 (all versions)
 
+= Database =
 
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+  * SQL Server 2005 SP2+ (all versions)
+  * SQL Server 2005 Express SP2+
+  * SQL Server 2008 (untested) (all versions)
+  * SQL Server 2008 Express (untested)
