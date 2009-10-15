@@ -1,0 +1,17 @@
+#summary 数据库设计指南.
+
+= 数据库设计指南 =
+
+为了能够正确的使用DbSharper，您必须在数据库设计中遵守如下的规范。
+
+== 表和视图设计规范 ==
+
+ # 表名称要为单数，名词，采用Pascal命名
+ # 视图命名可以参考表命名，并且要添加View后缀，例如：UserView
+ # 一对多和多对多关联表命名形式为：Ref_AaaInBbb，例如：Ref_MemberInGroup
+ # 一对多和多对多关联表也可以外加其他字段，这时不需要命名为Ref_AaaInBbb，例如：GroupMembership {Group_Id, User_Id, Type}
+ # 可以设置过滤前缀，如设置Ref_，则Ref_Group将不会生成实体类，例如：Ref_Table
+ # Ref_Enumeration是DbSharper自动生成的表，表内可以存储希望生成的枚举类型数据
+ # Ref_EnumerationMember是DbSharper自动生成的表，表内可以存储希望生成的枚举值数据
+
+== 存储过程设计规范 ==
