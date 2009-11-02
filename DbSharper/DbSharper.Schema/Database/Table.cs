@@ -5,7 +5,7 @@ using DbSharper.Schema.Collections;
 namespace DbSharper.Schema.Database
 {
 	[XmlType("table")]
-	public class Table : ISchema
+	public class Table : IColumns
 	{
 		#region Constructors
 

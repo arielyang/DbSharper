@@ -262,21 +262,61 @@ namespace DbSharper.Schema
 			return modelName;
 		}
 
-		private static string GetReferenceType(Table table, string columnName)
+		private static string GetName(IColumns databaseObject, string columnName)
 		{
-			foreach (ForeignKey fk in table.ForeignKeys)
+			if (databaseObject is Table)
 			{
-				if (fk.Columns.Count == 1 && fk.Columns[0].Name == columnName)
+				foreach (ForeignKey fk in (databaseObject as Table).ForeignKeys)
 				{
-					Table tb = database.Tables[fk.ReferentialTable];
-
-					return "Models." + MappingHelper.GetPascalCase(tb.Schema) + "." + MappingHelper.GetPascalCase(mappingConfig.Model.TrimName(tb)) + "Item";
+					if (fk.Columns.Count == 1 && fk.Columns[0].Name == columnName)
+					{
+						return MappingHelper.GetPascalCase(MappingHelper.TrimId(columnName));
+					}
 				}
 			}
 
 			if (columnName.EndsWith("_Id", StringComparison.OrdinalIgnoreCase))
 			{
-				return columnName.Substring(0, columnName.Length - 3) + "Item";
+				string referenceName = MappingHelper.TrimId(columnName);
+
+				foreach (Table tb in database.Tables)
+				{
+					if (mappingConfig.Model.TrimName(tb) == referenceName)
+					{
+						return MappingHelper.GetPascalCase(referenceName);
+					}
+				}
+			}
+
+			return MappingHelper.GetPascalCase(columnName);
+		}
+
+		private static string GetReferenceType(IColumns databaseObject, string columnName)
+		{
+			if (databaseObject is Table)
+			{
+				foreach (ForeignKey fk in (databaseObject as Table).ForeignKeys)
+				{
+					if (fk.Columns.Count == 1 && fk.Columns[0].Name == columnName)
+					{
+						Table tb = database.Tables[fk.ReferentialTable];
+
+						return "Models." + MappingHelper.GetPascalCase(tb.Schema) + "." + MappingHelper.GetPascalCase(mappingConfig.Model.TrimName(tb)) + "Item";
+					}
+				}
+			}
+
+			if (columnName.EndsWith("_Id", StringComparison.OrdinalIgnoreCase))
+			{
+				string referenceName = MappingHelper.TrimId(columnName);
+
+				foreach (Table tb in database.Tables)
+				{
+					if (mappingConfig.Model.TrimName(tb) == referenceName)
+					{
+						return "Models." + MappingHelper.GetPascalCase(tb.Schema) + "." +MappingHelper.GetPascalCase(referenceName) + "Item";
+					}
+				}
 			}
 
 			if (database.Enumerations.Contains(columnName))
@@ -284,19 +324,7 @@ namespace DbSharper.Schema
 				return "Enums." + columnName;
 			}
 
-			CommonType commonType = MappingHelper.GetCommonType(table.Columns[columnName].SqlDbType);
-
-			return MappingHelper.GetCommonTypeString(commonType);
-		}
-
-		private static string GetReferenceType(View view, string columnName)
-		{
-			if (columnName.EndsWith("_Id", StringComparison.OrdinalIgnoreCase))
-			{
-				return columnName.Substring(0, columnName.Length - 3) + "Item";
-			}
-
-			CommonType commonType = MappingHelper.GetCommonType(view.Columns[columnName].SqlDbType);
+			CommonType commonType = MappingHelper.GetCommonType((databaseObject as IColumns).Columns[columnName].SqlDbType);
 
 			return MappingHelper.GetCommonTypeString(commonType);
 		}
@@ -344,7 +372,7 @@ namespace DbSharper.Schema
 				properties.Add(
 					new Property
 					{
-						Name = MappingHelper.GetPascalCase(MappingHelper.TrimId(column.Name)),
+						Name = GetName(table, column.Name),
 						Column = column.Name,
 						ColumnName = MappingHelper.GetPascalCase(column.Name),
 						Description = column.Description,
@@ -369,7 +397,7 @@ namespace DbSharper.Schema
 				properties.Add(
 					new Property
 					{
-						Name = MappingHelper.GetPascalCase(MappingHelper.TrimId(column.Name)),
+						Name = GetName(view, column.Name),
 						Column = column.Name,
 						ColumnName = MappingHelper.GetPascalCase(column.Name),
 						Description = column.Description,
