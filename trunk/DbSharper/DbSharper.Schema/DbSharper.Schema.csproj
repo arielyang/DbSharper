@@ -65,13 +65,14 @@
     <Compile Include="DbSharperException.cs" />
     <Compile Include="Enums\ConditionType.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="IColumns.cs" />
     <Compile Include="MappingExtender.cs" />
     <Compile Include="MappingFactory.cs" />
     <Compile Include="Code\Method.cs" />
     <Compile Include="MappingHelper.cs" />
     <Compile Include="Collections\SchemaNamedCollection.cs" />
-    <Compile Include="Collections\ISchema.cs" />
-    <Compile Include="Collections\IName.cs" />
+    <Compile Include="ISchema.cs" />
+    <Compile Include="IName.cs" />
     <Compile Include="Code\DataAccess.cs" />
     <Compile Include="Code\DataAccessNamespace.cs" />
     <Compile Include="Code\Mapping.cs" />
