@@ -21,31 +21,36 @@ namespace DbSharper.Schema.Database
 		[XmlIgnore]
 		public string Definition
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("description")]
 		public string Description
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("name")]
 		public string Name
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlElement("parameter")]
 		public NamedCollection<Parameter> Parameters
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("schema")]
 		public string Schema
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		#endregion Properties

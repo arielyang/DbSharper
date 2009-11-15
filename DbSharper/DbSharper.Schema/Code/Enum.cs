@@ -23,32 +23,37 @@ namespace DbSharper.Schema.Code
 		[XmlAttribute("baseType")]
 		public string BaseType
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("description")]
 		[ReadOnly(true)]
 		public string Description
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("hasFlagsAttribute")]
 		public bool HasFlagsAttribute
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlElement("member")]
 		public NamedCollection<EnumMember> Members
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("name")]
 		public string Name
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		#endregion Properties

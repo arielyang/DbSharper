@@ -2,6 +2,10 @@
 
 namespace DbSharper.Schema.Collections
 {
+	/// <summary>
+	/// A collection contains object which implements IName interface.
+	/// </summary>
+	/// <typeparam name="T">Object implements IName interface.</typeparam>
 	public class NamedCollection<T> : KeyedCollection<string, T>
 		where T : IName
 	{

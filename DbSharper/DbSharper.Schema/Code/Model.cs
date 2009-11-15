@@ -25,40 +25,46 @@ namespace DbSharper.Schema.Code
 		[Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
 		public string Description
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("isView")]
 		[ReadOnly(true)]
 		public bool IsView
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("name")]
 		public string Name
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlElement("property")]
 		[Browsable(false)]
 		public NamedCollection<Property> Properties
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("schema")]
 		public string Schema
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 		[XmlIgnore]
 		internal string MappingSource
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		#endregion Properties

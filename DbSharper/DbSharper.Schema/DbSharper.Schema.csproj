@@ -44,7 +44,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\DbSharper.Schema.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\DbSharper.Schema.XML</DocumentationFile>
+    <CodeAnalysisRules>
+    </CodeAnalysisRules>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

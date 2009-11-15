@@ -24,25 +24,29 @@ namespace DbSharper.Schema.Code
 		[Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
 		public string Description
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlElement("method")]
 		public NamedCollection<Method> Methods
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("name")]
 		public string Name
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("schema")]
 		public string Schema
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		#endregion Properties

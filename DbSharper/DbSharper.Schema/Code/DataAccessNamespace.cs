@@ -20,13 +20,15 @@ namespace DbSharper.Schema.Code
 		[XmlElement("dataAccess")]
 		public NamedCollection<DataAccess> DataAccesses
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("name")]
 		public string Name
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		#endregion Properties

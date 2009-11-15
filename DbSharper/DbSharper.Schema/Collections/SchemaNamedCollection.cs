@@ -2,6 +2,10 @@
 
 namespace DbSharper.Schema.Collections
 {
+	/// <summary>
+	/// A collection contains object which implements ISchema interface.
+	/// </summary>
+	/// <typeparam name="T">Object implements ISchema interface.</typeparam>
 	public class SchemaNamedCollection<T> : KeyedCollection<string, T>
 		where T : ISchema
 	{

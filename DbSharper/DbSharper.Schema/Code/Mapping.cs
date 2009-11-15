@@ -23,34 +23,39 @@ namespace DbSharper.Schema.Code
 		[XmlAttribute("connectionStringName")]
 		public string ConnectionStringName
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlArray("dataAccesses")]
 		[XmlArrayItem("namespace")]
 		public NamedCollection<DataAccessNamespace> DataAccessNamespaces
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlElement("database")]
 		public Database.Database Database
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlArray("enums")]
 		[XmlArrayItem("enum")]
 		public NamedCollection<Enum> Enums
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlArray("models")]
 		[XmlArrayItem("namespace")]
 		public NamedCollection<ModelNamespace> ModelNamespaces
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		#endregion Properties

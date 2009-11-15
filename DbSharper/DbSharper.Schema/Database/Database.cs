@@ -24,28 +24,32 @@ namespace DbSharper.Schema.Database
 		[XmlIgnore]
 		public NamedCollection<Enumeration> Enumerations
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlArray("storedProcedures")]
 		[XmlArrayItem("storedProcedure")]
 		public SchemaNamedCollection<StoredProcedure> StoredProcedures
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlArray("tables")]
 		[XmlArrayItem("table")]
 		public SchemaNamedCollection<Table> Tables
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlArray("views")]
 		[XmlArrayItem("view")]
 		public SchemaNamedCollection<View> Views
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		#endregion Properties

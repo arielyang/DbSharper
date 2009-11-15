@@ -23,32 +23,37 @@ namespace DbSharper.Schema.Database
 		[XmlArrayItem("column")]
 		public NamedCollection<Column> Columns
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("description")]
 		public string Description
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlArray("indexes")]
 		[XmlArrayItem("index")]
 		public NamedCollection<Index> Indexes
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("name")]
 		public string Name
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("schema")]
 		public string Schema
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		#endregion Properties
