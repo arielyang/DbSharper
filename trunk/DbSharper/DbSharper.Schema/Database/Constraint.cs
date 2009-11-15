@@ -21,13 +21,15 @@ namespace DbSharper.Schema.Database
 		[XmlElement("column")]
 		public NamedCollection<Column> Columns
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("name")]
 		public string Name
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		#endregion Properties

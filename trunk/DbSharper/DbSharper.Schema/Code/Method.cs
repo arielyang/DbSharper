@@ -28,14 +28,16 @@ namespace DbSharper.Schema.Code
 		[ReadOnly(true)]
 		public string CommandText
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("commandType")]
 		[ReadOnly(true)]
 		public CommandType CommandType
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("description")]
@@ -43,21 +45,24 @@ namespace DbSharper.Schema.Code
 		[Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
 		public string Description
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("methodType")]
 		[ReadOnly(true)]
 		public MethodType MethodType
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("name")]
 		[ReadOnly(true)]
 		public string Name
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlArray("parameters")]
@@ -65,7 +70,8 @@ namespace DbSharper.Schema.Code
 		[Browsable(false)]
 		public NamedCollection<Parameter> Parameters
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlArray("results")]
@@ -73,7 +79,8 @@ namespace DbSharper.Schema.Code
 		[Browsable(false)]
 		public NamedCollection<Result> Results
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		#endregion Properties

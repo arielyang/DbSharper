@@ -26,52 +26,60 @@ namespace DbSharper.Schema.Database
 		[XmlArrayItem("column")]
 		public NamedCollection<Column> Columns
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("description")]
 		public string Description
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlArray("foreignKeys")]
 		[XmlArrayItem("foreignKey")]
 		public NamedCollection<ForeignKey> ForeignKeys
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlArray("indexes")]
 		[XmlArrayItem("index")]
 		public NamedCollection<Index> Indexes
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("name")]
 		public string Name
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlElement("primaryKey")]
 		public PrimaryKey PrimaryKey
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("schema")]
 		public string Schema
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlArray("uniqueKeys")]
 		[XmlArrayItem("uniqueKey")]
 		public NamedCollection<UniqueKey> UniqueKeys
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		#endregion Properties

@@ -17,27 +17,32 @@ namespace DbSharper.Schema.Database
 
 		public string BaseType
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		public string Description
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		public bool HasFlagsAttribute
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		public NamedCollection<EnumerationMember> Members
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		public string Name
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		#endregion Properties

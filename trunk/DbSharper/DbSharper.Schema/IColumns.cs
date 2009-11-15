@@ -1,5 +1,6 @@
-﻿using DbSharper.Schema.Database;
-using DbSharper.Schema.Collections;
+﻿using DbSharper.Schema.Collections;
+using DbSharper.Schema.Database;
+
 namespace DbSharper.Schema
 {
 	public interface IColumns : ISchema
@@ -9,7 +10,6 @@ namespace DbSharper.Schema
 		NamedCollection<Column> Columns
 		{
 			get;
-			set;
 		}
 
 		#endregion Properties

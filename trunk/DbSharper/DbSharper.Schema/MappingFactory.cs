@@ -266,7 +266,9 @@ namespace DbSharper.Schema
 		{
 			if (databaseObject is Table)
 			{
-				foreach (ForeignKey fk in (databaseObject as Table).ForeignKeys)
+				var foreignKeys = (databaseObject as Table).ForeignKeys;
+
+				foreach (ForeignKey fk in foreignKeys)
 				{
 					if (fk.Columns.Count == 1 && fk.Columns[0].Name == columnName)
 					{
@@ -295,7 +297,9 @@ namespace DbSharper.Schema
 		{
 			if (databaseObject is Table)
 			{
-				foreach (ForeignKey fk in (databaseObject as Table).ForeignKeys)
+				var foreignKeys = (databaseObject as Table).ForeignKeys;
+
+				foreach (ForeignKey fk in foreignKeys)
 				{
 					if (fk.Columns.Count == 1 && fk.Columns[0].Name == columnName)
 					{
@@ -314,7 +318,7 @@ namespace DbSharper.Schema
 				{
 					if (mappingConfig.Model.TrimName(tb) == referenceName)
 					{
-						return "Models." + MappingHelper.GetPascalCase(tb.Schema) + "." +MappingHelper.GetPascalCase(referenceName) + "Item";
+						return "Models." + MappingHelper.GetPascalCase(tb.Schema) + "." + MappingHelper.GetPascalCase(referenceName) + "Item";
 					}
 				}
 			}
