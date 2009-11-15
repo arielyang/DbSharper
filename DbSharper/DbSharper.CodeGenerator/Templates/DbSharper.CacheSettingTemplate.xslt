@@ -27,8 +27,6 @@
 			<providers defaultProvider="InProcessCacheProvider"><xsl:text>
 				</xsl:text>
 				<add name="InProcessCacheProvider" type="DbSharper.Library.Providers.InProcessCacheProvider, DbSharper.Library" /><xsl:text>
-				</xsl:text>
-				<add name="MemcachedCacheProvider" type="DbSharper.Library.Providers.MemcachedCacheProvider, DbSharper.Library" /><xsl:text>
 			</xsl:text>
 			</providers><xsl:text>
 			</xsl:text>
