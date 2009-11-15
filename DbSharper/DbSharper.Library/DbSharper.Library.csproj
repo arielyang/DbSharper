@@ -31,6 +31,8 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
     <DocumentationFile>bin\Debug\DbSharper.Library.xml</DocumentationFile>
+    <CodeAnalysisRules>
+    </CodeAnalysisRules>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -40,6 +42,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\DbSharper.Library.xml</DocumentationFile>
+    <CodeAnalysisRules>
+    </CodeAnalysisRules>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -78,13 +82,6 @@
     <Compile Include="Providers\CacheProviderCollection.cs" />
     <Compile Include="Providers\InProcessCacheProvider.cs" />
     <Compile Include="Providers\MemcachedCacheProvider.cs" />
-    <Compile Include="Providers\MemcachedClient\HashAlgorithms.cs" />
-    <Compile Include="Providers\MemcachedClient\MemcachedClient.cs" />
-    <Compile Include="Providers\MemcachedClient\MemcachedClientException.cs" />
-    <Compile Include="Providers\MemcachedClient\PooledSocket.cs" />
-    <Compile Include="Providers\MemcachedClient\Serializer.cs" />
-    <Compile Include="Providers\MemcachedClient\ServerPool.cs" />
-    <Compile Include="Providers\MemcachedClient\SocketPool.cs" />
     <Compile Include="Model\CollectionBase.cs" />
     <Compile Include="Data\IJson.cs" />
     <Compile Include="Model\ItemBase.cs" />

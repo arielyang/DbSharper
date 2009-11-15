@@ -9,6 +9,16 @@ namespace DbSharper.Library.Data
 	/// </summary>
 	public interface IPagedResults
 	{
-		int TotalCount { get; set; }
+		#region Properties
+
+		/// <summary>
+		/// Total count of all objects.
+		/// </summary>
+		int TotalCount
+		{
+			get; set;
+		}
+
+		#endregion Properties
 	}
 }
