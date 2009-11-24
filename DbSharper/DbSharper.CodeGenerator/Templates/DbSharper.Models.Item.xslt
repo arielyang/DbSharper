@@ -34,7 +34,7 @@
 		{
 			switch (fieldName)
 			{<xsl:for-each select="$properties">
-				case "<xsl:choose><xsl:when test="./@name=./@columnName"><xsl:value-of select="./@column" /></xsl:when><xsl:otherwise><xsl:value-of select="./@name" /></xsl:otherwise></xsl:choose>":
+				case "<xsl:choose><xsl:when test="./@name=./@columnName"><xsl:value-of select="script:TrimId(./@column)" /></xsl:when><xsl:otherwise><xsl:value-of select="./@name" /></xsl:otherwise></xsl:choose>":
 					{<xsl:choose>
 						<xsl:when test="script:EndsWith(./@referenceType,'Item')">
 						string secondaryFieldName = GetSecondaryFieldName();
