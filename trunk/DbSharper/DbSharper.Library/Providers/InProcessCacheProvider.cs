@@ -8,7 +8,7 @@ using System.Web.Caching;
 namespace DbSharper.Library.Providers
 {
 	/// <summary>
-	/// Cache provider using System.Web.HttpContext.Current.Cache.
+	/// Cache provider using System.Web.HttpRuntime.Cache.
 	/// </summary>
 	internal class InProcessCacheProvider : CacheProvider
 	{
@@ -37,7 +37,7 @@ namespace DbSharper.Library.Providers
 
 		public override object Get(string key)
 		{
-			return HttpContext.Current.Cache.Get(key);
+			return HttpRuntime.Cache.Get(key);
 		}
 
 		public override void Initialize(string name, NameValueCollection config)
@@ -79,25 +79,25 @@ namespace DbSharper.Library.Providers
 
 		public override void Insert(string key, object value, int duration)
 		{
-			HttpContext.Current.Cache.Insert(key, value, null, DateTime.Now.AddSeconds(duration), Cache.NoSlidingExpiration);
+			HttpRuntime.Cache.Insert(key, value, null, DateTime.Now.AddSeconds(duration), Cache.NoSlidingExpiration);
 		}
 
 		public override void Remove(string key)
 		{
-			HttpContext.Current.Cache.Remove(key);
+			HttpRuntime.Cache.Remove(key);
 		}
 
 		public override void RemoveBatch(string tag)
 		{
 			string key;
 
-			foreach (DictionaryEntry entry in HttpContext.Current.Cache)
+			foreach (DictionaryEntry entry in HttpRuntime.Cache)
 			{
 				key = entry.Key.ToString();
 
 				if (key.StartsWith(tag, StringComparison.Ordinal))
 				{
-					HttpContext.Current.Cache.Remove(key);
+					HttpRuntime.Cache.Remove(key);
 				}
 			}
 		}

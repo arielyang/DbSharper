@@ -9,12 +9,12 @@
 
 	public bool EndsWith(string str1, string str2)
 	{
-		return str1.EndsWith(str2);
+		return str1.EndsWith(str2, StringComparison.OrdinalIgnoreCase);
 	}
 	
 	public bool StartsWith(string str1, string str2)
 	{
-		return str1.StartsWith(str2);
+		return str1.StartsWith(str2, StringComparison.OrdinalIgnoreCase);
 	}
 	
 	public string GetCamelCase(string name)
@@ -53,6 +53,16 @@
 		}
 
 		return column.Substring(i + 1);
+	}
+
+	public string TrimId(string name)
+	{
+		if (name.EndsWith("_Id", StringComparison.OrdinalIgnoreCase))
+		{
+			return name.Substring(0, name.Length - 3);
+		}
+
+		return name;
 	}
 	
 	public string GetAnchor(string schema, string name)
