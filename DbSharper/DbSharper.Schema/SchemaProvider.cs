@@ -13,8 +13,9 @@ namespace DbSharper.Schema
 	{
 		#region Fields
 
+		private string connectionString;
 		private Database.Database database;
-		private string m_connectionString;
+		private ResourceFileManager resourceFileManager;
 
 		#endregion Fields
 
@@ -22,11 +23,11 @@ namespace DbSharper.Schema
 
 		public Database.Database GetSchema(string connectionString)
 		{
-			this.m_connectionString = connectionString;
-
-			this.InitializeEnumTables();
+			this.connectionString = connectionString;
 
 			this.database = new Database.Database();
+
+			this.resourceFileManager = new ResourceFileManager();
 
 			DataSet ds = this.GetSchemaDataSet();
 
@@ -77,165 +78,9 @@ namespace DbSharper.Schema
 			return sb.ToString();
 		}
 
-		private static string GetSchemaSqlText()
-		{
-			StringBuilder sb = new StringBuilder();
-
-			// 0.Get tables.
-			sb.AppendLine(@"SELECT
-								TABLE_SCHEMA,
-								TABLE_NAME
-							FROM INFORMATION_SCHEMA.TABLES
-							WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME <> 'sysdiagrams'
-							ORDER BY TABLE_SCHEMA, TABLE_NAME;");
-
-			// 1.Get table columns.
-			sb.AppendLine(@"SELECT
-								C.TABLE_SCHEMA,
-								C.TABLE_NAME,
-								C.COLUMN_NAME,
-								C.DATA_TYPE,
-								ISNULL(C.CHARACTER_MAXIMUM_LENGTH, 0) AS CHARACTER_MAXIMUM_LENGTH,
-								C.COLUMN_DEFAULT,
-								C.IS_NULLABLE
-							FROM INFORMATION_SCHEMA.COLUMNS C
-							INNER JOIN INFORMATION_SCHEMA.TABLES T ON T.TABLE_SCHEMA = C.TABLE_SCHEMA AND T.TABLE_NAME = C.TABLE_NAME
-							WHERE T.TABLE_TYPE = 'BASE TABLE' AND T.TABLE_NAME <> 'sysdiagrams'
-							ORDER BY C.TABLE_SCHEMA, C.TABLE_NAME, C.ORDINAL_POSITION;");
-
-			// 2.Get constraints.
-			sb.AppendLine(@"SELECT
-								C.TABLE_SCHEMA,
-								C.TABLE_NAME,
-								C.CONSTRAINT_TYPE,
-								C.CONSTRAINT_NAME,
-								U.COLUMN_NAME,
-								R.TABLE_NAME AS REFERENTIAL_TABLE_NAME,
-								R.TABLE_SCHEMA AS REFERENTIAL_TABLE_SCHEMA
-							FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS C
-							LEFT OUTER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE U ON C.TABLE_SCHEMA = U.TABLE_SCHEMA AND C.TABLE_NAME = U.TABLE_NAME AND C.CONSTRAINT_NAME = U.CONSTRAINT_NAME
-							LEFT OUTER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS F ON C.CONSTRAINT_NAME = F.CONSTRAINT_NAME
-							LEFT OUTER JOIN INFORMATION_SCHEMA.CONSTRAINT_TABLE_USAGE R ON F.UNIQUE_CONSTRAINT_NAME = R.CONSTRAINT_NAME
-							WHERE
-								CONSTRAINT_TYPE <> 'CHECK' AND
-								C.TABLE_NAME <> 'sysdiagrams'
-							ORDER BY C.TABLE_SCHEMA, C.TABLE_NAME, C.CONSTRAINT_NAME, U.ORDINAL_POSITION;");
-
-			// 3.Get table indexes.
-			sb.AppendLine(@"SELECT
-								OBJECT_SCHEMA_NAME(C.[object_id]) AS TABLE_SCHEMA,
-								OBJECT_NAME(C.[object_id]) AS TABLE_NAME,
-								I.name AS INDEX_NAME,
-								S.name AS COLUMN_NAME
-							FROM sys.index_columns C
-							LEFT OUTER JOIN sys.indexes I ON C.[object_id] = I.[object_id] AND C.index_id = I.index_id
-							LEFT OUTER JOIN sys.columns S ON C.[object_id] = S.[object_id] AND C.column_id = S.column_id
-							WHERE
-								OBJECTPROPERTY(C.[object_id], 'IsUserTable') = 1 AND
-								OBJECT_NAME(C.[object_id]) <> 'sysdiagrams' AND
-								I.[type] in (1, 2) AND
-								I.is_primary_key = 0
-							ORDER BY
-								OBJECT_SCHEMA_NAME(C.[object_id]),
-								OBJECT_NAME(C.[object_id]),
-								C.index_id;");
-
-			// 4.Get views.
-			sb.AppendLine(@"SELECT
-								TABLE_SCHEMA,
-								TABLE_NAME
-							FROM INFORMATION_SCHEMA.TABLES
-							WHERE TABLE_TYPE = 'VIEW'
-							ORDER BY TABLE_SCHEMA, TABLE_NAME;");
-
-			// 5.Get view columns.
-			sb.AppendLine(@"SELECT
-								C.TABLE_SCHEMA,
-								C.TABLE_NAME,
-								C.COLUMN_NAME,
-								C.DATA_TYPE,
-								ISNULL(C.CHARACTER_MAXIMUM_LENGTH, 0) AS CHARACTER_MAXIMUM_LENGTH,
-								C.IS_NULLABLE
-							FROM INFORMATION_SCHEMA.COLUMNS C
-							INNER JOIN INFORMATION_SCHEMA.TABLES T ON T.TABLE_SCHEMA = C.TABLE_SCHEMA AND T.TABLE_NAME = C.TABLE_NAME
-							WHERE T.TABLE_TYPE = 'VIEW'
-							ORDER BY C.TABLE_SCHEMA, C.TABLE_NAME, C.ORDINAL_POSITION;");
-
-			// 6.Get view idnexes.
-			sb.AppendLine(@"SELECT
-								OBJECT_SCHEMA_NAME(C.[object_id]) AS TABLE_SCHEMA,
-								OBJECT_NAME(C.[object_id]) AS TABLE_NAME,
-								I.name AS INDEX_NAME,
-								S.name AS COLUMN_NAME
-							FROM sys.index_columns C
-							LEFT OUTER JOIN sys.indexes I ON C.[object_id] = I.[object_id] AND C.index_id = I.index_id
-							LEFT OUTER JOIN sys.columns S ON C.[object_id] = S.[object_id] AND C.column_id = S.column_id
-							WHERE
-								OBJECTPROPERTY(C.[object_id], 'IsView') = 1 AND
-								OBJECT_NAME(C.[object_id]) <> 'sysdiagrams' AND
-								I.[type] in (1, 2) AND
-								I.is_primary_key = 0
-							ORDER BY
-								OBJECT_SCHEMA_NAME(C.[object_id]),
-								OBJECT_NAME(C.[object_id]),
-								C.index_id;");
-
-			// 7.Get procedures.
-			sb.AppendLine(@"SELECT
-								SPECIFIC_SCHEMA,
-								SPECIFIC_NAME,
-								ROUTINE_DEFINITION
-							FROM INFORMATION_SCHEMA.ROUTINES
-							WHERE ROUTINE_TYPE = 'PROCEDURE' AND ROUTINE_NAME NOT IN ('sp_upgraddiagrams', 'sp_helpdiagrams', 'sp_helpdiagramdefinition', 'sp_alterdiagram', 'sp_creatediagram', 'sp_dropdiagram', 'sp_renamediagram')
-							ORDER BY SPECIFIC_SCHEMA, SPECIFIC_NAME;");
-
-			// 8.Get parameters.
-			sb.AppendLine(@"SELECT
-								SPECIFIC_SCHEMA,
-								SPECIFIC_NAME,
-								PARAMETER_NAME,
-								DATA_TYPE,
-								ISNULL(CHARACTER_MAXIMUM_LENGTH, 0) AS CHARACTER_MAXIMUM_LENGTH,
-								PARAMETER_MODE
-							FROM INFORMATION_SCHEMA.PARAMETERS
-							ORDER BY SPECIFIC_SCHEMA, SPECIFIC_NAME, ORDINAL_POSITION;");
-
-			// 9.Get descriptions.
-			sb.AppendLine(@"SELECT
-								OBJECTPROPERTYEX(major_id, 'BaseType') AS BaseType,
-								OBJECT_SCHEMA_NAME(major_id) AS [Schema],
-								OBJECT_NAME(major_id) AS MajorName,
-								COL_NAME(major_id, minor_id) AS MinorName,
-								[value] AS [Value]
-							FROM sys.extended_properties
-							WHERE [name] = 'MS_Description';");
-
-			// 10.Get enumerations and enumeration members.
-			sb.AppendLine(@"IF
-								EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Ref_Enumeration') AND
-								EXISTS(SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Ref_EnumerationMember')
-							BEGIN
-								SELECT
-									[Name],
-									BaseType,
-									HasFlagsAttribute,
-									Description
-								FROM Ref_Enumeration;
-								SELECT
-									EnumerationName,
-									[Name],
-									[Value],
-									Description
-								FROM Ref_EnumerationMember
-								ORDER BY EnumerationName, [Value];
-							END");
-
-			return sb.ToString();
-		}
-
 		private void ExecuteSql(string commandText)
 		{
-			using (SqlConnection conn = new SqlConnection(this.m_connectionString))
+			using (SqlConnection conn = new SqlConnection(this.connectionString))
 			{
 				using (SqlCommand cmd = new SqlCommand(commandText))
 				{
@@ -250,9 +95,9 @@ namespace DbSharper.Schema
 
 		private DataSet GetSchemaDataSet()
 		{
-			string cmdText = GetSchemaSqlText();
+			string cmdText = resourceFileManager.ReadResourceString("Resources.GetDatabaseSchema.sql");
 
-			SqlDataAdapter da = new SqlDataAdapter(cmdText, this.m_connectionString);
+			SqlDataAdapter da = new SqlDataAdapter(cmdText, this.connectionString);
 
 			DataSet ds = new DataSet();
 			ds.Locale = CultureInfo.InvariantCulture;
@@ -280,10 +125,8 @@ namespace DbSharper.Schema
 
 		private void InitializeEnumTables()
 		{
-			ResourceFileManager manager = new ResourceFileManager();
-
-			this.ExecuteSql(manager.ReadResourceString("Resources.CreateEnumerationTable.sql"));
-			this.ExecuteSql(manager.ReadResourceString("Resources.CreateEnumerationMemberTable.sql"));
+			this.ExecuteSql(resourceFileManager.ReadResourceString("Resources.CreateEnumerationTable.sql"));
+			this.ExecuteSql(resourceFileManager.ReadResourceString("Resources.CreateEnumerationMemberTable.sql"));
 		}
 
 		private void LoadDatabaseSchema(DataSet ds)
@@ -601,6 +444,16 @@ namespace DbSharper.Schema
 			#region [10] Enumeratioins
 
 			drs = ds.Tables[10].Rows;
+
+			if (drs.Count > 0)
+			{
+				if (drs[0][0].ToString() == "-1")
+				{
+					InitializeEnumTables();
+
+					return;
+				}
+			}
 
 			foreach (DataRow dr in drs)
 			{

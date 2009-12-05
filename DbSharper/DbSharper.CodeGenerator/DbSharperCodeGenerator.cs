@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -15,15 +16,14 @@ using DbSharper.Schema.Code;
 namespace DbSharper.CodeGenerator
 {
 	[Guid("7EF57AF1-ED7A-48F6-B4A2-8BF0C4521375")]
-	public class DbSharperCodeGenerator : VsMultipleFileGenerator<string>
+	public class DbSharperCodeGenerator : VsMultipleFileGenerator<FileItem>
 	{
 		#region Fields
 
-		private string content;
-		private FormProcessing form;
+		private FormProcessing formProcessing;
 		private bool generatedSuccessfully;
-		private int step;
-		private string[] versionInfo;
+		private string mappingContent;
+		private int processBarStep;
 
 		#endregion Fields
 
@@ -33,19 +33,21 @@ namespace DbSharper.CodeGenerator
 		{
 			try
 			{
-				string currentVersion = UpdateService.GetExecutingVersion();
-
 				UpdateService service = new UpdateService();
 
-				versionInfo = service.GetLatestVersionInfo();
+				VersionInfo latestVersionInfo = service.GetLatestVersionInfo();
 
-				if (versionInfo[0] != null)
-				{
-					if (currentVersion != versionInfo[0])
-					{
-						cancelGenerating = true;
-					}
-				}
+				//if (latestVersionInfo != VersionInfo.Null &&
+				//    !UpdateService.ExecutingVersionInfo.Equals(latestVersionInfo))
+				//{
+				//    cancelGenerating = true;
+
+				//    string message = UpdateService.GetNewVersionInformation(latestVersionInfo);
+
+				//    MessageBox.Show(message, "DbSharper CodeGenerator", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+				//    LaunchUpdater();
+				//}
 			}
 			catch (Exception ex)
 			{
@@ -55,12 +57,23 @@ namespace DbSharper.CodeGenerator
 
 		#endregion Constructors
 
+		#region Properties
+
+		private string MappingName
+		{
+			get
+			{
+				return Path.GetFileNameWithoutExtension(this.InputFilePath);
+			}
+		}
+
+		#endregion Properties
+
 		#region Methods
 
-		public override byte[] GenerateContent(string element)
+		public override byte[] GenerateContent(FileItem item)
 		{
-			string templateFileName = GetTemplateFileName(element);
-			string codeContent = string.Empty;
+			string codeContent;
 
 			StringWriter outputWriter = null;
 
@@ -69,16 +82,16 @@ namespace DbSharper.CodeGenerator
 				outputWriter = new StringWriter();
 
 				XmlDocument sourceDocument = new XmlDocument();
-				sourceDocument.LoadXml(content);
+				sourceDocument.LoadXml(mappingContent);
 
 				XsltArgumentList args = new XsltArgumentList();
-				args.AddParam("defaultNamespace", string.Empty, this.DefaultNamespace + "." + Path.GetFileNameWithoutExtension(this.InputFilePath));
-				args.AddParam("namespace", string.Empty, GetNamespace(element));
+				args.AddParam("defaultNamespace", string.Empty, base.DefaultNamespace + "." + this.MappingName);
+				args.AddParam("namespace", string.Empty, item.Name);
 
 				XslCompiledTransform transformer;
 
 				transformer = new XslCompiledTransform();
-				transformer.Load(templateFileName, new XsltSettings(false, true), new XmlUrlResolver());
+				transformer.Load(item.TemplateFilePath, new XsltSettings(false, true), new XmlUrlResolver());
 				transformer.Transform(sourceDocument, args, outputWriter);
 			}
 			catch (Exception ex)
@@ -87,7 +100,7 @@ namespace DbSharper.CodeGenerator
 				outputWriter.WriteLine("\tERROR: Unable to generate output for template:");
 				outputWriter.WriteLine("\t'{0}'", this.InputFilePath);
 				outputWriter.WriteLine("\tUsing template:");
-				outputWriter.WriteLine("\t'{0}'", templateFileName);
+				outputWriter.WriteLine("\t'{0}'", item.TemplateFilePath);
 				outputWriter.WriteLine("");
 				outputWriter.WriteLine(ex.ToString());
 				outputWriter.WriteLine("*/");
@@ -104,23 +117,32 @@ namespace DbSharper.CodeGenerator
 
 		public override byte[] GenerateSummaryContent()
 		{
-			ShowMessage(string.Format("Update file {0}{1}", GetName(), GetDefaultExtension()), 0, "xml");
+			formProcessing.ShowLogMessage(
+				string.Format(
+					"Update file {0}{1}.",
+					MappingName,
+					GetDefaultExtension(),
+					CultureInfo.InvariantCulture
+					),
+				0,
+				IconKey.Xml
+				);
 
 			if (generatedSuccessfully)
 			{
-				ShowMessage("Generating successfully.", 0, "Success");
+				formProcessing.ShowLogMessage("Generating successfully.", 100, IconKey.Success);
 			}
 			else
 			{
-				ShowMessage("Generating failed.", 0, "Failed");
+				formProcessing.ShowLogMessage("Generating failed.", 100, IconKey.Failure);
 			}
 
-			form.progressBarGenerating.Value = 100;
-			form.buttonOk.Enabled = true;
-			form.buttonOk.Focus();
-			form.Update();
+			formProcessing.buttonOk.Enabled = true;
+			formProcessing.buttonOk.Focus();
 
-			return Encoding.UTF8.GetBytes(content);
+			formProcessing.Update();
+
+			return Encoding.UTF8.GetBytes(mappingContent);
 		}
 
 		public override string GetDefaultExtension()
@@ -128,210 +150,144 @@ namespace DbSharper.CodeGenerator
 			return ".Output.xml";
 		}
 
-		public override IEnumerator<string> GetEnumerator()
+		public override IEnumerator<FileItem> GetEnumerator()
 		{
-			if (form != null)
+			if (formProcessing != null)
 			{
-				form.Close();
+				formProcessing.Close();
 			}
 
-			form = new FormProcessing();
-			form.Show();
-			form.Update();
+			formProcessing = new FormProcessing();
+			formProcessing.Show();
+			formProcessing.Update();
 
-			ShowMessage("Start generating.", 10, "Start");
+			formProcessing.ShowLogMessage("Start generating.", IconKey.Start);
 
-			List<string> list = new List<string>();
-
-			list.Add("CacheSettingTemplate");
-			list.Add("ConnectionStrings");
-			list.Add("Document");
-			list.Add("Enums");
+			List<FileItem> list = new List<FileItem>();
 
 			try
 			{
-				ShowMessage("Getting database schema.", 10, "Schema");
+				formProcessing.ShowLogMessage("Getting database schema.", IconKey.Schema);
 
-				Mapping mapping = MappingFactory.CreateMapping(this.InputFilePath, this.InputFileContents);
+				formProcessing.Cursor = Cursors.WaitCursor;
 
-				ShowMessage("Generating mapping.", 10, "Dbsx");
+				Mapping newMapping = MappingFactory.CreateMapping(this.InputFilePath, this.InputFileContents);
+				Mapping oldMapping = GetLocalMapping(newMapping);
 
-				foreach (ModelNamespace ns in mapping.ModelNamespaces)
+				formProcessing.Cursor = Cursors.Default;
+
+				formProcessing.ShowLogMessage("Generating mapping.", IconKey.Dbsx);
+
+				list.Add(new FileItem(this.MappingName, ItemType.CacheSettingTemplate, !Equalizer.IsEqual(oldMapping.DataAccessNamespaces, newMapping.DataAccessNamespaces)));
+				list.Add(new FileItem(this.MappingName, ItemType.ConnectionStrings, !Equalizer.IsEqual(oldMapping.ConnectionStringName, newMapping.ConnectionStringName)));
+				list.Add(new FileItem(this.MappingName, ItemType.Document, !Equalizer.IsEqual(oldMapping.Database, newMapping.Database)));
+				list.Add(new FileItem(this.MappingName, ItemType.Enums, !Equalizer.IsEqual(oldMapping.Enums, newMapping.Enums)));
+
+				foreach (ModelNamespace ns in newMapping.ModelNamespaces)
 				{
 					if (ns.Models.Count > 0)
 					{
-						list.Add("Models." + ns.Name);
+						if (oldMapping.ModelNamespaces.Contains(ns.Name))
+						{
+							list.Add(new FileItem(this.MappingName, ns.Name, ItemType.Models, !Equalizer.IsEqual(oldMapping.ModelNamespaces[ns.Name], ns)));
+						}
+						else
+						{
+							list.Add(new FileItem(this.MappingName, ns.Name, ItemType.Models, true));
+						}
 					}
 				}
 
-				foreach (DataAccessNamespace ns in mapping.DataAccessNamespaces)
+				foreach (DataAccessNamespace ns in newMapping.DataAccessNamespaces)
 				{
 					if (ns.DataAccesses.Count > 0)
 					{
-						list.Add("DataAccess." + ns.Name);
+						if (oldMapping.DataAccessNamespaces.Contains(ns.Name))
+						{
+							list.Add(new FileItem(this.MappingName, ns.Name, ItemType.DataAccess, !Equalizer.IsEqual(oldMapping.DataAccessNamespaces[ns.Name], ns)));
+						}
+						else
+						{
+							list.Add(new FileItem(this.MappingName, ns.Name, ItemType.DataAccess, true));
+						}
 					}
 				}
 
-				content = Serializer.Serialize(mapping);
+				mappingContent = Serializer.Serialize(newMapping);
 
 				generatedSuccessfully = true;
+
+				processBarStep = (100 - formProcessing.progressBarGenerating.Value) / list.Count;
 			}
 			catch (Exception ex)
 			{
-				LogException(ex);
+				formProcessing.Cursor = Cursors.Default;
 
-				try
-				{
-					content = Serializer.Serialize(ex);
-				}
-				catch (InvalidOperationException)
-				{
-					content = ex.Message;
-				}
+				base.LogException(ex);
 
-				ShowMessage("Error: " + ex.Message, 10, "Error");
+				mappingContent = ex.Message;
 
 				generatedSuccessfully = false;
-			}
 
-			step = (100 - form.progressBarGenerating.Value) / list.Count;
+				formProcessing.ShowLogMessage("Error: " + ex.Message, IconKey.Error);
+
+				list.Clear();
+			}
 
 			return list.GetEnumerator();
 		}
 
-		protected override string GetFileName(string element)
+		protected override string GetFileName(FileItem item)
 		{
-			string connectionStringName = Path.GetFileNameWithoutExtension(this.InputFilePath);
-
-			switch (element)
-			{
-				case "CacheSettingTemplate":
-					return connectionStringName + ".CacheSettingTemplate.config";
-				case "Document":
-					return connectionStringName + ".Document.html";
-				default:
-					return string.Format("{0}.{1}.cs", connectionStringName, element);
-			}
-		}
-
-		protected override void OnCanceling()
-		{
-			base.OnCanceling();
-
-			string message = GetLatestVersionInformation(versionInfo);
-
-			MessageBox.Show(message, "DbSharper CodeGenerator", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-			LaunchUpdater();
+			return item.FileName;
 		}
 
 		protected override void OnError(Exception ex)
 		{
-			base.OnError(ex);
+			formProcessing.ShowLogMessage("Error: " + ex.Message, 100, IconKey.Error);
 
-			ShowMessage("Error: " + ex.Message, 10, "Error");
+			formProcessing.buttonOk.Enabled = true;
 
-			form.progressBarGenerating.Value = 100;
-			form.buttonOk.Enabled = true;
-			form.Update();
+			formProcessing.Update();
 		}
 
-		protected override void OnGenerateFile(string filePath)
+		protected override void OnFileGenerated(string filePath, bool isNewAdded)
 		{
-			base.OnGenerateFile(filePath);
-
 			string fileName = Path.GetFileName(filePath);
 
-			string action = oldFileNames.Contains(fileName) ? "Update" : "Add";
+			string action = isNewAdded ? "Add" : "Update";
 
-			ShowMessage(string.Format("{0} file {1}.", action, fileName), step, GetExtension(filePath));
+			formProcessing.ShowLogMessage(
+				string.Format("{0} file {1}.", action, fileName),
+				processBarStep,
+				Path.GetExtension(fileName).TrimStart('.'));
 		}
 
-		private string GetExtension(string fileName)
+		private Mapping GetLocalMapping(Mapping newMapping)
 		{
-			int i = fileName.LastIndexOf('.');
+			string schemaFile = Path.Combine(Path.GetDirectoryName(base.InputFilePath), MappingName + GetDefaultExtension());
 
-			if (i < 0)
+			Mapping mapping;
+
+			try
 			{
-				return string.Empty;
+				mapping = (Mapping)Serializer.Deserialize(typeof(Mapping), File.ReadAllText(schemaFile));
+			}
+			catch (InvalidOperationException)
+			{
+				mapping = newMapping;
 			}
 
-			return fileName.Substring(i + 1);
-		}
-
-		private string GetLatestVersionInformation(string[] versionInfo)
-		{
-			StringBuilder sb = new StringBuilder();
-
-			sb.AppendFormat("New verion {0} released.", versionInfo[0]);
-			sb.AppendLine();
-			sb.AppendLine();
-			sb.Append(versionInfo[1]);
-
-			return sb.ToString();
-		}
-
-		private string GetName()
-		{
-			string fileName = Path.GetFileName(this.InputFilePath);
-
-			return fileName.Substring(0, fileName.IndexOf('.'));
-		}
-
-		private string GetNamespace(string element)
-		{
-			int i = element.IndexOf('.');
-
-			if (i < 0)
-			{
-				return string.Empty;
-			}
-
-			return element.Substring(i + 1);
-		}
-
-		private string GetTemplateFileName(string element)
-		{
-			string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			string fileName;
-
-			if (element.StartsWith("DataAccess."))
-			{
-				fileName = @"Templates\DbSharper.DataAccess.xslt";
-			}
-			else if (element.StartsWith("Models."))
-			{
-				fileName = @"Templates\DbSharper.Models.xslt";
-			}
-			else
-			{
-				fileName = string.Format(@"Templates\DbSharper.{0}.xslt", element);
-			}
-
-			return Path.Combine(assemblyPath, fileName);
+			return mapping;
 		}
 
 		private void LaunchUpdater()
 		{
-			string updaterPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "DbSharper.Updater.exe");
+			string executingDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+			string updaterPath = Path.Combine(executingDirectory, "DbSharper.Updater.exe");
 
 			Process.Start(updaterPath);
-		}
-
-		private void ShowMessage(string message, int step, string iconKey)
-		{
-			form.listViewMessage.Items.Add(" " + message, iconKey);
-
-			if (form.progressBarGenerating.Value + step < 100)
-			{
-				form.progressBarGenerating.Value += step;
-			}
-			else
-			{
-				form.progressBarGenerating.Value = 100;
-			}
-
-			form.Update();
 		}
 
 		#endregion Methods

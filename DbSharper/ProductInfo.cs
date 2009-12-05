@@ -6,4 +6,4 @@
 [assembly: AssemblyCopyright("Copyright © DbSharper.com")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyVersion("0.8.10")]
+[assembly: AssemblyVersion("0.8.11")]

@@ -12,7 +12,7 @@ namespace DbSharper.Schema
 			// Return value.
 			string resourceValue = string.Empty;
 
-			////string[] names = this.GetType().Assembly.GetManifestResourceNames();
+			//string[] names = this.GetType().Assembly.GetManifestResourceNames();
 
 			// Get current assembly.
 			Assembly assembly = this.GetType().Assembly;

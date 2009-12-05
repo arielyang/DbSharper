@@ -15,23 +15,21 @@ namespace DbSharper.CodeGenerator
 	{
 		#region Methods
 
-		public static EnvDTE.ProjectItem FindProjectItem(EnvDTE.Project project, string file)
+		public static ProjectItem FindProjectItem(Project project, string file)
 		{
 			return FindProjectItem(project.ProjectItems, file);
 		}
 
-		public static EnvDTE.ProjectItem FindProjectItem(EnvDTE.ProjectItems items, string file)
+		public static ProjectItem FindProjectItem(ProjectItems items, string file)
 		{
 			string atom = file.Substring(0, file.IndexOf("\\") + 1);
 
-			foreach (EnvDTE.ProjectItem item in items)
+			foreach (ProjectItem item in items)
 			{
-				//if ( item
-				//if (item.ProjectItems.Count > 0)
 				if (atom.StartsWith(item.Name))
 				{
-					// then step in
-					EnvDTE.ProjectItem ritem = FindProjectItem(item.ProjectItems, file.Substring(file.IndexOf("\\") + 1));
+					// Then step in
+					ProjectItem ritem = FindProjectItem(item.ProjectItems, file.Substring(file.IndexOf("\\") + 1));
 
 					if (ritem != null)
 					{
@@ -46,7 +44,7 @@ namespace DbSharper.CodeGenerator
 
 				if (item.ProjectItems.Count > 0)
 				{
-					EnvDTE.ProjectItem ritem = FindProjectItem(item.ProjectItems, file.Substring(file.IndexOf("\\") + 1));
+					ProjectItem ritem = FindProjectItem(item.ProjectItems, file.Substring(file.IndexOf("\\") + 1));
 
 					if (ritem != null)
 					{
@@ -58,11 +56,11 @@ namespace DbSharper.CodeGenerator
 			return null;
 		}
 
-		public static List<EnvDTE.ProjectItem> FindProjectItems(EnvDTE.ProjectItems items, string match)
+		public static List<ProjectItem> FindProjectItems(ProjectItems items, string match)
 		{
-			List<EnvDTE.ProjectItem> values = new List<EnvDTE.ProjectItem>();
+			List<ProjectItem> values = new List<ProjectItem>();
 
-			foreach (EnvDTE.ProjectItem item in items)
+			foreach (ProjectItem item in items)
 			{
 				if (Regex.IsMatch(item.Name, match))
 				{
@@ -90,7 +88,7 @@ namespace DbSharper.CodeGenerator
 			return ToHierarchy(vs.SelectedItems.Item(1).ProjectItem.ContainingProject);
 		}
 
-		public static EnvDTE.Project ToDteProject(IVsHierarchy hierarchy)
+		public static Project ToDteProject(IVsHierarchy hierarchy)
 		{
 			if (hierarchy == null)
 			{
@@ -109,7 +107,7 @@ namespace DbSharper.CodeGenerator
 			}
 		}
 
-		public static EnvDTE.Project ToDteProject(IVsProject project)
+		public static Project ToDteProject(IVsProject project)
 		{
 			if (project == null)
 			{
@@ -119,7 +117,7 @@ namespace DbSharper.CodeGenerator
 			return ToDteProject(project as IVsHierarchy);
 		}
 
-		public static IVsHierarchy ToHierarchy(EnvDTE.Project project)
+		public static IVsHierarchy ToHierarchy(Project project)
 		{
 			if (project == null)
 			{
@@ -147,12 +145,13 @@ namespace DbSharper.CodeGenerator
 			}
 
 			Debug.Assert(!String.IsNullOrEmpty(projectGuid));
+
 			IServiceProvider serviceProvider = new ServiceProvider(project.DTE as Microsoft.VisualStudio.OLE.Interop.IServiceProvider);
 
 			return VsShellUtilities.GetHierarchy(serviceProvider, new Guid(projectGuid));
 		}
 
-		public static IVsProject ToVsProject(EnvDTE.Project project)
+		public static IVsProject ToVsProject(Project project)
 		{
 			if (project == null)
 			{

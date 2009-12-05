@@ -88,14 +88,14 @@
 			this.imageListIcon.TransparentColor = System.Drawing.Color.Transparent;
 			this.imageListIcon.Images.SetKeyName(0, "Start");
 			this.imageListIcon.Images.SetKeyName(1, "Schema");
-			this.imageListIcon.Images.SetKeyName(2, "dbsx");
+			this.imageListIcon.Images.SetKeyName(2, "Dbsx");
 			this.imageListIcon.Images.SetKeyName(3, "config");
 			this.imageListIcon.Images.SetKeyName(4, "cs");
 			this.imageListIcon.Images.SetKeyName(5, "html");
-			this.imageListIcon.Images.SetKeyName(6, "xml");
+			this.imageListIcon.Images.SetKeyName(6, "Xml");
 			this.imageListIcon.Images.SetKeyName(7, "Error");
 			this.imageListIcon.Images.SetKeyName(8, "Success");
-			this.imageListIcon.Images.SetKeyName(9, "Failed");
+			this.imageListIcon.Images.SetKeyName(9, "Failure");
 			// 
 			// pictureBoxLogo
 			// 
@@ -122,7 +122,7 @@
 			this.linkLabelWebsite.Font = new System.Drawing.Font("Arial", 9F);
 			this.linkLabelWebsite.Location = new System.Drawing.Point(341, 29);
 			this.linkLabelWebsite.Name = "linkLabelWebsite";
-			this.linkLabelWebsite.Size = new System.Drawing.Size(121, 15);
+			this.linkLabelWebsite.Size = new System.Drawing.Size(119, 15);
 			this.linkLabelWebsite.TabIndex = 8;
 			this.linkLabelWebsite.TabStop = true;
 			this.linkLabelWebsite.Text = "www.dbsharper.com";

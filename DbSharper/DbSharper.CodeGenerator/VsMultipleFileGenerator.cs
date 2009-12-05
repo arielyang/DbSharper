@@ -6,24 +6,27 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
+using EnvDTE;
+
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TextTemplating.VSHost;
 
 namespace DbSharper.CodeGenerator
 {
-	public abstract class VsMultipleFileGenerator<IterativeElementType> : IEnumerable<IterativeElementType>, IVsSingleFileGenerator, IObjectWithSite
+	public abstract class VsMultipleFileGenerator<T> : IEnumerable<T>, IVsSingleFileGenerator, IObjectWithSite
+		where T : IChangable
 	{
 		#region Fields
 
 		protected bool cancelGenerating = false;
-		protected List<string> oldFileNames;
 
 		private string defaultNamespace;
 		private string inputFileContents;
 		private string inputFilePath;
 		private List<string> newFileNames;
-		private EnvDTE.Project project;
+		private List<string> oldFileNames;
+		private Project project;
 		private ServiceProvider serviceProvider = null;
 		private object site;
 
@@ -33,13 +36,13 @@ namespace DbSharper.CodeGenerator
 
 		public VsMultipleFileGenerator()
 		{
-			EnvDTE.DTE dte = (EnvDTE.DTE)Package.GetGlobalService(typeof(EnvDTE.DTE));
+			DTE dte = (DTE)Package.GetGlobalService(typeof(DTE));
 
 			Array ary = (Array)dte.ActiveSolutionProjects;
 
 			if (ary.Length > 0)
 			{
-				project = (EnvDTE.Project)ary.GetValue(0);
+				project = (Project)ary.GetValue(0);
 			}
 
 			newFileNames = new List<string>();
@@ -65,7 +68,7 @@ namespace DbSharper.CodeGenerator
 			get { return inputFilePath; }
 		}
 
-		protected EnvDTE.Project Project
+		protected Project Project
 		{
 			get { return project; }
 		}
@@ -77,6 +80,7 @@ namespace DbSharper.CodeGenerator
 				if (serviceProvider == null)
 				{
 					Microsoft.VisualStudio.OLE.Interop.IServiceProvider oleServiceProvider = site as Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
+
 					serviceProvider = new ServiceProvider(oleServiceProvider);
 				}
 
@@ -96,14 +100,12 @@ namespace DbSharper.CodeGenerator
 				{
 					byte[] fileData = File.ReadAllBytes(Path.ChangeExtension(inputFilePath, GetDefaultExtension()));
 
-					// return our summary data, so that Visual Studio may write it to disk.
+					// Return our summary data, so that Visual Studio may write it to disk.
 					outputFileContents = Marshal.AllocCoTaskMem(fileData.Length);
 
 					Marshal.Copy(fileData, 0, outputFileContents, fileData.Length);
 
 					output = fileData.Length;
-
-					OnCanceling();
 
 					return;
 				}
@@ -111,29 +113,32 @@ namespace DbSharper.CodeGenerator
 				this.inputFileContents = inputFileContents;
 				this.inputFilePath = inputFilePath;
 				this.defaultNamespace = defaultNamespace;
-				this.newFileNames.Clear();
 
 				int iFound = 0;
 				uint itemId = 0;
-				EnvDTE.ProjectItem item;
+				ProjectItem projectItem;
+
 				Microsoft.VisualStudio.Shell.Interop.VSDOCUMENTPRIORITY[] pdwPriority = new Microsoft.VisualStudio.Shell.Interop.VSDOCUMENTPRIORITY[1];
 
-				// obtain a reference to the current project as an IVsProject type
+				// Obtain a reference to the current project as an IVsProject type
 				Microsoft.VisualStudio.Shell.Interop.IVsProject VsProject = VsHelper.ToVsProject(project);
-				// this locates, and returns a handle to our source file, as a ProjectItem
+
+				// This locates, and returns a handle to our source file, as a ProjectItem
 				VsProject.IsDocumentInProject(InputFilePath, out iFound, pdwPriority, out itemId);
 
-				// if our source file was found in the project (which it should have been)
+				// If our source file was found in the project (which it should have been)
 				if (iFound != 0 && itemId != 0)
 				{
 					Microsoft.VisualStudio.OLE.Interop.IServiceProvider oleSp = null;
+
 					VsProject.GetItemContext(itemId, out oleSp);
 
 					if (oleSp != null)
 					{
 						ServiceProvider sp = new ServiceProvider(oleSp);
-						// convert our handle to a ProjectItem
-						item = sp.GetService(typeof(EnvDTE.ProjectItem)) as EnvDTE.ProjectItem;
+
+						// Convert our handle to a ProjectItem
+						projectItem = sp.GetService(typeof(ProjectItem)) as ProjectItem;
 					}
 					else
 					{
@@ -148,7 +153,7 @@ namespace DbSharper.CodeGenerator
 				oldFileNames.Clear();
 				newFileNames.Clear();
 
-				foreach (EnvDTE.ProjectItem childItem in item.ProjectItems)
+				foreach (ProjectItem childItem in projectItem.ProjectItems)
 				{
 					oldFileNames.Add(childItem.Name);
 
@@ -158,42 +163,50 @@ namespace DbSharper.CodeGenerator
 					}
 				}
 
-				// now we can start our work, iterate across all the 'elements' in our source file
-				foreach (IterativeElementType element in this)
+				// Now we can start our work, iterate across all the 'items' in our source file
+				foreach (T item in this)
 				{
+					// Obtain a name for this target file
+					string fileName = GetFileName(item);
+					// Add it to the tracking cache
+					newFileNames.Add(fileName);
+					// Fully qualify the file on the filesystem
+					string filePath = Path.Combine(Path.GetDirectoryName(inputFilePath), fileName);
+
+					if (!(item as IChangable).IsChanged && File.Exists(filePath))
+					{
+						continue;
+					}
+
 					try
 					{
-						// obtain a name for this target file
-						string fileName = GetFileName(element);
-						// add it to the tracking cache
-						newFileNames.Add(fileName);
-						// fully qualify the file on the filesystem
-						string strFile = Path.Combine(inputFilePath.Substring(0, inputFilePath.LastIndexOf(Path.DirectorySeparatorChar)), fileName);
+						bool isNewAdded = !oldFileNames.Contains(fileName);
 
-						if (oldFileNames.Contains(fileName))
+						if (!isNewAdded)
 						{
-							// check out this file.
-							if (project.DTE.SourceControl.IsItemUnderSCC(strFile) &&
-								!project.DTE.SourceControl.IsItemCheckedOut(strFile))
+							// Check out this file.
+							if (project.DTE.SourceControl.IsItemUnderSCC(filePath) &&
+								!project.DTE.SourceControl.IsItemCheckedOut(filePath))
 							{
-								project.DTE.SourceControl.CheckOutItem(strFile);
+								project.DTE.SourceControl.CheckOutItem(filePath);
 							}
 						}
 
-						// create the file
-						FileStream fs = File.Create(strFile);
+						// Create the file
+						FileStream fs = File.Create(filePath);
 
 						try
 						{
-							// generate our target file content
-							byte[] data = GenerateContent(element);
+							// Generate our target file content
+							byte[] data = GenerateContent(item);
 
-							// write it out to the stream
+							// Write it out to the stream
 							fs.Write(data, 0, data.Length);
 
 							fs.Close();
 
-							OnGenerateFile(strFile);
+							OnFileGenerated(filePath, isNewAdded);
+
 							/*
 							 * Here you may wish to perform some addition logic
 							 * such as, setting a custom tool for the target file if it
@@ -209,14 +222,13 @@ namespace DbSharper.CodeGenerator
 							}
 							*/
 						}
-						catch (Exception)
+						catch (Exception ex)
 						{
 							fs.Close();
 
-							if (File.Exists(strFile))
-							{
-								File.Delete(strFile);
-							}
+							OnError(ex);
+
+							LogException(ex);
 						}
 					}
 					catch (Exception ex)
@@ -225,12 +237,12 @@ namespace DbSharper.CodeGenerator
 					}
 				}
 
-				// perform some clean-up, making sure we delete any old (stale) target-files
-				foreach (EnvDTE.ProjectItem childItem in item.ProjectItems)
+				// Perform some clean-up, making sure we delete any old (stale) target-files
+				foreach (ProjectItem childItem in projectItem.ProjectItems)
 				{
 					if (!(childItem.Name.EndsWith(GetDefaultExtension()) || newFileNames.Contains(childItem.Name)))
 					{
-						// then delete it
+						// Then delete it
 						childItem.Delete();
 					}
 				}
@@ -241,10 +253,10 @@ namespace DbSharper.CodeGenerator
 					{
 						string fileName = Path.Combine(inputFilePath.Substring(0, inputFilePath.LastIndexOf(Path.DirectorySeparatorChar)), newFileName);
 
-						//// add the newly generated file to the solution, as a child of the source file...
-						EnvDTE.ProjectItem itm = item.ProjectItems.AddFromFile(fileName);
+						// Add the newly generated file to the solution, as a child of the source file...
+						ProjectItem itm = projectItem.ProjectItems.AddFromFile(fileName);
 
-						//// set buildaction to none
+						// Set buildaction to none
 						if (!newFileName.EndsWith(".cs"))
 						{
 							itm.Properties.Item("BuildAction").Value = 0;
@@ -252,7 +264,7 @@ namespace DbSharper.CodeGenerator
 					}
 				}
 
-				// generate our summary content for our 'single' file
+				// Generate our summary content for our 'single' file
 				byte[] summaryData = GenerateSummaryContent();
 
 				if (summaryData == null)
@@ -263,7 +275,7 @@ namespace DbSharper.CodeGenerator
 				}
 				else
 				{
-					// return our summary data, so that Visual Studio may write it to disk.
+					// Return our summary data, so that Visual Studio may write it to disk.
 					outputFileContents = Marshal.AllocCoTaskMem(summaryData.Length);
 
 					Marshal.Copy(summaryData, 0, outputFileContents, summaryData.Length);
@@ -282,13 +294,13 @@ namespace DbSharper.CodeGenerator
 			}
 		}
 
-		public abstract byte[] GenerateContent(IterativeElementType element);
+		public abstract byte[] GenerateContent(T element);
 
 		public abstract byte[] GenerateSummaryContent();
 
 		public abstract string GetDefaultExtension();
 
-		public abstract IEnumerator<IterativeElementType> GetEnumerator();
+		public abstract IEnumerator<T> GetEnumerator();
 
 		public void GetSite(ref Guid riid, out IntPtr ppvSite)
 		{
@@ -313,6 +325,7 @@ namespace DbSharper.CodeGenerator
 				if (objectPointer != IntPtr.Zero)
 				{
 					Marshal.Release(objectPointer);
+
 					objectPointer = IntPtr.Zero;
 				}
 			}
@@ -320,7 +333,7 @@ namespace DbSharper.CodeGenerator
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return GetEnumerator();
+			return this.GetEnumerator();
 		}
 
 		public void SetSite(object pUnkSite)
@@ -328,44 +341,30 @@ namespace DbSharper.CodeGenerator
 			this.site = pUnkSite;
 		}
 
-		protected abstract string GetFileName(IterativeElementType element);
+		protected abstract string GetFileName(T element);
 
 		protected void LogException(Exception ex)
 		{
 			string path = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, "log");
 
-			using (FileStream stm = File.Open(path, FileMode.Append))
+			using (StreamWriter sw = File.AppendText(path))
 			{
-				using (StreamWriter sw = new StreamWriter(stm))
-				{
-					sw.WriteLine(DateTime.Now);
-
-					sw.WriteLine(new string('-', 50));
-
-					sw.WriteLine(ex.ToString());
-
-					sw.WriteLine();
-
-					sw.WriteLine(ex.Message);
-
-					sw.WriteLine();
-
-					sw.WriteLine(ex.StackTrace);
-
-					sw.WriteLine();
-				}
+				sw.WriteLine(DateTime.Now);
+				sw.WriteLine(new string('-', 50));
+				sw.WriteLine(ex.ToString());
+				sw.WriteLine();
+				sw.WriteLine(ex.Message);
+				sw.WriteLine();
+				sw.WriteLine(ex.StackTrace);
+				sw.WriteLine();
 			}
-		}
-
-		protected virtual void OnCanceling()
-		{
 		}
 
 		protected virtual void OnError(Exception ex)
 		{
 		}
 
-		protected virtual void OnGenerateFile(string filePath)
+		protected virtual void OnFileGenerated(string filePath, bool isNewAdded)
 		{
 		}
 
