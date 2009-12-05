@@ -81,7 +81,6 @@
     <Compile Include="Providers\CacheProvider.cs" />
     <Compile Include="Providers\CacheProviderCollection.cs" />
     <Compile Include="Providers\InProcessCacheProvider.cs" />
-    <Compile Include="Providers\MemcachedCacheProvider.cs" />
     <Compile Include="Model\CollectionBase.cs" />
     <Compile Include="Data\IJson.cs" />
     <Compile Include="Model\ItemBase.cs" />

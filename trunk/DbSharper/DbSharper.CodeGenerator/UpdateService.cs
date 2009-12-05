@@ -1,29 +1,48 @@
 ﻿using System;
 using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Xml;
 
 namespace DbSharper.CodeGenerator
 {
 	internal class UpdateService
 	{
-		#region Methods
+		#region Properties
 
-		public static string GetExecutingVersion()
+		public static VersionInfo ExecutingVersionInfo
 		{
-			Version version = Assembly.GetExecutingAssembly().GetName().Version;
+			get
+			{
+				Version version = Assembly.GetExecutingAssembly().GetName().Version;
 
-			return string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build);
+				return new VersionInfo(
+					string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build),
+					null);
+			}
 		}
 
-		public string[] GetLatestVersionInfo()
-		{
-			string version;
-			string summary;
+		#endregion Properties
 
+		#region Methods
+
+		public static string GetNewVersionInformation(VersionInfo versionInfo)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			sb.AppendFormat("New verion {0} released.", versionInfo.Version);
+			sb.AppendLine();
+			sb.AppendLine();
+			sb.Append(versionInfo.Summary);
+
+			return sb.ToString();
+		}
+
+		public VersionInfo GetLatestVersionInfo()
+		{
 			WebClient webClient = new WebClient();
 
-			webClient.Headers.Add("User-Agent", "DbSharperCodeGenerator/" + GetExecutingVersion());
+			webClient.Headers.Add("User-Agent", "DbSharperCodeGenerator/" + ExecutingVersionInfo);
 
 			try
 			{
@@ -37,29 +56,21 @@ namespace DbSharper.CodeGenerator
 
 				if (versionNode == null)
 				{
-					return new string[] { string.Empty, string.Empty };
-				}
-				else
-				{
-					version = versionNode.Value;
+					return VersionInfo.Null;
 				}
 
 				XmlNode summaryNode = doc.SelectSingleNode("/manifest/version/summary");
 
 				if (summaryNode == null)
 				{
-					summary = null;
-				}
-				else
-				{
-					summary = summaryNode.InnerText;
+					return new VersionInfo(versionNode.Value, null);
 				}
 
-				return new string[] { version, summary };
+				return new VersionInfo(versionNode.Value, summaryNode.InnerText);
 			}
 			catch
 			{
-				return new string[] { null, null };
+				return VersionInfo.Null;
 			}
 		}
 

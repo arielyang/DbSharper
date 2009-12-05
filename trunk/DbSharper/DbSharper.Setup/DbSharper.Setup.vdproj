@@ -1218,7 +1218,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:DbSharper.Schema, Version=0.8.9.0, Culture=neutral, PublicKeyToken=c7f0f633127b688f, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:DbSharper.Schema, Version=0.8.10.0, Culture=neutral, PublicKeyToken=c7f0f633127b688f, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_AC2A553E52870497B8FE334AAF3A7762"
@@ -1577,14 +1577,14 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:DbSharper"
-        "ProductCode" = "8:{BDF24D90-5DCD-49A1-809D-C4F697E9E930}"
-        "PackageCode" = "8:{1BE60191-658B-407D-8083-43FE21D1E928}"
+        "ProductCode" = "8:{61BF5D59-0F78-4DC8-8B87-E88197565635}"
+        "PackageCode" = "8:{E3C6EE11-5594-4D97-8FF8-12471A60A704}"
         "UpgradeCode" = "8:{72AFD558-42E8-491E-8091-4F8AA0ECEAD6}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:0.8.10"
+        "ProductVersion" = "8:0.8.11"
         "Manufacturer" = "8:DbSharper.com"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://www.dbsharper.com"

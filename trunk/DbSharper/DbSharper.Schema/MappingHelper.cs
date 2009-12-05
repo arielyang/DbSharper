@@ -131,7 +131,6 @@ namespace DbSharper.Schema
 		}
 
 		*/
-
 		public static CommonType GetCommonType(SqlDbType sqlDbType)
 		{
 			switch (sqlDbType)

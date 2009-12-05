@@ -66,6 +66,7 @@
     <Compile Include="Database\EnumerationMember.cs" />
     <Compile Include="DbSharperException.cs" />
     <Compile Include="Enums\ConditionType.cs" />
+    <Compile Include="Equalizer.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IColumns.cs" />
     <Compile Include="MappingExtender.cs" />
@@ -114,6 +115,7 @@
     <None Include="..\DbSharper.snk">
       <Link>DbSharper.snk</Link>
     </None>
+    <EmbeddedResource Include="Resources\GetDatabaseSchema.sql" />
     <EmbeddedResource Include="Resources\CreateEnumerationMemberTable.sql" />
     <EmbeddedResource Include="Resources\CreateEnumerationTable.sql" />
   </ItemGroup>
