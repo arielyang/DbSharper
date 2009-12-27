@@ -1,4 +1,4 @@
-﻿<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns:script="urn:my-scripts">
+﻿<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns:script="urn:scripts">
 	<xsl:import href="DbSharper.Scripts.xslt" />
 	<xsl:output omit-xml-declaration="yes" method="html" />
 	<xsl:variable name="tables" select="/mapping/database/tables/table" />
@@ -61,15 +61,15 @@
 								<td>
 									<a>
 										<xsl:attribute name="href">
-											<xsl:value-of select="script:GetAnchor(./@schema,./@name)" />
+											<xsl:value-of select="script:GetAnchor(@schema,@name)" />
 										</xsl:attribute>
 										<xsl:attribute name="title">
-											<xsl:value-of select="./@description" />
+											<xsl:value-of select="@description" />
 										</xsl:attribute>
 										<span class="schema">
-											<xsl:value-of select="./@schema" />
+											<xsl:value-of select="@schema" />
 										</span>.<span class="name">
-											<xsl:value-of select="./@name" />
+											<xsl:value-of select="@name" />
 										</span>
 									</a>
 								</td>
@@ -136,15 +136,15 @@
 								<td>
 									<a>
 										<xsl:attribute name="href">
-											<xsl:value-of select="script:GetAnchor(./@schema,./@name)" />
+											<xsl:value-of select="script:GetAnchor(@schema,@name)" />
 										</xsl:attribute>
 										<xsl:attribute name="title">
-											<xsl:value-of select="./@description" />
+											<xsl:value-of select="@description" />
 										</xsl:attribute>
 										<span class="schema">
-											<xsl:value-of select="./@schema" />
+											<xsl:value-of select="@schema" />
 										</span>.<span class="name">
-											<xsl:value-of select="./@name" />
+											<xsl:value-of select="@name" />
 										</span>
 									</a>
 								</td>
@@ -216,15 +216,15 @@
 								<td>
 									<a>
 										<xsl:attribute name="href">
-											<xsl:value-of select="script:GetAnchor(./@schema,./@name)" />
+											<xsl:value-of select="script:GetAnchor(@schema,@name)" />
 										</xsl:attribute>
 										<xsl:attribute name="title">
-											<xsl:value-of select="./@description" />
+											<xsl:value-of select="@description" />
 										</xsl:attribute>
 										<span class="schema">
-											<xsl:value-of select="./@schema" />
+											<xsl:value-of select="@schema" />
 										</span>.<span class="name">
-											<xsl:value-of select="./@name" />
+											<xsl:value-of select="@name" />
 										</span>
 									</a>
 								</td>
@@ -254,14 +254,14 @@
 				<xsl:for-each select="$tables">
 					<a>
 						<xsl:attribute name="name">
-							<xsl:value-of select="./@schema" />.<xsl:value-of select="./@name" />
+							<xsl:value-of select="@schema" />.<xsl:value-of select="@name" />
 						</xsl:attribute>
 						<span></span>
 					</a>
 					<table border="1" cellpadding="3">
 						<tr>
 							<th align="left" colspan="6" class="tabletitle">
-								[<xsl:value-of select="./@schema" />].[<xsl:value-of select="./@name" />]
+								[<xsl:value-of select="@schema" />].[<xsl:value-of select="@name" />]
 							</th>
 							<th align="right">
 								<span class="specialchar">é</span>
@@ -270,7 +270,7 @@
 						</tr>
 						<tr>
 							<td colspan="7" class="tabledesc">
-								<xsl:value-of select="script:GetDescription(./@description)" disable-output-escaping="yes" />
+								<xsl:value-of select="script:GetDescription(@description)" disable-output-escaping="yes" />
 							</td>
 						</tr>
 						<tr class="tableheader">
@@ -282,40 +282,40 @@
 							<td width="100" align="center">Default</td>
 							<td>Description</td>
 						</tr>
-						<xsl:for-each select="./columns/column">
+						<xsl:for-each select="columns/column">
 							<tr>
 								<td>
-									<xsl:value-of select="./@name" />
+									<xsl:value-of select="@name" />
 								</td>
 								<td class="keyword">
-									<xsl:value-of select="script:ToLower(./@sqlDbType)" />
+									<xsl:value-of select="script:ToLower(@specificDbType)" />
 									<xsl:choose>
-										<xsl:when test="./@size=-1">(max)</xsl:when>
-										<xsl:when test="./@size!=0">
-											(<xsl:value-of select="./@size" />)
+										<xsl:when test="@size=-1">(max)</xsl:when>
+										<xsl:when test="@size!=0">
+											(<xsl:value-of select="@size" />)
 										</xsl:when>
 									</xsl:choose>
 								</td>
 								<td align="center">
-									<xsl:if test="./@nullable='true'">
+									<xsl:if test="@nullable='true'">
 										<span class="specialchar">ü</span>
 									</xsl:if>
 								</td>
 								<td align="center">
-									<xsl:if test="../../primaryKey/column/@name=./@name">
+									<xsl:if test="../../primaryKey/column/@name=@name">
 										<span class="specialchar">ü</span>
 									</xsl:if>
 								</td>
 								<td align="center">
-									<xsl:if test="../../foreignKeys/foreignKey/column/@name=./@name">
+									<xsl:if test="../../foreignKeys/foreignKey/column/@name=@name">
 										<span class="specialchar">ü</span>
 									</xsl:if>
 								</td>
 								<td align="center" class="default">
-									<xsl:value-of select="./@default" />
+									<xsl:value-of select="@default" />
 								</td>
 								<td class="description">
-									<xsl:value-of select="script:GetDescription(./@description)" disable-output-escaping="yes" />
+									<xsl:value-of select="script:GetDescription(@description)" disable-output-escaping="yes" />
 								</td>
 							</tr>
 						</xsl:for-each>
@@ -326,14 +326,14 @@
 				<xsl:for-each select="$views">
 					<a>
 						<xsl:attribute name="name">
-							<xsl:value-of select="./@schema" />.<xsl:value-of select="./@name" />
+							<xsl:value-of select="@schema" />.<xsl:value-of select="@name" />
 						</xsl:attribute>
 						<span></span>
 					</a>
 					<table border="1" cellpadding="3">
 						<tr>
 							<th align="left" colspan="3" class="tabletitle">
-								[<xsl:value-of select="./@schema" />].[<xsl:value-of select="./@name" />]
+								[<xsl:value-of select="@schema" />].[<xsl:value-of select="@name" />]
 							</th>
 							<th align="right">
 								<span class="specialchar">é</span>
@@ -342,7 +342,7 @@
 						</tr>
 						<tr>
 							<td colspan="4" class="tabledesc">
-								<xsl:value-of select="script:GetDescription(./@description)" disable-output-escaping="yes" />
+								<xsl:value-of select="script:GetDescription(@description)" disable-output-escaping="yes" />
 							</td>
 						</tr>
 						<tr class="tableheader">
@@ -351,27 +351,27 @@
 							<td width="30" align="center">Nulls</td>
 							<td>Description</td>
 						</tr>
-						<xsl:for-each select="./columns/column">
+						<xsl:for-each select="columns/column">
 							<tr>
 								<td>
-									<xsl:value-of select="./@name" />
+									<xsl:value-of select="@name" />
 								</td>
 								<td class="keyword">
-									<xsl:value-of select="script:ToLower(./@sqlDbType)" />
+									<xsl:value-of select="script:ToLower(@specificDbType)" />
 									<xsl:choose>
-										<xsl:when test="./@size=-1">(max)</xsl:when>
-										<xsl:when test="./@size!=0">
-											(<xsl:value-of select="./@size" />)
+										<xsl:when test="@size=-1">(max)</xsl:when>
+										<xsl:when test="@size!=0">
+											(<xsl:value-of select="@size" />)
 										</xsl:when>
 									</xsl:choose>
 								</td>
 								<td align="center">
-									<xsl:if test="./@nullable='true'">
+									<xsl:if test="@nullable='true'">
 										<span class="specialchar">ü</span>
 									</xsl:if>
 								</td>
 								<td class="description">
-									<xsl:value-of select="script:GetDescription(./@description)" disable-output-escaping="yes" />
+									<xsl:value-of select="script:GetDescription(@description)" disable-output-escaping="yes" />
 								</td>
 							</tr>
 						</xsl:for-each>
@@ -382,14 +382,14 @@
 				<xsl:for-each select="$storedProcedures">
 					<a>
 						<xsl:attribute name="name">
-							<xsl:value-of select="./@schema" />.<xsl:value-of select="./@name" />
+							<xsl:value-of select="@schema" />.<xsl:value-of select="@name" />
 						</xsl:attribute>
 						<span></span>
 					</a>
 					<table border="1" cellpadding="3">
 						<tr>
 							<th align="left" class="tabletitle">
-								[<xsl:value-of select="./@schema" />].[<xsl:value-of select="./@name" />]
+								[<xsl:value-of select="@schema" />].[<xsl:value-of select="@name" />]
 							</th>
 							<th align="right">
 								<span class="specialchar">é</span>
@@ -398,32 +398,32 @@
 						</tr>
 						<tr>
 							<td colspan="2" class="tabledesc">
-								<xsl:value-of select="script:GetDescription(./@description)" disable-output-escaping="yes" />
+								<xsl:value-of select="script:GetDescription(@description)" disable-output-escaping="yes" />
 							</td>
 						</tr>
 						<tr>
 							<td colspan="2">
 								<xsl:choose>
-									<xsl:when test="count(./parameter[@direction!='ReturnValue'])&gt;0">
+									<xsl:when test="count(parameter[@direction!='ReturnValue'])&gt;0">
 										<table class="subtable" border="0" cellpadding="2">
-											<xsl:for-each select="./parameter[@direction!='ReturnValue']">
+											<xsl:for-each select="parameter[@direction!='ReturnValue']">
 												<tr>
 													<td>
-														<xsl:value-of select="./@name" />
+														<xsl:value-of select="@name" />
 													</td>
 													<td class="keyword">
 														<nobr>
-															<xsl:value-of select="script:ToLower(./@sqlDbType)" />
+															<xsl:value-of select="script:ToLower(@specificDbType)" />
 															<xsl:choose>
-																<xsl:when test="./@size=-1">(max)</xsl:when>
-																<xsl:when test="./@size!=0">
-																	(<xsl:value-of select="./@size" />)
+																<xsl:when test="@size=-1">(max)</xsl:when>
+																<xsl:when test="@size!=0">
+																	(<xsl:value-of select="@size" />)
 																</xsl:when>
 															</xsl:choose>
 														</nobr>
 													</td>
 													<td class="keyword">
-														<xsl:if test="./@direction='InputOutput'">OUTPUT</xsl:if>
+														<xsl:if test="@direction='InputOutput'">OUTPUT</xsl:if>
 													</td>
 													<td width="100%"></td>
 												</tr>

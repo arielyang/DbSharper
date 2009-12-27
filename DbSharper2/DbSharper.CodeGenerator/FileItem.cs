@@ -8,7 +8,7 @@ namespace DbSharper.CodeGenerator
 	/// <summary>
 	/// Generated file item.
 	/// </summary>
-	internal sealed class FileItem : IChangable
+	internal sealed class FileItem
 	{
 		#region Fields
 

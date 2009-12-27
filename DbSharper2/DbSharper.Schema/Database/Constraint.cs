@@ -1,17 +1,19 @@
-﻿using System.Xml;
+﻿using System;
+using System.Xml;
 using System.Xml.Serialization;
-
 using DbSharper.Schema.Infrastructure;
 
 namespace DbSharper.Schema.Database
 {
 	public class Constraint : IName
 	{
+		private NamedCollection<Column> columns;
+
 		#region Constructors
 
 		public Constraint()
 		{
-			this.Columns = new NamedCollection<Column>();
+			this.columns = new NamedCollection<Column>();
 		}
 
 		#endregion Constructors
@@ -21,8 +23,8 @@ namespace DbSharper.Schema.Database
 		[XmlElement("column")]
 		public NamedCollection<Column> Columns
 		{
-			get;
-			set;
+			get { return this.columns; }
+			set { throw new NotImplementedException(); }
 		}
 
 		[XmlAttribute("name")]

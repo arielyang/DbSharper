@@ -2,6 +2,8 @@
 using System.Data;
 using System.Text;
 using DbSharper.Schema.Code;
+using System;
+using DbSharper.Schema.Infrastructure;
 
 namespace DbSharper.Schema
 {
@@ -11,7 +13,7 @@ namespace DbSharper.Schema
 
 		internal static string GetPrimaryKeyNamesConnectedWithAnd(Model model)
 		{
-			const string connectorString ="And";
+			const string connectorString = "And";
 
 			StringBuilder sb = new StringBuilder();
 
@@ -19,7 +21,7 @@ namespace DbSharper.Schema
 			{
 				if (property.IsPrimaryKey)
 				{
-					sb.Append(property.ColumnName);
+					sb.Append(property.Name);
 					sb.Append(connectorString);
 				}
 			}
@@ -74,16 +76,26 @@ namespace DbSharper.Schema
 		/// <returns>Method paramter.</returns>
 		internal static Parameter PropertyToParameter(Property property)
 		{
-			return new Parameter
+			try
 			{
-				Name = property.Name,
-				Description = property.Description,
-				Direction = ParameterDirection.Input,
-				Size = property.Size,
-				DbType = property.DbType,
-				SqlName = "@" + property.Name,
-				Type = property.Type
-			};
+				CommonType type = (CommonType)Enum.Parse(typeof(CommonType), property.Type);
+
+				return new Parameter
+				{
+					Name = property.Name,
+					Description = property.Description,
+					Direction = ParameterDirection.Input,
+					Size = property.Size,
+					DbType = property.DbType,
+					SqlName = "@" + property.Name,
+					Type = type
+				};
+
+			}
+			catch (ArgumentException)
+			{
+				return null;
+			}
 		}
 
 		/// <summary>
@@ -98,7 +110,7 @@ namespace DbSharper.Schema
 				Name = "Inserted" + property.Name,
 				Description = "Inserted " + property.Name,
 				IsOutputParameter = true,
-				CommonType = property.Type.ToString()
+				TypeName = property.Type.ToString()
 			};
 		}
 

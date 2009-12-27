@@ -1,5 +1,5 @@
-﻿<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns:script="urn:my-scripts">
-<xsl:template name="Collection" match="/">
+﻿<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns:script="urn:scripts">
+<xsl:template name="Extension" match="/">
 <xsl:variable name="modelName" select="./@name" />
 <xsl:variable name="getItemBy" select="./property[@canGetItemBy='true']" />
 <xsl:variable name="getCollectionBy" select="./property[@canGetCollectionBy='true' and @canGetItemBy='false']" />

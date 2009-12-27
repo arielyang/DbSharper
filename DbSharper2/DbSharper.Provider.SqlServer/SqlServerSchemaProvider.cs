@@ -2,16 +2,18 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.Reflection;
 using System.Text;
 
 using DbSharper.Schema.Code;
 using DbSharper.Schema.Database;
 using DbSharper.Schema.Infrastructure;
-using DbSharper.Schema.Utility;
 using DbSharper.Schema.Provider;
+using DbSharper.Schema.Utility;
 
 namespace DbSharper.Schema
 {
+	[SchemaProvider("System.Data.SqlClient")]
 	public class SqlServerSchemaProvider : SchemaProviderBase
 	{
 		#region Fields
@@ -24,13 +26,142 @@ namespace DbSharper.Schema
 
 		#region Methods
 
-		public Database.Database GetSchema(string connectionString)
+		public override DbType GetDbType(string dbTypeString)
+		{
+			//Value:0 SqlDbType.BigInt DbType.Int64
+			//Value:1 SqlDbType.Binary DbType.Binary
+			//Value:2 SqlDbType.Bit DbType.Boolean
+			//Value:3 SqlDbType.Char DbType.AnsiString
+			//Value:4 SqlDbType.DateTime DbType.DateTime
+			//Value:5 SqlDbType.Decimal DbType.Decimal
+			//Value:6 SqlDbType.Float DbType.Double
+			//Value:7 SqlDbType.Image DbType.Binary
+			//Value:8 SqlDbType.Int DbType.Int32
+			//Value:9 SqlDbType.Money DbType.Currency
+			//Value:10 SqlDbType.NChar DbType.String
+			//Value:11 SqlDbType.NText DbType.String
+			//Value:12 SqlDbType.NVarChar DbType.String
+			//Value:13 SqlDbType.Real DbType.Single
+			//Value:14 SqlDbType.UniqueIdentifier DbType.Guid
+			//Value:15 SqlDbType.SmallDateTime DbType.DateTime
+			//Value:16 SqlDbType.SmallInt DbType.Int16
+			//Value:17 SqlDbType.SmallMoney DbType.Currency
+			//Value:18 SqlDbType.Text DbType.AnsiString
+			//Value:19 SqlDbType.Timestamp DbType.Binary
+			//Value:20 SqlDbType.TinyInt DbType.Byte
+			//Value:21 SqlDbType.VarBinary DbType.Binary
+			//Value:22 SqlDbType.VarChar DbType.AnsiString
+			//Value:23 SqlDbType.Variant DbType.Object
+			//Value:24					 DbType.Object
+			//Value:25 SqlDbType.Xml DbType.Xml
+			//Value:26					 DbType.String
+			//Value:27					 DbType.String
+			//Value:28					 DbType.String
+			//Value:29 SqlDbType.Udt DbType.Object
+			//Value:30 SqlDbType.Structured DbType.Object
+			//Value:31 SqlDbType.Date DbType.Date
+			//Value:32 SqlDbType.Time DbType.Time
+			//Value:33 SqlDbType.DateTime2 DbType.DateTime2
+			//Value:34 SqlDbType.DateTimeOffset DbType.DateTimeOffset
+
+			switch (dbTypeString)
+			{
+				case "bigint":
+					// SqlDbType.BigInt;
+					return DbType.Int64;
+				case "binary":
+				case "image":
+				case "timestamp":
+				case "varbinary":
+					// SqlDbType.Binary;
+					// SqlDbType.Image;
+					// SqlDbType.Timestamp;
+					// SqlDbType.VarBinary;
+					return DbType.Binary;
+				case "bit":
+					// SqlDbType.Bit;
+					return DbType.Boolean;
+				case "char":
+				case "text":
+				case "varchar":
+					// SqlDbType.Char;
+					// SqlDbType.Text;
+					// SqlDbType.VarChar;
+					return DbType.AnsiString;
+				case "datetime":
+				case "smalldatetime":
+					// SqlDbType.DateTime;
+					// SqlDbType.SmallDateTime;
+					return DbType.DateTime;
+				case "decimal":
+				case "numeric":
+					// SqlDbType.Decimal;
+					return DbType.Decimal;
+				case "float":
+					// SqlDbType.Float;
+					return DbType.Double;
+				case "int":
+					// SqlDbType.Int;
+					return DbType.Int32;
+				case "money":
+				case "smallmoney":
+					// SqlDbType.Money;
+					// SqlDbType.SmallMoney;
+					return DbType.Currency;
+				case "nchar":
+				case "ntext":
+				case "nvarchar":
+					// SqlDbType.NChar;
+					// SqlDbType.NText;
+					// SqlDbType.NVarChar;
+					return DbType.String;
+				case "real":
+					// SqlDbType.Real;
+					return DbType.Single;
+				case "uniqueidentifier":
+					// SqlDbType.UniqueIdentifier;
+					return DbType.Guid;
+				case "smallint":
+					// SqlDbType.SmallInt;
+					return DbType.Int16;
+				case "tinyint":
+					// SqlDbType.TinyInt;
+					return DbType.Byte;
+				case "sql_variant":
+					// SqlDbType.Variant;
+					return DbType.Object;
+				case "xml":
+					// SqlDbType.Xml;
+					return DbType.Xml;
+				case "date":
+					// SqlDbType.Date;
+					return DbType.Date;
+				case "time":
+					// SqlDbType.Time;
+					return DbType.Time;
+				case "datetime2":
+					// SqlDbType.DateTime2;
+					return DbType.DateTime2;
+				case "datetimeoffset":
+					// SqlDbType.DateTimeOffset;
+					return DbType.DateTimeOffset;
+				default:
+					throw new ArgumentException("Unknown dbType.", "dbType");
+			}
+		}
+
+		public override string GetParameterName(string parameter)
+		{
+			return parameter.TrimStart('@');
+		}
+
+		public override Database.Database GetSchema(string connectionString)
 		{
 			this.connectionString = connectionString;
 
 			this.database = new Database.Database();
 
-			this.resourceFileManager = new ResourceFileManager();
+			this.resourceFileManager = new ResourceFileManager(Assembly.GetExecutingAssembly());
 
 			DataSet ds = this.GetSchemaDataSet();
 
@@ -96,9 +227,24 @@ namespace DbSharper.Schema
 			}
 		}
 
+		private ParameterDirection GetParameterDirection(string direction)
+		{
+			switch (direction)
+			{
+				case "IN":
+					return ParameterDirection.Input;
+				case "OUT":
+					return ParameterDirection.Output;
+				case "INOUT":
+					return ParameterDirection.InputOutput;
+				default:
+					throw new ArgumentException("Unknown parameter direction.", "direction");
+			}
+		}
+
 		private DataSet GetSchemaDataSet()
 		{
-			string cmdText = resourceFileManager.ReadResourceString("Resources.GetDatabaseSchema.sql");
+			string cmdText = resourceFileManager.ReadResourceAsString("Resources.GetDatabaseSchema.sql");
 
 			SqlDataAdapter da = new SqlDataAdapter(cmdText, this.connectionString);
 
@@ -128,8 +274,8 @@ namespace DbSharper.Schema
 
 		private void InitializeEnumTables()
 		{
-			this.ExecuteSql(resourceFileManager.ReadResourceString("Resources.CreateEnumerationTable.sql"));
-			this.ExecuteSql(resourceFileManager.ReadResourceString("Resources.CreateEnumerationMemberTable.sql"));
+			this.ExecuteSql(resourceFileManager.ReadResourceAsString("Resources.CreateEnumerationTable.sql"));
+			this.ExecuteSql(resourceFileManager.ReadResourceAsString("Resources.CreateEnumerationMemberTable.sql"));
 		}
 
 		private void LoadDatabaseSchema(DataSet ds)
@@ -141,7 +287,8 @@ namespace DbSharper.Schema
 			Procedure procedure;
 			ForeignKey foreignKey;
 			UniqueKey uniqueKey;
-			SqlDbType sqlDbType;
+			DbType dbType;
+			string specificDbType;
 			string constraintName;
 			string columnName;
 			string key;
@@ -173,7 +320,9 @@ namespace DbSharper.Schema
 			{
 				table = this.database.Tables.GetItem(dr["TABLE_SCHEMA"].ToString(), dr["TABLE_NAME"].ToString());
 
-				sqlDbType = MappingHelper.GetSqlDbType(dr["DATA_TYPE"].ToString());
+				specificDbType = dr["DATA_TYPE"].ToString();
+
+				dbType = GetDbType(specificDbType);
 
 				defaultString = dr["COLUMN_DEFAULT"].ToString();
 
@@ -186,7 +335,8 @@ namespace DbSharper.Schema
 					new Column()
 					{
 						Name = dr["COLUMN_NAME"].ToString(),
-						SqlDbType = sqlDbType,
+						DbType = dbType,
+						SpecificDbType = specificDbType,
 						Size = Convert.ToInt32(dr["CHARACTER_MAXIMUM_LENGTH"].ToString(), CultureInfo.InvariantCulture),
 						Default = defaultString,
 						Nullable = dr["IS_NULLABLE"].ToString() == "YES",
@@ -312,13 +462,16 @@ namespace DbSharper.Schema
 			{
 				view = this.database.Views.GetItem(dr["TABLE_SCHEMA"].ToString(), dr["TABLE_NAME"].ToString());
 
-				sqlDbType = MappingHelper.GetSqlDbType(dr["DATA_TYPE"].ToString());
+				specificDbType = dr["DATA_TYPE"].ToString();
+
+				dbType = GetDbType(specificDbType);
 
 				view.Columns.Add(
 					new Column()
 					{
 						Name = dr["COLUMN_NAME"].ToString(),
-						SqlDbType = sqlDbType,
+						DbType = dbType,
+						SpecificDbType = specificDbType,
 						Size = Convert.ToInt32(dr["CHARACTER_MAXIMUM_LENGTH"].ToString(), CultureInfo.InvariantCulture),
 						Nullable = dr["IS_NULLABLE"].ToString() == "YES",
 						Description = string.Empty
@@ -381,13 +534,13 @@ namespace DbSharper.Schema
 				{
 					procedure = this.database.Procedures.GetItem(dr["SPECIFIC_SCHEMA"].ToString(), dr["SPECIFIC_NAME"].ToString());
 
-					sqlDbType = MappingHelper.GetSqlDbType(dr["DATA_TYPE"].ToString());
+					dbType = GetDbType(dr["DATA_TYPE"].ToString());
 
 					procedure.Parameters.Add(
-						new Parameter()
+						new Database.Parameter()
 						{
 							Name = dr["PARAMETER_NAME"].ToString(),
-							SqlDbType = sqlDbType,
+							DbType = dbType,
 							Size = Convert.ToInt32(dr["CHARACTER_MAXIMUM_LENGTH"].ToString(), CultureInfo.InvariantCulture),
 							Direction = GetParameterDirection(dr["PARAMETER_MODE"].ToString())
 						});
@@ -490,106 +643,6 @@ namespace DbSharper.Schema
 			#endregion
 		}
 
-		private ParameterDirection GetParameterDirection(string direction)
-		{
-			switch (direction)
-			{
-				case "IN":
-					return ParameterDirection.Input;
-				case "OUT":
-					return ParameterDirection.Output;
-				case "INOUT":
-					return ParameterDirection.InputOutput;
-				default:
-					throw new ArgumentException("Unknown parameter direction.", "direction");
-			}
-		}
-
-		private DbType GetDbType(string dbTypeString)
-		{
-			return DbType.AnsiString;
-		}
-
-		/// <summary>
-		/// Get SqlDbType enum according to sqlDbType string from database.
-		/// </summary>
-		/// <param name="sqlDbType">SqlDbType string from database</param>
-		/// <returns>SqlDbType enum</returns>
-		public static SqlDbType GetSqlDbType(string sqlDbType)
-		{
-			switch (sqlDbType)
-			{
-				case "bigint":
-					return SqlDbType.BigInt;
-				case "binary":
-					return SqlDbType.Binary;
-				case "bit":
-					return SqlDbType.Bit;
-				case "char":
-					return SqlDbType.Char;
-				case "datetime":
-					return SqlDbType.DateTime;
-				case "decimal":
-				case "numeric":
-					return SqlDbType.Decimal;
-				case "float":
-					return SqlDbType.Float;
-				case "image":
-					return SqlDbType.Image;
-				case "int":
-					return SqlDbType.Int;
-				case "money":
-					return SqlDbType.Money;
-				case "nchar":
-					return SqlDbType.NChar;
-				case "ntext":
-					return SqlDbType.NText;
-				case "nvarchar":
-					return SqlDbType.NVarChar;
-				case "real":
-					return SqlDbType.Real;
-				case "uniqueidentifier":
-					return SqlDbType.UniqueIdentifier;
-				case "smalldatetime":
-					return SqlDbType.SmallDateTime;
-				case "smallint":
-					return SqlDbType.SmallInt;
-				case "smallmoney":
-					return SqlDbType.SmallMoney;
-				case "text":
-					return SqlDbType.Text;
-				case "timestamp":
-					return SqlDbType.Timestamp;
-				case "tinyint":
-					return SqlDbType.TinyInt;
-				case "varbinary":
-					return SqlDbType.VarBinary;
-				case "varchar":
-					return SqlDbType.VarChar;
-				case "sql_variant":
-					return SqlDbType.Variant;
-				case "xml":
-					return SqlDbType.Xml;
-				case "date":
-					return SqlDbType.Date;
-				case "time":
-					return SqlDbType.Time;
-				case "datetime2":
-					return SqlDbType.DateTime2;
-				case "datetimeoffset":
-					return SqlDbType.DateTimeOffset;
-				default:
-					throw new ArgumentException("Unknown sqlDbType.", "sqlDbType");
-			}
-		}
-
-
-
 		#endregion Methods
-
-		public override string GetParameterName(string parameter)
-		{
-			return parameter.TrimStart('@');
-		}
 	}
 }

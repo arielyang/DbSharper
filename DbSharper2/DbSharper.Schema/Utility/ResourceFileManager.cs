@@ -5,9 +5,24 @@ namespace DbSharper.Schema.Utility
 {
 	public sealed class ResourceFileManager
 	{
+		#region Fields
+
+		private Assembly assembly;
+
+		#endregion Fields
+
+		#region Constructors
+
+		public ResourceFileManager(Assembly assembly)
+		{
+			this.assembly = assembly;
+		}
+
+		#endregion Constructors
+
 		#region Methods
 
-		public string ReadResourceString(string resourceFileName)
+		public string ReadResourceAsString(string resourceFileName)
 		{
 			// Return value.
 			string resourceValue = string.Empty;
@@ -15,10 +30,10 @@ namespace DbSharper.Schema.Utility
 			//string[] names = this.GetType().Assembly.GetManifestResourceNames();
 
 			// Get current assembly.
-			Assembly assembly = this.GetType().Assembly;
+			//Assembly assembly = Assembly.GetExecutingAssembly();
 
 			// Get current assembly name.
-			string assemblyName = this.GetType().Assembly.GetName().Name;
+			string assemblyName = assembly.GetName().Name;
 
 			// Get resource value (text, string).
 			using (StreamReader sr = new StreamReader(assembly.GetManifestResourceStream(assemblyName + "." + resourceFileName)))

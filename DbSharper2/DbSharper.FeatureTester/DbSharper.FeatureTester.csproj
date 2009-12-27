@@ -10,8 +10,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DbSharper.FeatureTester</RootNamespace>
     <AssemblyName>DbSharper.FeatureTester</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,15 +35,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -50,6 +43,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DbSharper.CodeGenerator\DbSharper.CodeGenerator.csproj">
+      <Project>{7D9ABD87-276F-493F-94AA-133D0747DECD}</Project>
+      <Name>DbSharper.CodeGenerator</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DbSharper.Data.SqlServer\DbSharper.Data.SqlServer.csproj">
       <Project>{09630A10-6539-475E-B848-A0E103A4CE4E}</Project>
       <Name>DbSharper.Data.SqlServer</Name>
@@ -58,16 +55,14 @@
       <Project>{7B5D9B29-F74E-46BD-AAD8-D0B0B51A8C3F}</Project>
       <Name>DbSharper.Library</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DbSharper.Provider.SqlServer\DbSharper.Provider.SqlServer.csproj">
+      <Project>{3A4CB1EE-7280-4FB2-9A2C-44F3D14A01A4}</Project>
+      <Name>DbSharper.Provider.SqlServer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DbSharper.Schema\DbSharper.Schema.csproj">
       <Project>{722569E0-AC05-4751-B98D-D1122AA44F99}</Project>
       <Name>DbSharper.Schema</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="Core.dbsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -77,4 +72,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
 </Project>

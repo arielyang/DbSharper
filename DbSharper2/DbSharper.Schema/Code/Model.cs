@@ -52,8 +52,8 @@ namespace DbSharper.Schema.Code
 			set;
 		}
 
-		[XmlAttribute("schema")]
-		public string Schema
+		[XmlAttribute("namespace")]
+		public string Namespace
 		{
 			get;
 			set;
