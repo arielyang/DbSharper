@@ -1,6 +1,6 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
 
-using DbSharper.Schema.Code;
 using DbSharper.Schema.Infrastructure;
 
 namespace DbSharper.Schema.Database
@@ -8,49 +8,59 @@ namespace DbSharper.Schema.Database
 	[XmlType("database")]
 	public class Database
 	{
+		#region Fields
+
+		private NamedCollection<Enumeration> enumerations;
+		private SchemaNamedCollection<Procedure> procedures;
+		private SchemaNamedCollection<Table> tables;
+		private SchemaNamedCollection<View> views;
+
+		#endregion Fields
+
 		#region Constructors
 
 		public Database()
 		{
-			this.Tables = new SchemaNamedCollection<Table>();
-			this.Views = new SchemaNamedCollection<View>();
-			this.Procedures = new SchemaNamedCollection<Procedure>();
-			this.Enumerations = new NamedCollection<Enumeration>();
+			this.tables = new SchemaNamedCollection<Table>();
+			this.views = new SchemaNamedCollection<View>();
+			this.procedures = new SchemaNamedCollection<Procedure>();
+			this.enumerations = new NamedCollection<Enumeration>();
 		}
 
 		#endregion Constructors
 
 		#region Properties
 
-		[XmlIgnore]
+		[XmlArray("enumerations")]
+		[XmlArrayItem("enumeration")]
 		public NamedCollection<Enumeration> Enumerations
 		{
-			get;
-			set;
+			get { return enumerations; }
+			set { throw new NotImplementedException(); }
 		}
 
 		[XmlArray("procedures")]
 		[XmlArrayItem("procedure")]
 		public SchemaNamedCollection<Procedure> Procedures
 		{
-			get;
-			set;
+			get { return procedures; }
+			set { throw new NotImplementedException(); }
 		}
 
 		[XmlArray("tables")]
 		[XmlArrayItem("table")]
 		public SchemaNamedCollection<Table> Tables
 		{
-			get;
-			set;
+			get { return tables; }
+			set { throw new NotImplementedException(); }
 		}
 
 		[XmlArray("views")]
 		[XmlArrayItem("view")]
 		public SchemaNamedCollection<View> Views
 		{
-			get;
-			set;
+			get { return views; }
+			set { throw new NotImplementedException(); }
 		}
 
 		#endregion Properties

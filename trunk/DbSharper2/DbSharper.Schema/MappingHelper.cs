@@ -77,7 +77,19 @@ namespace DbSharper.Schema
 				throw new ArgumentNullException("connectionStringName");
 			}
 
-			ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings[connectionStringName];
+			if (!File.Exists(configFile))
+			{
+				// TODO: Embed string into resource file later.
+				throw new DbSharperException(string.Format(CultureInfo.InvariantCulture, "Can not find configuration file \"{0}\".", configFile));
+			}
+
+			ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
+
+			fileMap.ExeConfigFilename = configFile;
+
+			System.Configuration.Configuration configuration = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+
+			ConnectionStringSettings settings = configuration.ConnectionStrings.ConnectionStrings[connectionStringName];
 
 			if (settings == null)
 			{
@@ -85,7 +97,7 @@ namespace DbSharper.Schema
 				throw new DbSharperException(string.Format(CultureInfo.InvariantCulture, "Can not find connection string named \"{0}\".", connectionStringName));
 			}
 
-			string value = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
+			string value = settings.ConnectionString;
 
 			if (string.IsNullOrEmpty(value))
 			{

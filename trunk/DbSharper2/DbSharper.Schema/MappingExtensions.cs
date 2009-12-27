@@ -48,6 +48,7 @@ namespace DbSharper.Schema
 					return CommonType.Decimal;
 				case DbType.Date:
 				case DbType.DateTime:
+				case DbType.Time:
 					return CommonType.DateTime;
 				case DbType.DateTime2:
 					return CommonType.DateTime2;
@@ -67,8 +68,6 @@ namespace DbSharper.Schema
 					return CommonType.Object;
 				case DbType.Single:
 					return CommonType.Single;
-				case DbType.Time:
-					return CommonType.DateTime;
 				case DbType.SByte:
 				case DbType.UInt16:
 				case DbType.UInt32:
@@ -234,7 +233,7 @@ namespace DbSharper.Schema
 			}
 			else
 			{
-				camelCaseName = name[0].ToString().ToUpperInvariant() + name.Substring(1);
+				camelCaseName = name[0].ToString().ToLowerInvariant() + name.Substring(1);
 			}
 
 			if (IsCSharpKeyword(camelCaseName))
@@ -262,7 +261,14 @@ namespace DbSharper.Schema
 				return name.ToUpperInvariant();
 			}
 
-			return name[0].ToString().ToUpperInvariant() + name.Substring(1).ToLowerInvariant();
+			if (name.ToUpperInvariant() == name)
+			{
+				return name[0].ToString().ToUpperInvariant() + name.Substring(1).ToLowerInvariant();
+			}
+			else
+			{
+				return name[0].ToString().ToUpperInvariant() + name.Substring(1);
+			}
 		}
 
 		#endregion Methods

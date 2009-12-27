@@ -27,30 +27,30 @@ namespace DbSharper.Schema
 
 		#region Methods
 
-		/// <summary>
-		/// Create a mapping.
-		/// </summary>
-		/// <param name="mappingConfigFile">Mapping configuration file.</param>
-		/// <returns>Mapping.</returns>
-		public static Mapping CreateMapping(string mappingConfigFile)
-		{
-			if (string.IsNullOrEmpty(mappingConfigFile))
-			{
-				throw new ArgumentNullException("mappingConfigFile");
-			}
+		///// <summary>
+		///// Create a mapping.
+		///// </summary>
+		///// <param name="mappingConfigFile">Mapping configuration file.</param>
+		///// <returns>Mapping.</returns>
+		//public static Mapping CreateMapping(string mappingConfigFile)
+		//{
+		//    if (string.IsNullOrEmpty(mappingConfigFile))
+		//    {
+		//        throw new ArgumentNullException("mappingConfigFile");
+		//    }
 
-			if (!File.Exists(mappingConfigFile))
-			{
-				// TODO: Embed string into resource file later.
-				throw new FileNotFoundException(
-					string.Format(CultureInfo.InvariantCulture, "{0}is not found.", mappingConfigFile),
-					mappingConfigFile);
-			}
+		//    if (!File.Exists(mappingConfigFile))
+		//    {
+		//        // TODO: Embed string into resource file later.
+		//        throw new FileNotFoundException(
+		//            string.Format(CultureInfo.InvariantCulture, "{0}is not found.", mappingConfigFile),
+		//            mappingConfigFile);
+		//    }
 
-			string mappingConfigContent = File.ReadAllText(mappingConfigFile);
+		//    string mappingConfigContent = File.ReadAllText(mappingConfigFile);
 
-			return CreateMapping(mappingConfigFile, mappingConfigContent);
-		}
+		//    return CreateMapping(mappingConfigFile, mappingConfigContent);
+		//}
 
 		/// <summary>
 		/// Create a mapping.
@@ -74,7 +74,7 @@ namespace DbSharper.Schema
 			{
 				// TODO: Embed string into resource file later.
 				throw new FileNotFoundException(
-					string.Format(CultureInfo.InvariantCulture, "{0}is not found.", mappingConfigFile),
+					string.Format(CultureInfo.InvariantCulture, "{0} is not found.", mappingConfigFile),
 					mappingConfigFile);
 			}
 
@@ -116,7 +116,7 @@ namespace DbSharper.Schema
 
 				Model model = new Model()
 				{
-					Schema = schema,
+					Namespace = schema,
 					Name = mappingRuleManager.TrimPrefix(databaseObject).ToPascalCase(),
 					Description = databaseObject.Description,
 					IsView = databaseObject is View,
@@ -197,9 +197,6 @@ namespace DbSharper.Schema
 			mapping = new Mapping();
 			mapping.ConnectionStringName = connectionStringName;
 			mapping.Database = database;
-			mapping.Enumerations = database.Enumerations;
-
-			database.Enumerations = null;
 
 			foreach (Table table in database.Tables)
 			{
@@ -236,7 +233,7 @@ namespace DbSharper.Schema
 						nameSpace.DataAccesses.Add(
 							new DataAccess()
 							{
-								Schema = schema,
+								Namespace = schema,
 								Name = classMethod.ClassName,
 								Description = string.Format(CultureInfo.InvariantCulture, "Access data about {0}.", classMethod.ClassName)
 							});
@@ -262,8 +259,8 @@ namespace DbSharper.Schema
 					return string.Format(
 						CultureInfo.InvariantCulture,
 						"Models.{0}.{1}",
-						model.Schema,
-						model.Name);
+						schema,
+						modelName);
 				}
 			}
 
@@ -313,7 +310,7 @@ namespace DbSharper.Schema
 					{
 						Table tb = database.Tables[fk.ReferentialTable];
 
-						return "Models." + tb.Schema.ToPascalCase() + "." + mappingRuleManager.TrimPrefix(tb).ToPascalCase() + "Item";
+						return "Models." + tb.Schema.ToPascalCase() + "." + mappingRuleManager.TrimPrefix(tb).ToPascalCase() + "Model";
 					}
 				}
 			}
@@ -326,19 +323,24 @@ namespace DbSharper.Schema
 				{
 					if (mappingRuleManager.TrimPrefix(tb) == referenceName)
 					{
-						return "Models." + tb.Schema.ToPascalCase() + "." + referenceName.ToPascalCase() + "Item";
+						return "Models." + tb.Schema.ToPascalCase() + "." + referenceName.ToPascalCase() + "Model";
 					}
 				}
-			}
-
-			if (database.Enumerations.Contains(columnName))
-			{
-				return "Enums." + columnName;
 			}
 
 			CommonType commonType = (databaseObject as IColumns).Columns[columnName].DbType.ToCommonType();
 
 			return MappingHelper.GetCommonTypeString(commonType);
+		}
+
+		private static string GetEnumType(DbType dbType, string columnName)
+		{
+			if (mapping.Database.Enumerations.Contains(columnName))
+			{
+				return "Enums." + columnName;
+			}
+
+			return null;
 		}
 
 		private static void LoadParameters(NamedCollection<Code.Parameter> parameters, Procedure procedure)
@@ -347,12 +349,13 @@ namespace DbSharper.Schema
 
 			foreach (var parameter in procedure.Parameters)
 			{
-				parameterName = provider.GetParameterName(parameter.Name).ToPascalCase();
+				parameterName = provider.GetParameterName(parameter.Name);
 
 				parameters.Add(
 					new Code.Parameter()
 					{
-						Name = parameterName,
+						Name = parameterName.ToPascalCase(),
+						CamelCaseName = parameterName.ToCamelCase(),
 						SqlName = parameter.Name,
 						DbType = parameter.DbType,
 						Description = parameter.Description,
@@ -371,33 +374,63 @@ namespace DbSharper.Schema
 
 			if (isView)
 			{
-				table = databaseObject as Table;
+				table = null;
 			}
 			else
 			{
-				table = null;
+				table = databaseObject as Table;
 			}
+
+			string name;
+			string pascalName;
+			Property property;
 
 			foreach (Column column in databaseObject.Columns)
 			{
-				properties.Add(
-					new Property
+				name = GetName(databaseObject, column.Name);
+				pascalName = column.Name.ToPascalCase();
+
+				property = new Property
 					{
-						Name = GetName(databaseObject, column.Name),
+						Name = pascalName,
 						Column = column.Name,
-						ColumnName = column.Name.ToPascalCase(),
+						CamelCaseName = pascalName.ToCamelCase(),
 						Description = column.Description,
 						Nulls = column.Nullable,
-						ReferenceType = GetReferenceType(databaseObject, column.Name),
 						Size = column.Size,
 						DbType = column.DbType,
-						Type = column.DbType.ToCommonType(),
-						CanGetItemBy = CanGetItemBy(table, column.Name),
+						Type = MappingHelper.GetCommonTypeString(column.DbType.ToCommonType()),
+						EnumType = GetEnumType(column.DbType, column.Name),
+						CanGetItemBy = isView ? false : CanGetItemBy(table, column.Name),
 						CanGetCollectionBy = isView ? false : CanGetCollectionBy(databaseObject, column.Name),
 						IsPrimaryKey = isView ? false : table.PrimaryKey.Columns.Contains(column.Name),
 						HasDefault = isView ? false : !string.IsNullOrEmpty(column.Default.Trim()),
-						Attributes = string.Empty
-					});
+						IsExtended = false
+					};
+
+				properties.Add(property);
+
+				if (name != pascalName && !databaseObject.Columns.Contains(name))
+				{
+					properties.Add(
+						new Property
+						{
+							Name = name,
+							Column = column.Name,
+							CamelCaseName = name.ToCamelCase(),
+							Description = column.Description,
+							Nulls = column.Nullable,
+							Size = column.Size,
+							DbType = column.DbType,
+							Type = GetReferenceType(databaseObject, column.Name),
+							EnumType = null,
+							CanGetItemBy = property.CanGetItemBy,
+							CanGetCollectionBy = property.CanGetCollectionBy,
+							IsPrimaryKey = property.IsPrimaryKey,
+							HasDefault = property.HasDefault,
+							IsExtended = true
+						});
+				}
 			}
 		}
 
@@ -417,7 +450,7 @@ namespace DbSharper.Schema
 					new Result
 					{
 						Name = modelName + typePostfix,
-						CommonType = modelNameWithSchema + typePostfix,
+						TypeName = modelNameWithSchema + typePostfix,
 						Description = string.Empty,
 						IsOutputParameter = false
 					});
@@ -430,7 +463,7 @@ namespace DbSharper.Schema
 						new Result
 						{
 							Name = matchResults.Groups["Name"].Captures[i].Value.ToPascalCase(),
-							CommonType = matchResults.Groups["Type"].Captures[i].Value,
+							TypeName = matchResults.Groups["Type"].Captures[i].Value,
 							Description = string.Empty,
 							IsOutputParameter = false
 						});
@@ -445,7 +478,7 @@ namespace DbSharper.Schema
 						new Result
 						{
 							Name = parameter.Name,
-							CommonType = parameter.Name == "ReturnResult" ? "ReturnResult" : MappingHelper.GetCommonTypeString(parameter.Type),
+							TypeName = parameter.Name == "ReturnResult" ? "ReturnResult" : MappingHelper.GetCommonTypeString(parameter.Type),
 							Description = parameter.Description,
 							IsOutputParameter = true
 						});

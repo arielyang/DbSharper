@@ -13,9 +13,9 @@ namespace DbSharper.Schema.Code
 	{
 		#region Properties
 
-		[XmlAttribute("type")]
+		[XmlAttribute("typeName")]
 		[ReadOnly(true)]
-		public string CommonType
+		public string TypeName
 		{
 			get; set;
 		}

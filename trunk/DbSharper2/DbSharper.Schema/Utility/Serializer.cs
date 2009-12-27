@@ -30,16 +30,20 @@ namespace DbSharper.Schema.Utility
 				IndentChars = "\t"
 			};
 
+			XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+
+			ns.Add(string.Empty, string.Empty);
+
 			StringBuilder sb = new StringBuilder();
 
 			using (XmlWriter xw = XmlTextWriter.Create(sb, settings))
 			{
 				XmlSerializer xs = new XmlSerializer(value.GetType());
 
-				xs.Serialize(xw, value);
+				xs.Serialize(xw, value, ns);
 			}
 
-			return sb.ToString().Replace(" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"", string.Empty);
+			return sb.ToString();
 		}
 
 		#endregion Methods

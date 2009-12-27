@@ -14,13 +14,6 @@ namespace DbSharper.Schema.Code
 	{
 		#region Properties
 
-		[XmlAttribute("attributes")]
-		[Category("Extension")]
-		public string Attributes
-		{
-			get; set;
-		}
-
 		[XmlAttribute("camelCaseName")]
 		[ReadOnly(true)]
 		public string CamelCaseName
@@ -50,13 +43,6 @@ namespace DbSharper.Schema.Code
 			get; set;
 		}
 
-		[XmlAttribute("columnName")]
-		[ReadOnly(true)]
-		public string ColumnName
-		{
-			get; set;
-		}
-
 		[XmlAttribute("dbType")]
 		[ReadOnly(true)]
 		public DbType DbType
@@ -72,8 +58,23 @@ namespace DbSharper.Schema.Code
 			get; set;
 		}
 
+		[XmlAttribute("enumType")]
+		[ReadOnly(true)]
+		public string EnumType
+		{
+			get;
+			set;
+		}
+
 		[XmlIgnore]
 		public bool HasDefault
+		{
+			get; set;
+		}
+
+		[XmlAttribute("isExtended")]
+		[ReadOnly(true)]
+		public bool IsExtended
 		{
 			get; set;
 		}
@@ -98,13 +99,6 @@ namespace DbSharper.Schema.Code
 			get; set;
 		}
 
-		[XmlAttribute("referenceType")]
-		[ReadOnly(true)]
-		public string ReferenceType
-		{
-			get; set;
-		}
-
 		[XmlAttribute("size")]
 		[ReadOnly(true)]
 		public int Size
@@ -114,7 +108,7 @@ namespace DbSharper.Schema.Code
 
 		[XmlAttribute("type")]
 		[ReadOnly(true)]
-		public CommonType Type
+		public string Type
 		{
 			get; set;
 		}

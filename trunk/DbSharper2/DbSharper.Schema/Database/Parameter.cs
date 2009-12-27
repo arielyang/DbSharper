@@ -52,7 +52,7 @@ namespace DbSharper.Schema.Database
 				"{0} {1} {2} {3}",
 				this.Name,
 				this.DbType,
-				this.Size == 0 ? string.Empty : this.Size.ToString(CultureInfo.InvariantCulture),
+				this.Size == 0 ? string.Empty : "(" + this.Size.ToString(CultureInfo.InvariantCulture) + ")",
 				this.Direction).Trim();
 		}
 

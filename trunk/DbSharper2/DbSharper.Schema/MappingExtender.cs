@@ -84,7 +84,7 @@ namespace DbSharper.Schema
 				new Result
 				{
 					Name = "ReturnResult",
-					CommonType = "ReturnResult",
+					TypeName = "ReturnResult",
 					Description = "Return result.",
 					IsOutputParameter = true
 				});
@@ -121,7 +121,7 @@ namespace DbSharper.Schema
 				new Result
 				{
 					Name = model.Name + "Item",
-					CommonType = model.Name + "Item",
+					TypeName = model.Name + "Item",
 					Description = model.Name + " Item.",
 					IsOutputParameter = false
 				});
@@ -131,9 +131,7 @@ namespace DbSharper.Schema
 			sb.AppendLine("FROM");
 			foreach (var property in model.Properties)
 			{
-				if (property.ReferenceType != property.Type.ToString())
-				{
-				}
+				
 			}
 			sb.AppendLine();
 			sb.AppendLine("WHERE");
@@ -168,13 +166,13 @@ namespace DbSharper.Schema
 			DataAccess dataAccess;
 
 			// Discover relative DataAccessNamespace or create a new one if it does not exist.
-			if (mapping.DataAccessNamespaces.Contains(model.Schema))
+			if (mapping.DataAccessNamespaces.Contains(model.Namespace))
 			{
-				dataAccessNamespace = mapping.DataAccessNamespaces[model.Schema];
+				dataAccessNamespace = mapping.DataAccessNamespaces[model.Namespace];
 			}
 			else
 			{
-				dataAccessNamespace = new DataAccessNamespace { Name = model.Schema };
+				dataAccessNamespace = new DataAccessNamespace { Name = model.Namespace };
 
 				mapping.DataAccessNamespaces.Add(dataAccessNamespace);
 			}
@@ -189,7 +187,7 @@ namespace DbSharper.Schema
 				dataAccess = new DataAccess
 				{
 					Name = model.Name,
-					Schema = model.Schema,
+					Namespace = model.Namespace,
 					Description = string.Format(CultureInfo.InvariantCulture, "Auto generated class for model {0}.", model.Name)
 				};
 

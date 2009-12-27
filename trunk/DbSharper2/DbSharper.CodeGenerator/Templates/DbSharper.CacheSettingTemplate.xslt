@@ -43,7 +43,7 @@
 				<xsl:for-each select="//method"><xsl:text>
 				</xsl:text>
 				<add>
-					<xsl:attribute name="name"><xsl:value-of select="$connectionStringName" />.<xsl:value-of select="../@schema" />.<xsl:value-of select="../@name" />.<xsl:value-of select="./@name" /></xsl:attribute>
+					<xsl:attribute name="name"><xsl:value-of select="$connectionStringName" />.<xsl:value-of select="../@schema" />.<xsl:value-of select="../@name" />.<xsl:value-of select="@name" /></xsl:attribute>
 					<xsl:attribute name="enabled">true</xsl:attribute>
 					<xsl:attribute name="duration">60</xsl:attribute>
 				</add>

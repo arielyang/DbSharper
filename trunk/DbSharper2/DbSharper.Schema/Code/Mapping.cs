@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 
+using DbSharper.Schema.Database;
 using DbSharper.Schema.Infrastructure;
 
 namespace DbSharper.Schema.Code
@@ -11,9 +12,8 @@ namespace DbSharper.Schema.Code
 
 		internal Mapping()
 		{
-			this.ModelNamespaces = new NamedCollection<ModelNamespace>();
 			this.DataAccessNamespaces = new NamedCollection<DataAccessNamespace>();
-			this.Enumerations = new NamedCollection<Enumeration>();
+			this.ModelNamespaces = new NamedCollection<ModelNamespace>();
 		}
 
 		#endregion Constructors
@@ -37,14 +37,6 @@ namespace DbSharper.Schema.Code
 
 		[XmlElement("database")]
 		public Database.Database Database
-		{
-			get;
-			set;
-		}
-
-		[XmlArray("enums")]
-		[XmlArrayItem("enum")]
-		public NamedCollection<Enumeration> Enumerations
 		{
 			get;
 			set;

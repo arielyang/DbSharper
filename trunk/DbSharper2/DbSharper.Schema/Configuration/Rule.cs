@@ -104,7 +104,7 @@ namespace DbSharper.Schema.Configuration
 			// Prefix has high priority than name.
 			if (!string.IsNullOrEmpty(this.Prefix))
 			{
-				if (this.TrimPrefix.Value)
+				if (this.TrimPrefix.HasValue && this.TrimPrefix.Value)
 				{
 					return string.Format(CultureInfo.InvariantCulture, "{0} = {1} and trim {1}", this.RuleType, this.Prefix);
 				}

@@ -1,4 +1,4 @@
-﻿<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns:script="urn:my-scripts">
+﻿<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns:script="urn:scripts">
 <xsl:template name="ExecuteHeader" match="/">
 <xsl:variable name="methodName" select="./@name" />
 <xsl:variable name="results" select="./results/result" />
