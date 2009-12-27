@@ -23,8 +23,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper.CodeGenerator", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper.Provider.SqlServer", "DbSharper.Provider.SqlServer\DbSharper.Provider.SqlServer.csproj", "{3A4CB1EE-7280-4FB2-9A2C-44F3D14A01A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper.Schema.Test", "DbSharper.Schema.Test\DbSharper.Schema.Test.csproj", "{4A9D0D20-2D51-4F8D-AFF6-A123557E9CF8}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{86D1CC71-B55F-4DE1-8758-50381E397FBF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{160BA0CE-2095-4F82-9D22-956B4C6DCDB9}"
@@ -32,6 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{
 		Resources\DbSharper.com.url = Resources\DbSharper.com.url
 		Resources\DbSharper.ico = Resources\DbSharper.ico
 		Resources\Dbsx.ico = Resources\Dbsx.ico
+		Resources\mapping.xsd = Resources\mapping.xsd
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ItemTemplate", "ItemTemplate", "{EE1FA72D-74A1-4952-8235-0DD5DEA4511C}"
@@ -77,15 +76,8 @@ Global
 		{3A4CB1EE-7280-4FB2-9A2C-44F3D14A01A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A4CB1EE-7280-4FB2-9A2C-44F3D14A01A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A4CB1EE-7280-4FB2-9A2C-44F3D14A01A4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4A9D0D20-2D51-4F8D-AFF6-A123557E9CF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4A9D0D20-2D51-4F8D-AFF6-A123557E9CF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4A9D0D20-2D51-4F8D-AFF6-A123557E9CF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4A9D0D20-2D51-4F8D-AFF6-A123557E9CF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{4A9D0D20-2D51-4F8D-AFF6-A123557E9CF8} = {86D1CC71-B55F-4DE1-8758-50381E397FBF}
 	EndGlobalSection
 EndGlobal
