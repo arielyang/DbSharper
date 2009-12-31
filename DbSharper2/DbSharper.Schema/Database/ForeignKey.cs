@@ -16,8 +16,8 @@ namespace DbSharper.Schema.Database
 
 		#region Properties
 
-		[XmlAttribute("referentialTable")]
-		public string ReferentialTable
+		[XmlAttribute("referentialTableName")]
+		public string ReferentialTableName
 		{
 			get; set;
 		}

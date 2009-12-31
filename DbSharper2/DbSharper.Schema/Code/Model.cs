@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing.Design;
+using System.Globalization;
 using System.Xml.Serialization;
 
 using DbSharper.Schema.Infrastructure;
@@ -44,16 +45,17 @@ namespace DbSharper.Schema.Code
 			set;
 		}
 
-		[XmlElement("property")]
-		[Browsable(false)]
-		public NamedCollection<Property> Properties
+		//[XmlAttribute("namespace")]
+		[XmlIgnore]
+		public string Namespace
 		{
 			get;
 			set;
 		}
 
-		[XmlAttribute("namespace")]
-		public string Namespace
+		[XmlElement("property")]
+		[Browsable(false)]
+		public NamedCollection<Property> Properties
 		{
 			get;
 			set;
@@ -63,12 +65,21 @@ namespace DbSharper.Schema.Code
 		/// Relative table or view name.
 		/// </summary>
 		[XmlIgnore]
-		internal string MappingSource
+		internal string MappingName
 		{
 			get;
 			set;
 		}
 
 		#endregion Properties
+
+		#region Methods
+
+		public override string ToString()
+		{
+			return string.Format(CultureInfo.InvariantCulture, "{0}.{1}", this.Namespace, this.Name);
+		}
+
+		#endregion Methods
 	}
 }

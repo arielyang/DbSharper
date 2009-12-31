@@ -8,13 +8,22 @@ namespace DbSharper.Schema.Provider
 {
 	public static class SchemaProviderFactory
 	{
+		#region Fields
+
+		private static Type typeCache;
+
+		#endregion Fields
+
 		#region Methods
 
 		public static SchemaProviderBase Create(string providerName)
 		{
-			Type type = GetProviderType(providerName);
+			if (typeCache == null)
+			{
+				typeCache = GetProviderType(providerName);
+			}
 
-			SchemaProviderBase provider = (SchemaProviderBase)Activator.CreateInstance(type);
+			SchemaProviderBase provider = (SchemaProviderBase)Activator.CreateInstance(typeCache);
 
 			return provider;
 		}

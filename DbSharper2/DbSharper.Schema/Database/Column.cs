@@ -11,6 +11,12 @@ namespace DbSharper.Schema.Database
 	{
 		#region Properties
 
+		[XmlAttribute("dbType")]
+		public DbType DbType
+		{
+			get; set;
+		}
+
 		[XmlAttribute("default")]
 		public string Default
 		{
@@ -37,12 +43,6 @@ namespace DbSharper.Schema.Database
 
 		[XmlAttribute("size")]
 		public int Size
-		{
-			get; set;
-		}
-
-		[XmlAttribute("dbType")]
-		public DbType DbType
 		{
 			get; set;
 		}

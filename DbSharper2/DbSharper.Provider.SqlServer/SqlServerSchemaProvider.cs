@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 
-using DbSharper.Schema.Code;
+using DbSharper.Data.SqlServer;
 using DbSharper.Schema.Database;
 using DbSharper.Schema.Infrastructure;
 using DbSharper.Schema.Provider;
@@ -25,6 +25,11 @@ namespace DbSharper.Schema
 		#endregion Fields
 
 		#region Methods
+
+		public override Type GetDatabaseType()
+		{
+			return typeof(SqlServerDatabase);
+		}
 
 		public override DbType GetDbType(string dbTypeString)
 		{
@@ -152,7 +157,8 @@ namespace DbSharper.Schema
 
 		public override string GetParameterName(string parameter)
 		{
-			return parameter.TrimStart('@');
+			//return parameter.TrimStart('@');
+			return parameter.Substring(1); // Remove leading '@'.
 		}
 
 		public override Database.Database GetSchema(string connectionString)
@@ -381,7 +387,7 @@ namespace DbSharper.Schema
 
 									if (this.database.Tables.Contains(dr["REFERENTIAL_TABLE_SCHEMA"].ToString(), dr["REFERENTIAL_TABLE_NAME"].ToString()))
 									{
-										foreignKey.ReferentialTable = dr["REFERENTIAL_TABLE_SCHEMA"].ToString() + "." + dr["REFERENTIAL_TABLE_NAME"].ToString();
+										foreignKey.ReferentialTableName = dr["REFERENTIAL_TABLE_SCHEMA"].ToString() + "." + dr["REFERENTIAL_TABLE_NAME"].ToString();
 									}
 
 									table.ForeignKeys.Add(foreignKey);

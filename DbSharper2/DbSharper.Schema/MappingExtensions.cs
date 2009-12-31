@@ -2,6 +2,7 @@
 using System.Data;
 using System.Text;
 
+using DbSharper.Schema.Code;
 using DbSharper.Schema.Infrastructure;
 
 namespace DbSharper.Schema
@@ -17,7 +18,7 @@ namespace DbSharper.Schema
 		/// <returns>Camel case name string.</returns>
 		internal static string ToCamelCase(this string name)
 		{
-			string pascalCaseName = ToPascalCaseInternal(name);
+			string pascalCaseName = name.ToPascalCase();
 
 			return ToCamelCaseInternal(pascalCaseName);
 		}
@@ -105,17 +106,24 @@ namespace DbSharper.Schema
 		}
 
 		/// <summary>
-		/// Remove "_Id" from a string which ends with "_Id".
+		/// Remove a primary key name string from a column name string which ends with the primary key name string.
 		/// </summary>
-		/// <param name="name">Name string.</param>
+		/// <param name="primaryKeyName">Primary key name string .</param>
 		/// <returns>Trimmed string.</returns>
-		internal static string TrimId(this string name)
+		internal static string TrimPrimaryKeyName(this string name, string primaryKeyName)
 		{
-			const string idString = "_Id";
+			int length = name.Length - primaryKeyName.Length;
 
-			if (name.EndsWith(idString, StringComparison.OrdinalIgnoreCase))
+			if (length <= 0)
 			{
-				return name.Substring(0, name.Length - idString.Length);
+				return null;
+			}
+
+			string tail = name.Substring(length);
+
+			if (string.Compare(tail, primaryKeyName, StringComparison.OrdinalIgnoreCase) == 0)
+			{
+				return name.Substring(0, length).TrimEnd('_');
 			}
 
 			return name;

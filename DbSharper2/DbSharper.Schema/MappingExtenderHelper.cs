@@ -1,8 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Data;
+using System.Globalization;
 using System.Text;
+
 using DbSharper.Schema.Code;
-using System;
 using DbSharper.Schema.Infrastructure;
 
 namespace DbSharper.Schema
@@ -13,7 +15,13 @@ namespace DbSharper.Schema
 
 		internal static string GetPrimaryKeyNamesConnectedWithAnd(Model model)
 		{
+			return GetPrimaryKeyNamesConnectedWithAnd(model, false);
+		}
+
+		internal static string GetPrimaryKeyNamesConnectedWithAnd(Model model, bool isList)
+		{
 			const string connectorString = "And";
+			const string listString = "List";
 
 			StringBuilder sb = new StringBuilder();
 
@@ -22,6 +30,12 @@ namespace DbSharper.Schema
 				if (property.IsPrimaryKey)
 				{
 					sb.Append(property.Name);
+
+					if (isList)
+					{
+						sb.Append(listString);
+					}
+
 					sb.Append(connectorString);
 				}
 			}
@@ -73,13 +87,12 @@ namespace DbSharper.Schema
 		/// Transform a model property to a method parameter.
 		/// </summary>
 		/// <param name="property">Model property.</param>
+		/// <param name="isList"></param>
 		/// <returns>Method paramter.</returns>
-		internal static Parameter PropertyToParameter(Property property)
+		internal static Parameter PropertyToParameter(Property property, bool isList)
 		{
 			try
 			{
-				CommonType type = (CommonType)Enum.Parse(typeof(CommonType), property.Type);
-
 				return new Parameter
 				{
 					Name = property.Name,
@@ -88,7 +101,7 @@ namespace DbSharper.Schema
 					Size = property.Size,
 					DbType = property.DbType,
 					SqlName = "@" + property.Name,
-					Type = type
+					Type = isList ? string.Format(CultureInfo.InvariantCulture, "IList<{0}>", property.Type) : property.Type
 				};
 
 			}
@@ -96,6 +109,11 @@ namespace DbSharper.Schema
 			{
 				return null;
 			}
+		}
+
+		internal static Parameter PropertyToParameter(Property property)
+		{
+			return PropertyToParameter(property, false);
 		}
 
 		/// <summary>
@@ -110,7 +128,7 @@ namespace DbSharper.Schema
 				Name = "Inserted" + property.Name,
 				Description = "Inserted " + property.Name,
 				IsOutputParameter = true,
-				TypeName = property.Type.ToString()
+				Type = property.Type.ToString()
 			};
 		}
 

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Xml;
+using System.Xml.Xsl;
 
 using DbSharper.Schema;
 using DbSharper.Schema.Code;
 using DbSharper.Schema.Utility;
-using System.Xml;
-using System.Xml.Xsl;
 
 namespace DbSharper.CodeGenerator
 {
@@ -18,15 +18,16 @@ namespace DbSharper.CodeGenerator
 		public Action<string> AfterFileItemAdded;
 		public Action<string> AfterFileItemDeleted;
 		public Action<string> BeforeFileItemAdded;
-		public Action<int> ProgressChanged;
 		public Action<Exception> ExceptionThrown;
+		public Action<int> ProgressChanged;
 
-		private string mappingContent;
 		private string defaultExtension;
 		private string defaultNamespace;
 		private string inputFileContent;
 		private string inputFilePath;
+		private string mappingContent;
 		private string mappingName;
+
 		//private Mapping mapping;
 		private List<string> oldFileNames;
 		private int progress;
@@ -49,6 +50,8 @@ namespace DbSharper.CodeGenerator
 
 		#endregion Constructors
 
+		#region Properties
+
 		private int Progress
 		{
 			set
@@ -69,6 +72,8 @@ namespace DbSharper.CodeGenerator
 			}
 		}
 
+		#endregion Properties
+
 		#region Methods
 
 		public byte[] Generate()
@@ -83,37 +88,6 @@ namespace DbSharper.CodeGenerator
 			GenerateFileItems(fileItems);
 
 			return Encoding.UTF8.GetBytes(mappingContent);
-		}
-
-		private void GenerateFileItems(List<FileItem> fileItems)
-		{
-			string fileContent;
-			string filePath;
-
-			foreach (var fileItem in fileItems)
-			{
-				if (BeforeFileItemAdded != null)
-				{
-					BeforeFileItemAdded(fileItem.FileName);
-				}
-
-				fileContent = GenerateFileFromTemplate(fileItem);
-				filePath = Path.Combine(Path.GetDirectoryName(this.inputFilePath), fileItem.FileName);
-
-				File.WriteAllText(filePath, fileContent, Encoding.UTF8);
-
-				if (ProgressChanged != null)
-				{
-					this.Progress += progressStep;
-
-					ProgressChanged(progress);
-				}
-
-				if (AfterFileItemAdded != null)
-				{
-					AfterFileItemAdded(fileItem.FileName);
-				}
-			}
 		}
 
 		private string GenerateFileFromTemplate(FileItem fileItem)
@@ -158,6 +132,37 @@ namespace DbSharper.CodeGenerator
 			}
 
 			return codeContent;
+		}
+
+		private void GenerateFileItems(List<FileItem> fileItems)
+		{
+			string fileContent;
+			string filePath;
+
+			foreach (var fileItem in fileItems)
+			{
+				if (BeforeFileItemAdded != null)
+				{
+					BeforeFileItemAdded(fileItem.FileName);
+				}
+
+				fileContent = GenerateFileFromTemplate(fileItem);
+				filePath = Path.Combine(Path.GetDirectoryName(this.inputFilePath), fileItem.FileName);
+
+				File.WriteAllText(filePath, fileContent, Encoding.UTF8);
+
+				if (ProgressChanged != null)
+				{
+					this.Progress += progressStep;
+
+					ProgressChanged(progress);
+				}
+
+				if (AfterFileItemAdded != null)
+				{
+					AfterFileItemAdded(fileItem.FileName);
+				}
+			}
 		}
 
 		private List<FileItem> GetFileItems(Mapping newMapping, Mapping oldMapping)

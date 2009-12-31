@@ -36,13 +36,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ItemTemplate", "ItemTemplate", "{EE1FA72D-74A1-4952-8235-0DD5DEA4511C}"
 	ProjectSection(SolutionItems) = preProject
 		ItemTemplate\Database.dbsx = ItemTemplate\Database.dbsx
+		ItemTemplate\DbSharperMappingTemplate.vstemplate = ItemTemplate\DbSharperMappingTemplate.vstemplate
 		ItemTemplate\DbSharperMappingTemplate.zip = ItemTemplate\DbSharperMappingTemplate.zip
+		ItemTemplate\TemplateIcon.ico = ItemTemplate\TemplateIcon.ico
 	EndProjectSection
 EndProject
 Global
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = DbSharper.vsmdi
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing.Design;
+using System.Globalization;
 using System.Xml.Serialization;
 
 using DbSharper.Schema.Infrastructure;
@@ -50,5 +51,14 @@ namespace DbSharper.Schema.Code
 		}
 
 		#endregion Properties
+
+		#region Methods
+
+		public override string ToString()
+		{
+			return string.Format(CultureInfo.InvariantCulture, "{0}.{1}", this.Namespace, this.Name);
+		}
+
+		#endregion Methods
 	}
 }

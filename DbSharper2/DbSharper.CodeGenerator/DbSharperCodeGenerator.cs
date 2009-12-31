@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+
 using EnvDTE;
+
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TextTemplating.VSHost;
 
@@ -12,12 +14,6 @@ namespace DbSharper.CodeGenerator
 	[Guid("7EF57AF1-ED7A-48F6-B4A2-8BF0C4521375")]
 	public sealed class DbSharperCodeGenerator : BaseCodeGeneratorWithSite
 	{
-		#region Fields
-
-		//private FormProcessing formProcessing;
-
-		#endregion Fields
-
 		#region Constructors
 
 		public DbSharperCodeGenerator()
@@ -132,5 +128,11 @@ namespace DbSharper.CodeGenerator
 		}
 
 		#endregion Methods
+
+		#region Other
+
+		//private FormProcessing formProcessing;
+
+		#endregion Other
 	}
 }

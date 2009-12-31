@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Xml;
 using System.Xml.Serialization;
+
 using DbSharper.Schema.Infrastructure;
 
 namespace DbSharper.Schema.Database
 {
 	public class Constraint : IName
 	{
+		#region Fields
+
 		private NamedCollection<Column> columns;
+
+		#endregion Fields
 
 		#region Constructors
 

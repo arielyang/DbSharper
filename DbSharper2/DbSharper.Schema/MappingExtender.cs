@@ -2,6 +2,7 @@
 using System.Data;
 using System.Globalization;
 using System.Text;
+
 using DbSharper.Schema.Code;
 using DbSharper.Schema.Infrastructure;
 
@@ -24,12 +25,6 @@ namespace DbSharper.Schema
 
 		#endregion Constructors
 
-		#region Delegates
-
-		private delegate Method ExtendDelegate(Model model);
-
-		#endregion Delegates
-
 		#region Methods
 
 		internal void Extend()
@@ -41,16 +36,16 @@ namespace DbSharper.Schema
 				foreach (var model in ns.Models)
 				{
 					ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get by id.
-					ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get by id with specific columns.
-					ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list.
-					ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list with specific columns.
-					ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list by ids.
-					ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list by ids with specific columns.
-					ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list foreign keys or indexes.
-					ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list foreign keys or indexes with specific columns.
+					//ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get by id with specific columns.
+					//ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list.
+					//ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list with specific columns.
+					//ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list by ids.
+					//ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list by ids with specific columns.
+					//ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list foreign keys or indexes.
+					//ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list foreign keys or indexes with specific columns.
 					ExtendMethod(model, ExtendDeleteByPrimaryKeyMethod); // Delete by primary key(s).
 					ExtendMethod(model, ExtendDeleteByPrimaryKeyMethod); // Delete by ids.
-					ExtendMethod(model, ExtendDeleteByPrimaryKeyMethod); // Delete by foreign keys or indexes.
+					//ExtendMethod(model, ExtendDeleteByPrimaryKeyMethod); // Delete by foreign keys or indexes.
 				}
 			}
 		}
@@ -65,7 +60,7 @@ namespace DbSharper.Schema
 			Method method = new Method
 			{
 				Name = "Delete",
-				Description = string.Format(CultureInfo.InvariantCulture, "Delete {0} item by primary key. (Auto generated)", model.Name),
+				Description = string.Format(CultureInfo.InvariantCulture, "Delete {0} by primary key. (Auto generated)", model.Name),
 				CommandType = CommandType.Text,
 				MethodType = MethodType.ExecuteNonQuery,
 			};
@@ -73,7 +68,7 @@ namespace DbSharper.Schema
 			// Add parameters.
 			foreach (var property in model.Properties)
 			{
-				if (property.IsPrimaryKey)
+				if (property.IsPrimaryKey && !property.IsExtended)
 				{
 					method.Parameters.Add(MappingExtenderHelper.PropertyToParameter(property));
 				}
@@ -84,7 +79,39 @@ namespace DbSharper.Schema
 				new Result
 				{
 					Name = "ReturnResult",
-					TypeName = "ReturnResult",
+					Type = "ReturnResult",
+					Description = "Return result.",
+					IsOutputParameter = true
+				});
+
+			return method;
+		}
+
+		private Method ExtendDeleteByPrimaryKeysMethod(Model model)
+		{
+			Method method = new Method
+			{
+				Name = "DeleteBy" + MappingExtenderHelper.GetPrimaryKeyNamesConnectedWithAnd(model, true),
+				Description = string.Format(CultureInfo.InvariantCulture, "Delete {0}s by primary keys. (Auto generated)", model.Name),
+				CommandType = CommandType.Text,
+				MethodType = MethodType.ExecuteNonQuery,
+			};
+
+			// Add parameters.
+			foreach (var property in model.Properties)
+			{
+				if (property.IsPrimaryKey && !property.IsExtended)
+				{
+					method.Parameters.Add(MappingExtenderHelper.PropertyToParameter(property, true));
+				}
+			}
+
+			// Add result.
+			method.Results.Add(
+				new Result
+				{
+					Name = "ReturnResult",
+					Type = "ReturnResult",
 					Description = "Return result.",
 					IsOutputParameter = true
 				});
@@ -121,7 +148,7 @@ namespace DbSharper.Schema
 				new Result
 				{
 					Name = model.Name + "Item",
-					TypeName = model.Name + "Item",
+					Type = model.Name + "Model",
 					Description = model.Name + " Item.",
 					IsOutputParameter = false
 				});
@@ -131,7 +158,7 @@ namespace DbSharper.Schema
 			sb.AppendLine("FROM");
 			foreach (var property in model.Properties)
 			{
-				
+
 			}
 			sb.AppendLine();
 			sb.AppendLine("WHERE");
@@ -139,7 +166,7 @@ namespace DbSharper.Schema
 			{
 				if (property.IsPrimaryKey)
 				{
-					sb.AppendFormat("\t{0}.{1} = @{1} AND", model.MappingSource, property.Name);
+					sb.AppendFormat("\t{0}.{1} = @{1} AND", model.MappingName, property.Name);
 					sb.AppendLine(); // Environment.NewLine
 				}
 			}
@@ -153,9 +180,9 @@ namespace DbSharper.Schema
 		/// </summary>
 		/// <param name="model">Model to extend.</param>
 		/// <param name="extendMethod">Extend method delegate.</param>
-		private void ExtendMethod(Model model, ExtendDelegate extendMethod)
+		private void ExtendMethod(Model model, Func<Model, Method> extendMethod)
 		{
-			Method method = extendMethod.Invoke(model);
+			Method method = extendMethod(model);
 
 			if (method == null)
 			{

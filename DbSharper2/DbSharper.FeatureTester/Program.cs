@@ -6,6 +6,7 @@ using DbSharper.Schema;
 using DbSharper.Schema.Code;
 using DbSharper.Schema.Utility;
 using DbSharper.CodeGenerator;
+using System.Collections.Generic;
 
 namespace DbSharper.FeatureTester
 {
@@ -18,16 +19,32 @@ namespace DbSharper.FeatureTester
 			string inputFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "..\\..\\..\\DbSharperVerifier\\DbSharperVerifier\\Core.dbsx");
 			string outputFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "..\\..\\..\\DbSharperVerifier\\DbSharperVerifier\\Core.Schema.xml");
 
+			string[] files = Directory.GetFiles(Path.GetDirectoryName(inputFilePath));
+
+			List<string> fileList = new List<string>();
+
+			string fileName;
+
+			foreach (var file in files)
+			{
+				fileName = Path.GetFileName(file);
+
+				if (fileName.StartsWith("Core.") && fileName != "Core.dbsx" && fileName != "Core.Schema.xml")
+				{
+					fileList.Add(fileName);
+				}
+			}
+
 			GeneratorEngine engine = new GeneratorEngine(
 				inputFilePath,
 				File.ReadAllText(inputFilePath),
 				".Schema.xml",
 				"DbSharperVerifier",
-				null);
+				fileList);
 
 			engine.ProgressChanged = (progress) => { Console.WriteLine("Progress {0}.", progress); };
-			engine.BeforeFileItemAdded = (fileName) => { Console.WriteLine("Before {0} Added.", fileName); };
-			engine.AfterFileItemAdded = (fileName) => { Console.WriteLine("After {0} Added.", fileName); };
+			engine.BeforeFileItemAdded = (file) => { Console.WriteLine("Before {0} Added.", file); };
+			engine.AfterFileItemAdded = (file) => { Console.WriteLine("After {0} Added.", file); };
 
 			byte[] bytes = engine.Generate();
 

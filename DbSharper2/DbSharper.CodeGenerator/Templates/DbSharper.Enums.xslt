@@ -2,7 +2,9 @@
 <xsl:import href="DbSharper.Scripts.xslt" />
 <xsl:output omit-xml-declaration="yes" method="text" />
 <xsl:param name="defaultNamespace" />
-<xsl:template match="/">using System.ComponentModel;
+<xsl:template match="/">using System;
+using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace <xsl:value-of select="$defaultNamespace" />.Enums
 {<xsl:for-each select="/mapping/database/enumerations/enumeration">
@@ -13,6 +15,8 @@ namespace <xsl:value-of select="$defaultNamespace" />.Enums
 <xsl:if test="@description=''">	/// Summary of enum <xsl:value-of select="@name" />.</xsl:if>
 	/// &lt;/summary&gt;<xsl:if test="@hasFlagsAttribute='true'">
 	[Flags]</xsl:if>
+	[Serializable]
+	[DataContract]
 	public enum <xsl:value-of select="@name" /> : <xsl:value-of select="script:CSharpAlias(@baseType)" />
 	{<xsl:for-each select="member">
 		/// &lt;summary&gt;
@@ -20,6 +24,7 @@ namespace <xsl:value-of select="$defaultNamespace" />.Enums
 <xsl:if test="@description=''">		/// Summary of enum member <xsl:value-of select="@name" />.</xsl:if>
 		/// &lt;/summary&gt;
 		[Description("<xsl:value-of select="@description" />")]
+		[EnumMember]
 		<xsl:value-of select="@name" /> = <xsl:value-of select="@value" /><xsl:if test="position()!=last()">,<xsl:text></xsl:text></xsl:if><xsl:text>
 	</xsl:text>
 	</xsl:for-each>}
