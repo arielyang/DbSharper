@@ -34,38 +34,7 @@ namespace DbSharper.Schema
 			return Path.GetFileNameWithoutExtension(mappingConfigFile);
 		}
 
-		internal static string GetConnectionStringProviderName(string configFile, string connectionStringName)
-		{
-			if (string.IsNullOrEmpty(configFile))
-			{
-				throw new ArgumentNullException("configFile");
-			}
-
-			if (string.IsNullOrEmpty(connectionStringName))
-			{
-				throw new ArgumentNullException("connectionStringName");
-			}
-
-			ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings[connectionStringName];
-
-			if (settings == null)
-			{
-				// TODO: Embed string into resource file later.
-				throw new DbSharperException(string.Format(CultureInfo.InvariantCulture, "Can not find connection string named \"{0}\".", connectionStringName));
-			}
-
-			string providerName = ConfigurationManager.ConnectionStrings[connectionStringName].ProviderName;
-
-			if (string.IsNullOrEmpty(providerName))
-			{
-				// TODO: Embed string into resource file later.
-				throw new DbSharperException(string.Format(CultureInfo.InvariantCulture, "ProviderName of connection string named \"{0}\" is null or empty.", connectionStringName));
-			}
-
-			return providerName;
-		}
-
-		internal static string GetConnectionStringValue(string configFile, string connectionStringName)
+		internal static ConnectionStringSettings GetConnectionStringSettings(string configFile, string connectionStringName)
 		{
 			if (string.IsNullOrEmpty(configFile))
 			{
@@ -97,15 +66,7 @@ namespace DbSharper.Schema
 				throw new DbSharperException(string.Format(CultureInfo.InvariantCulture, "Can not find connection string named \"{0}\".", connectionStringName));
 			}
 
-			string value = settings.ConnectionString;
-
-			if (string.IsNullOrEmpty(value))
-			{
-				// TODO: Embed string into resource file later.
-				throw new DbSharperException(string.Format(CultureInfo.InvariantCulture, "Value of connection string named \"{0}\" is null or empty.", connectionStringName));
-			}
-
-			return value;
+			return settings;
 		}
 
 		/// <summary>

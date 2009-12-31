@@ -36,9 +36,9 @@ namespace DbSharper.Schema.Code
 			get; set;
 		}
 
-		[XmlAttribute("column")]
+		[XmlAttribute("columnName")]
 		[ReadOnly(true)]
-		public string Column
+		public string ColumnName
 		{
 			get; set;
 		}
@@ -99,6 +99,14 @@ namespace DbSharper.Schema.Code
 			get; set;
 		}
 
+		[XmlAttribute("refPkName")]
+		[ReadOnly(true)]
+		public string RefPkName
+		{
+			get;
+			set;
+		}
+
 		[XmlAttribute("size")]
 		[ReadOnly(true)]
 		public int Size
@@ -114,5 +122,14 @@ namespace DbSharper.Schema.Code
 		}
 
 		#endregion Properties
+
+		#region Methods
+
+		public override string ToString()
+		{
+			return this.Name;
+		}
+
+		#endregion Methods
 	}
 }

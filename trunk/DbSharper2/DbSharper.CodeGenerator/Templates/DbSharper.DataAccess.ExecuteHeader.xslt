@@ -1,11 +1,11 @@
 ﻿<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns:script="urn:scripts">
 <xsl:template name="ExecuteHeader" match="/">
-<xsl:variable name="methodName" select="./@name" />
-<xsl:variable name="results" select="./results/result" />
+<xsl:variable name="methodName" select="@name" />
+<xsl:variable name="results" select="results/result" />
 <xsl:variable name="resultsCount" select="count($results)" />
 <xsl:variable name="resultClass" select="concat($methodName, 'Results')" />
 <xsl:variable name="resultType" select="script:CSharpAlias($results[1]/@type)" />
-<xsl:variable name="inputSqlParameters" select="./parameters/parameter[@direction='Input']" />
+<xsl:variable name="inputSqlParameters" select="parameters/parameter[@direction='Input']" />
 <xsl:variable name="inputSqlParametersCount" select="count($inputSqlParameters)" />
 		<xsl:if test="$inputSqlParametersCount&gt;0">
 
@@ -25,7 +25,7 @@
 
 		/// &lt;summary&gt;
 <xsl:value-of select="script:GetSummary(./@description, 2)" />
-<xsl:if test="./@description=''">		/// Summary of <xsl:value-of select="$methodName" />.</xsl:if>
+<xsl:if test="@description=''">		/// Summary of <xsl:value-of select="$methodName" />.</xsl:if>
 		/// &lt;/summary&gt;
 		public static <xsl:choose>
 		<xsl:when test="$resultsCount=0">void</xsl:when>
@@ -42,7 +42,7 @@
 
 		/// &lt;summary&gt;
 <xsl:value-of select="script:GetSummary(./@description, 2)" />
-<xsl:if test="./@description=''">		/// Summary of <xsl:value-of select="$methodName" />.</xsl:if>
+<xsl:if test="@description=''">		/// Summary of <xsl:value-of select="$methodName" />.</xsl:if>
 		/// &lt;/summary&gt;
 		public static <xsl:choose>
 		<xsl:when test="$resultsCount=0">void</xsl:when>

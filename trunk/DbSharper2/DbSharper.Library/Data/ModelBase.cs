@@ -99,7 +99,8 @@ namespace DbSharper.Library.Data
 
 			if (!this.ContainsField(fieldName))
 			{
-				throw new InvalidOperationException(
+				throw new ArgumentOutOfRangeException(
+					"fieldName",
 					string.Format(
 						CultureInfo.InvariantCulture,
 						"Field '{0}' does not exists.",
@@ -130,7 +131,8 @@ namespace DbSharper.Library.Data
 
 			if (!this.ContainsField(fieldName))
 			{
-				throw new InvalidOperationException(
+				throw new ArgumentOutOfRangeException(
+					"fieldName",
 					string.Format(
 						CultureInfo.InvariantCulture,
 						"Field '{0}' does not exists.",

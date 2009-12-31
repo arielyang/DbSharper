@@ -4,20 +4,20 @@
 <xsl:import href="DbSharper.DataAccess.ExecuteOutputParameters.xslt" />
 <xsl:template name="ExecuteReader" match="/">
 <xsl:variable name="cacheKey" select="concat(../@name,'_',./@name)" />
-<xsl:variable name="methodName" select="./@name" />
+<xsl:variable name="methodName" select="@name" />
 <xsl:variable name="sqlParametersCount" select="count(./parameters/parameter)" />
-<xsl:variable name="inputSqlParameters" select="./parameters/parameter[@direction='Input']" />
+<xsl:variable name="inputSqlParameters" select="parameters/parameter[@direction='Input']" />
 <xsl:variable name="inputSqlParametersCount" select="count(./parameters/parameter[@direction='Input'])" />
-<xsl:variable name="results" select="./results/result[@isOutputParameter='false']" />
+<xsl:variable name="results" select="results/result[@isOutputParameter='false']" />
 <xsl:variable name="resultsCount" select="count(./results/result)" />
-<xsl:variable name="resultType" select="./results/result[1]/@type" />
+<xsl:variable name="resultType" select="results/result[1]/@type" />
 <xsl:variable name="resultClass" select="concat($methodName, 'Results')" />
 <xsl:call-template name="ExecuteHeader" />
 		{
 			CachingService cache = new CachingService(<xsl:value-of select="$cacheKey" /><xsl:for-each select="$inputSqlParameters">, <xsl:value-of select="script:GetCamelCase(./@name)" />
 				<xsl:choose>
-					<xsl:when test="./@type='DateTime'">.ToShortDateString()</xsl:when>
-					<xsl:when test="./@type!='String'">.ToString()</xsl:when>
+					<xsl:when test="@type='DateTime'">.ToShortDateString()</xsl:when>
+					<xsl:when test="@type!='String'">.ToString()</xsl:when>
 				</xsl:choose>
 			</xsl:for-each>);
 
@@ -30,7 +30,7 @@
 			{<xsl:call-template name="ExecuteParameters" />
 				result = new <xsl:choose><xsl:when test="$resultsCount=1"><xsl:value-of select="$resultType" /></xsl:when><xsl:when test="$resultsCount&gt;1"><xsl:value-of select="$resultClass" /></xsl:when></xsl:choose>();
 
-				using (global::System.Data.SqlClient.SqlDataReader reader = SqlHelper.ExecuteReader(connectionString, global::System.Data.CommandType.<xsl:value-of select="./@commandType" />, "<xsl:value-of select="./@commandText" />"<xsl:if test="$sqlParametersCount!=0">, parms</xsl:if>))
+				using (global::System.Data.SqlClient.SqlDataReader reader = SqlHelper.ExecuteReader(connectionString, global::System.Data.CommandType.<xsl:value-of select="@commandType" />, "<xsl:value-of select="@commandText" />"<xsl:if test="$sqlParametersCount!=0">, parms</xsl:if>))
 				{<xsl:for-each select="$results">
 					<xsl:if test="position()!=1">
 
@@ -40,18 +40,18 @@
 					<xsl:when test="script:EndsWith(./@type,'Item')">
 					if(reader.Read())
 					{
-						result<xsl:if test="$resultsCount&gt;1">.<xsl:value-of select="./@name" /></xsl:if> = new <xsl:value-of select="./@type" />(reader);
+						result<xsl:if test="$resultsCount&gt;1">.<xsl:value-of select="@name" /></xsl:if> = new <xsl:value-of select="@type" />(reader);
 					}
 					else
 					{
-						result<xsl:if test="$resultsCount&gt;1">.<xsl:value-of select="./@name" /></xsl:if> = null;
+						result<xsl:if test="$resultsCount&gt;1">.<xsl:value-of select="@name" /></xsl:if> = null;
 					}</xsl:when>
 					<xsl:when test="script:EndsWith(./@type,'Collection')">
-					result<xsl:if test="$resultsCount&gt;1">.<xsl:value-of select="./@name" /></xsl:if> = new <xsl:value-of select="./@type" />();
+					result<xsl:if test="$resultsCount&gt;1">.<xsl:value-of select="@name" /></xsl:if> = new <xsl:value-of select="@type" />();
 
 					while (reader.Read())
 					{
-						result<xsl:if test="$resultsCount&gt;1">.<xsl:value-of select="./@name" /></xsl:if>.Add(new <xsl:value-of select="script:GetItemType(./@type)" />(reader));
+						result<xsl:if test="$resultsCount&gt;1">.<xsl:value-of select="@name" /></xsl:if>.Add(new <xsl:value-of select="script:GetItemType(./@type)" />(reader));
 					}</xsl:when>
 					</xsl:choose>
 				</xsl:for-each>
@@ -97,8 +97,8 @@
 			CachingService cache = new CachingService(<xsl:value-of select="$cacheKey" /><xsl:for-each select="$inputSqlParameters">
 				<xsl:if test="position()&lt;=$cacheKeyPosition">, <xsl:value-of select="script:GetCamelCase(./@name)" />
 				<xsl:choose>
-					<xsl:when test="./@type='DateTime'">.ToShortDateString()</xsl:when>
-					<xsl:when test="./@type!='String'">.ToString()</xsl:when>
+					<xsl:when test="@type='DateTime'">.ToShortDateString()</xsl:when>
+					<xsl:when test="@type!='String'">.ToString()</xsl:when>
 				</xsl:choose>
 				</xsl:if>
 			</xsl:for-each>);

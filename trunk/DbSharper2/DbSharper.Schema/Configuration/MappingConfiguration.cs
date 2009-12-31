@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Xml;
+
 using DbSharper.Schema.Infrastructure;
 
 namespace DbSharper.Schema.Configuration

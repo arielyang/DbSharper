@@ -13,13 +13,6 @@ namespace DbSharper.Schema.Code
 	{
 		#region Properties
 
-		[XmlAttribute("typeName")]
-		[ReadOnly(true)]
-		public string TypeName
-		{
-			get; set;
-		}
-
 		[XmlAttribute("description")]
 		[Category("Extension")]
 		[Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
@@ -38,6 +31,13 @@ namespace DbSharper.Schema.Code
 		[XmlAttribute("name")]
 		[ReadOnly(true)]
 		public string Name
+		{
+			get; set;
+		}
+
+		[XmlAttribute("type")]
+		[ReadOnly(true)]
+		public string Type
 		{
 			get; set;
 		}

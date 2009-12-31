@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DbSharper.Library</RootNamespace>
     <AssemblyName>DbSharper.Library</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\DbSharper.snk</AssemblyOriginatorKeyFile>
@@ -36,14 +36,29 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\ProductInfo.cs">
       <Link>ProductInfo.cs</Link>
     </Compile>
+    <Compile Include="Caching\CachingService.cs" />
+    <Compile Include="Configuration\CacheProvidersSection.cs" />
+    <Compile Include="Configuration\CacheSetting.cs" />
+    <Compile Include="Configuration\CacheSettingCollection.cs" />
+    <Compile Include="Configuration\CacheSettingsSection.cs" />
+    <Compile Include="Configuration\CachingServiceSetionGroup.cs" />
+    <Compile Include="Configuration\DbSharperSectionGroup.cs" />
     <Compile Include="Data\DataAccessBase.cs" />
     <Compile Include="Data\Database.cs" />
     <Compile Include="Data\DatabaseFactory.cs" />
@@ -61,6 +76,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Providers\CacheProvider.cs" />
+    <Compile Include="Providers\CacheProviderCollection.cs" />
+    <Compile Include="Providers\InProcessCacheProvider.cs" />
+    <Compile Include="Schema\ModelAttribute.cs" />
+    <Compile Include="Schema\ModelSchema.cs" />
+    <Compile Include="Schema\PropertyAttribute.cs" />
+    <Compile Include="Schema\PropertySchema.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -72,6 +94,9 @@
     <None Include="..\DbSharper.snk">
       <Link>DbSharper.snk</Link>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Validation\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

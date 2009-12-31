@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DbSharper.Provider.SqlServer</RootNamespace>
     <AssemblyName>DbSharper.Provider.SqlServer</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\DbSharper.snk</AssemblyOriginatorKeyFile>
@@ -36,8 +36,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\ProductInfo.cs">
@@ -55,6 +58,14 @@
     <EmbeddedResource Include="Resources\GetDatabaseSchema.sql" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DbSharper.Data.SqlServer\DbSharper.Data.SqlServer.csproj">
+      <Project>{09630A10-6539-475E-B848-A0E103A4CE4E}</Project>
+      <Name>DbSharper.Data.SqlServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DbSharper.Library\DbSharper.Library.csproj">
+      <Project>{7B5D9B29-F74E-46BD-AAD8-D0B0B51A8C3F}</Project>
+      <Name>DbSharper.Library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DbSharper.Schema\DbSharper.Schema.csproj">
       <Project>{722569E0-AC05-4751-B98D-D1122AA44F99}</Project>
       <Name>DbSharper.Schema</Name>

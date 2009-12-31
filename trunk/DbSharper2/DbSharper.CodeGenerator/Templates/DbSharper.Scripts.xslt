@@ -2,11 +2,6 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:script="urn:scripts">
 <msxsl:script language="C#" implements-prefix="script">
 <![CDATA[
-	public string ToLower(string str)
-	{
-		return str.ToLower();
-	}
-
 	public bool EndsWith(string str1, string str2)
 	{
 		return str1.EndsWith(str2, StringComparison.OrdinalIgnoreCase);
@@ -41,28 +36,6 @@
 	public string RemoveItemPostfix(string item)
 	{
 		return item.Substring(0, item.Length - 4);
-	}
-	
-	public string GetId(string column)
-	{
-		int i = column.LastIndexOf('_');
-
-		if (i < 0 || i == column.Length - 1)
-		{
-			return column;
-		}
-
-		return column.Substring(i + 1);
-	}
-
-	public string TrimId(string name)
-	{
-		if (name.EndsWith("_Id", StringComparison.OrdinalIgnoreCase))
-		{
-			return name.Substring(0, name.Length - 3);
-		}
-
-		return name;
 	}
 	
 	public string GetAnchor(string schema, string name)

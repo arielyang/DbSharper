@@ -4,11 +4,11 @@
 <xsl:import href="DbSharper.DataAccess.ExecuteOutputParameters.xslt" />
 <xsl:template name="ExecuteNonQuery" match="/">
 <xsl:variable name="cacheKey" select="concat(../@name,'_',./@name)" />
-<xsl:variable name="methodName" select="./@name" />
+<xsl:variable name="methodName" select="@name" />
 <xsl:variable name="sqlParametersCount" select="count(./parameters/parameter)" />
-<xsl:variable name="inputSqlParameters" select="./parameters/parameter[@direction='Input']" />
+<xsl:variable name="inputSqlParameters" select="parameters/parameter[@direction='Input']" />
 <xsl:variable name="inputSqlParametersCount" select="count(./parameters/parameter[@direction='Input'])" />
-<xsl:variable name="results" select="./results/result" />
+<xsl:variable name="results" select="results/result" />
 <xsl:variable name="resultsCount" select="count(./results/result)" />
 <xsl:variable name="resultType" select="script:CSharpAlias(./results/result[1]/@type)" />
 <xsl:variable name="resultClass" select="concat(./@name, 'Results')" />
@@ -16,8 +16,8 @@
 		{
 			CachingService cache = new CachingService(<xsl:value-of select="$cacheKey" /><xsl:for-each select="$inputSqlParameters">, <xsl:value-of select="script:GetCamelCase(./@name)" />
 				<xsl:choose>
-					<xsl:when test="./@type='DateTime'">.ToShortDateString()</xsl:when>
-					<xsl:when test="./@type!='String'">.ToString()</xsl:when>
+					<xsl:when test="@type='DateTime'">.ToShortDateString()</xsl:when>
+					<xsl:when test="@type!='String'">.ToString()</xsl:when>
 				</xsl:choose>
 			</xsl:for-each>);
 
@@ -28,7 +28,7 @@
 
 			if (result == null)
 			{<xsl:call-template name="ExecuteParameters" />
-				SqlHelper.ExecuteNonQuery(connectionString, global::System.Data.CommandType.<xsl:value-of select="./@commandType" />, "<xsl:value-of select="./@commandText" />"<xsl:if test="$sqlParametersCount!=0">, parms</xsl:if>);
+				SqlHelper.ExecuteNonQuery(connectionString, global::System.Data.CommandType.<xsl:value-of select="@commandType" />, "<xsl:value-of select="@commandText" />"<xsl:if test="$sqlParametersCount!=0">, parms</xsl:if>);
 				<xsl:if test="$resultsCount&gt;1">
 				result = new <xsl:value-of select="$resultClass" />();
 				</xsl:if>
@@ -77,8 +77,8 @@
 			CachingService cache = new CachingService(<xsl:value-of select="$cacheKey" /><xsl:for-each select="$inputSqlParameters">
 				<xsl:if test="position()&lt;=$cacheKeyPosition">, <xsl:value-of select="script:GetCamelCase(./@name)" />
 				<xsl:choose>
-					<xsl:when test="./@type='DateTime'">.ToShortDateString()</xsl:when>
-					<xsl:when test="./@type!='String'">.ToString()</xsl:when>
+					<xsl:when test="@type='DateTime'">.ToShortDateString()</xsl:when>
+					<xsl:when test="@type!='String'">.ToString()</xsl:when>
 				</xsl:choose>
 				</xsl:if>
 			</xsl:for-each>);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Globalization;
 using System.IO;
@@ -16,7 +17,6 @@ namespace DbSharper.Schema
 	{
 		#region Fields
 
-		private static Database.Database database;
 		private static Mapping mapping;
 		private static MappingRuleManager mappingRuleManager;
 		private static SchemaProviderBase provider;
@@ -26,31 +26,6 @@ namespace DbSharper.Schema
 		#endregion Fields
 
 		#region Methods
-
-		///// <summary>
-		///// Create a mapping.
-		///// </summary>
-		///// <param name="mappingConfigFile">Mapping configuration file.</param>
-		///// <returns>Mapping.</returns>
-		//public static Mapping CreateMapping(string mappingConfigFile)
-		//{
-		//    if (string.IsNullOrEmpty(mappingConfigFile))
-		//    {
-		//        throw new ArgumentNullException("mappingConfigFile");
-		//    }
-
-		//    if (!File.Exists(mappingConfigFile))
-		//    {
-		//        // TODO: Embed string into resource file later.
-		//        throw new FileNotFoundException(
-		//            string.Format(CultureInfo.InvariantCulture, "{0}is not found.", mappingConfigFile),
-		//            mappingConfigFile);
-		//    }
-
-		//    string mappingConfigContent = File.ReadAllText(mappingConfigFile);
-
-		//    return CreateMapping(mappingConfigFile, mappingConfigContent);
-		//}
 
 		/// <summary>
 		/// Create a mapping.
@@ -85,20 +60,86 @@ namespace DbSharper.Schema
 			string configFile = Path.Combine(Path.GetDirectoryName(mappingConfigFile), mappingConfig.ConfigFile);
 
 			string connectionStringName = MappingHelper.GetConnectionStringName(mappingConfigFile);
-			string connectionStringValue = MappingHelper.GetConnectionStringValue(configFile, connectionStringName);
-			string connestionStringProviderName = MappingHelper.GetConnectionStringProviderName(configFile, connectionStringName);
 
-			provider = SchemaProviderFactory.Create(connestionStringProviderName);
+			ConnectionStringSettings settings = MappingHelper.GetConnectionStringSettings(configFile, connectionStringName);
 
-			database = provider.GetSchema(connectionStringValue);
+			if (string.IsNullOrEmpty(settings.ConnectionString))
+			{
+				// TODO: Embed string into resource file later.
+				throw new DbSharperException(string.Format(CultureInfo.InvariantCulture, "Value of connection string named \"{0}\" is null or empty.", connectionStringName));
+			}
 
-			mapping = GetMapping(database, connectionStringName);
+			if (string.IsNullOrEmpty(settings.ProviderName))
+			{
+				// TODO: Embed string into resource file later.
+				throw new DbSharperException(string.Format(CultureInfo.InvariantCulture, "ProviderName of connection string named \"{0}\" is null or empty.", connectionStringName));
+			}
 
-			//MappingExtender extender = new MappingExtender(mapping);
+			provider = SchemaProviderFactory.Create(settings.ProviderName);
 
-			//extender.Extend();
+			Database.Database database = provider.GetSchema(settings.ConnectionString);
+
+			mapping = GetMapping(database, connectionStringName, provider.GetDatabaseType().FullName);
+
+			MappingExtender extender = new MappingExtender(mapping);
+
+			extender.Extend();
 
 			return mapping;
+		}
+
+		private static void AddDataAccess(Procedure procedure)
+		{
+			string schema;
+
+			if (mappingRuleManager.IsIncluded(procedure))
+			{
+				var classMethod = mappingRuleManager.GetClassMethod(procedure);
+
+				if (classMethod == null)
+				{
+					return;
+				}
+
+				schema = procedure.Schema.ToPascalCase();
+
+				if (!mapping.DataAccessNamespaces.Contains(schema))
+				{
+					mapping.DataAccessNamespaces.Add(new DataAccessNamespace() { Name = schema });
+				}
+
+				DataAccessNamespace nameSpace = mapping.DataAccessNamespaces[schema];
+
+				if (!nameSpace.DataAccesses.Contains(classMethod.ClassName))
+				{
+					nameSpace.DataAccesses.Add(
+						new DataAccess()
+						{
+							Namespace = schema,
+							Name = classMethod.ClassName,
+							Description = string.Format(CultureInfo.InvariantCulture, "Access data about {0}.", classMethod.ClassName)
+						});
+				}
+
+				AddMethod(nameSpace, classMethod, procedure);
+			}
+		}
+
+		private static void AddMethod(DataAccessNamespace nameSpace, ClassMethodContainer classMethod, Procedure procedure)
+		{
+			Method method = new Method()
+			{
+				Name = classMethod.MethodName.ToPascalCase(),
+				CommandText = string.Format(CultureInfo.InvariantCulture, "[{0}].[{1}]", procedure.Schema, procedure.Name),
+				CommandType = CommandType.StoredProcedure,
+				Description = procedure.Description,
+				MethodType = MappingHelper.GetMethodType(classMethod.MethodName)
+			};
+
+			LoadParameters(method.Parameters, procedure);
+			LoadResults(method.Results, classMethod.ClassName, method, procedure);
+
+			nameSpace.DataAccesses[classMethod.ClassName].Methods.Add(method);
 		}
 
 		private static void AddModel(IColumns databaseObject)
@@ -120,30 +161,13 @@ namespace DbSharper.Schema
 					Name = mappingRuleManager.TrimPrefix(databaseObject).ToPascalCase(),
 					Description = databaseObject.Description,
 					IsView = databaseObject is View,
-					MappingSource = databaseObject.Name
+					MappingName = databaseObject.ToString()
 				};
 
 				LoadProperties(model.Properties, databaseObject);
 
 				mapping.ModelNamespaces[schema].Models.Add(model);
 			}
-		}
-
-		private static Method BuildMethod(Procedure procedure, string className, string methodName)
-		{
-			Method method = new Method()
-			{
-				Name = methodName.ToPascalCase(),
-				CommandText = string.Format(CultureInfo.InvariantCulture, "[{0}].[{1}]", procedure.Schema, procedure.Name),
-				CommandType = CommandType.StoredProcedure,
-				Description = procedure.Description,
-				MethodType = MappingHelper.GetMethodType(methodName)
-			};
-
-			LoadParameters(method.Parameters, procedure);
-			LoadResults(method.Results, className, method, procedure);
-
-			return method;
 		}
 
 		private static bool CanGetCollectionBy(IColumns databaseObject, string columnName)
@@ -190,65 +214,17 @@ namespace DbSharper.Schema
 			return false;
 		}
 
-		private static Mapping GetMapping(Database.Database database, string connectionStringName)
+		private static string DiscoverEnumType(DbType dbType, string columnName)
 		{
-			string schema;
-
-			mapping = new Mapping();
-			mapping.ConnectionStringName = connectionStringName;
-			mapping.Database = database;
-
-			foreach (Table table in database.Tables)
+			if (mapping.Database.Enumerations.Contains(columnName))
 			{
-				AddModel(table);
+				return "Enums." + columnName;
 			}
 
-			foreach (View view in database.Views)
-			{
-				AddModel(view);
-			}
-
-			foreach (Procedure procedure in database.Procedures)
-			{
-				if (mappingRuleManager.IsIncluded(procedure))
-				{
-					var classMethod = mappingRuleManager.GetClassMethod(procedure);
-
-					if (classMethod == null)
-					{
-						continue;
-					}
-
-					schema = procedure.Schema.ToPascalCase();
-
-					if (!mapping.DataAccessNamespaces.Contains(schema))
-					{
-						mapping.DataAccessNamespaces.Add(new DataAccessNamespace() { Name = schema });
-					}
-
-					DataAccessNamespace nameSpace = mapping.DataAccessNamespaces[schema];
-
-					if (!nameSpace.DataAccesses.Contains(classMethod.ClassName))
-					{
-						nameSpace.DataAccesses.Add(
-							new DataAccess()
-							{
-								Namespace = schema,
-								Name = classMethod.ClassName,
-								Description = string.Format(CultureInfo.InvariantCulture, "Access data about {0}.", classMethod.ClassName)
-							});
-					}
-
-					Method method = BuildMethod(procedure, classMethod.ClassName, classMethod.MethodName);
-
-					nameSpace.DataAccesses[classMethod.ClassName].Methods.Add(method);
-				}
-			}
-
-			return mapping;
+			return null;
 		}
 
-		private static string GetModelForMethod(string schema, string modelName)
+		private static string DiscoverModelTypeForResult(string schema, string modelName)
 		{
 			Model model = mapping.GetModel(schema, modelName);
 
@@ -259,7 +235,7 @@ namespace DbSharper.Schema
 					return string.Format(
 						CultureInfo.InvariantCulture,
 						"Models.{0}.{1}",
-						schema,
+						schema.ToPascalCase(),
 						modelName);
 				}
 			}
@@ -267,87 +243,194 @@ namespace DbSharper.Schema
 			return modelName;
 		}
 
-		private static string GetName(IColumns databaseObject, string columnName)
+		private static void DiscoverReferenceModelType(Model model, Property property, ref int index)
 		{
-			if (databaseObject is Table)
-			{
-				var foreignKeys = (databaseObject as Table).ForeignKeys;
+			var tables = mapping.Database.Tables;
 
-				foreach (ForeignKey fk in foreignKeys)
+			string columnName = property.ColumnName;
+			int originalIndex = index;
+
+			Table referenceTable;
+			Model referenceModel;
+			string tableName;
+			string primaryKeyColumnName;
+			string propertyName;
+
+			if (!model.IsView) // Is mapping from table.
+			{
+				Table table = mapping.Database.Tables[model.MappingName];
+
+				if (table == null)
+				{
+					return;
+				}
+
+				var foreignKeys = table.ForeignKeys;
+
+				foreach (var fk in foreignKeys)
 				{
 					if (fk.Columns.Count == 1 && fk.Columns[0].Name == columnName)
 					{
-						return columnName.TrimId().ToPascalCase();
+						tableName = fk.ReferentialTableName;
+
+						referenceTable = tables[tableName];
+						referenceModel = mapping.GetModel(tableName);
+
+						if (referenceModel == null)
+						{
+							continue;
+						}
+
+						primaryKeyColumnName = referenceTable.PrimaryKey.Columns[0].Name.ToPascalCase();
+
+						propertyName = columnName.TrimPrimaryKeyName(primaryKeyColumnName);
+
+						if (string.IsNullOrEmpty(propertyName))
+						{
+							propertyName = referenceModel.Name;
+						}
+						else
+						{
+							propertyName = propertyName.ToPascalCase();
+						}
+
+						if (!model.Properties.Contains(propertyName))
+						{
+							model.Properties.Insert(
+								index + 1,
+								new Property
+								{
+									Name = propertyName,
+									CamelCaseName = propertyName.ToCamelCase(),
+									ColumnName = property.ColumnName,
+									DbType = property.DbType,
+									Type = string.Format(CultureInfo.InvariantCulture, "Models.{0}.{1}Model", referenceModel.Namespace, referenceModel.Name),
+									EnumType = null,
+									Nulls = property.Nulls,
+									Size = property.Size,
+									Description = property.Description,
+									CanGetCollectionBy = property.CanGetCollectionBy,
+									CanGetItemBy = property.CanGetItemBy,
+									HasDefault = property.HasDefault,
+									IsPrimaryKey = property.IsPrimaryKey,
+									RefPkName = primaryKeyColumnName,
+									IsExtended = true
+								});
+
+							index++;
+						}
 					}
 				}
 			}
 
-			if (columnName.EndsWith("_Id", StringComparison.OrdinalIgnoreCase))
+			if (index > originalIndex) // Found foreign key reference.
 			{
-				string referenceName = columnName.TrimId();
+				return;
+			}
 
-				foreach (Table tb in database.Tables)
+			// Not found foreign key reference. 
+			if (TrySplitColumnName(model.MappingName, property, out tableName, out primaryKeyColumnName))
+			{
+				referenceModel = mapping.GetModel(tableName);
+
+				if (referenceModel != null)
 				{
-					if (mappingRuleManager.TrimPrefix(tb) == referenceName)
+					propertyName = columnName.TrimPrimaryKeyName(primaryKeyColumnName);
+
+					if (string.IsNullOrEmpty(propertyName))
 					{
-						return referenceName.ToPascalCase();
+						propertyName = referenceModel.Name;
+					}
+					else
+					{
+						propertyName = propertyName.ToPascalCase();
+					}
+
+					if (!model.Properties.Contains(propertyName))
+					{
+						model.Properties.Insert(
+							index + 1,
+							new Property
+							{
+								Name = propertyName,
+								CamelCaseName = propertyName.ToCamelCase(),
+								ColumnName = property.ColumnName,
+								DbType = property.DbType,
+								Type = string.Format(CultureInfo.InvariantCulture, "Models.{0}.{1}Model", referenceModel.Namespace.ToPascalCase(), referenceModel.Name),
+								EnumType = null,
+								Nulls = property.Nulls,
+								Size = property.Size,
+								Description = property.Description,
+								CanGetCollectionBy = property.CanGetCollectionBy,
+								CanGetItemBy = property.CanGetItemBy,
+								HasDefault = property.HasDefault,
+								IsPrimaryKey = property.IsPrimaryKey,
+								RefPkName = primaryKeyColumnName,
+								IsExtended = true
+							});
+
+						index++;
 					}
 				}
 			}
-
-			return columnName.ToPascalCase();
 		}
 
-		private static string GetReferenceType(IColumns databaseObject, string columnName)
+		private static void DiscoverReferences()
 		{
-			if (databaseObject is Table)
+			NamedCollection<ModelNamespace> modelNamespaces = mapping.ModelNamespaces;
+			NamedCollection<Model> models;
+			NamedCollection<Property> properties;
+
+			foreach (var modelNamespace in modelNamespaces)
 			{
-				var foreignKeys = (databaseObject as Table).ForeignKeys;
+				models = modelNamespace.Models;
 
-				foreach (ForeignKey fk in foreignKeys)
+				foreach (var model in models)
 				{
-					if (fk.Columns.Count == 1 && fk.Columns[0].Name == columnName)
-					{
-						Table tb = database.Tables[fk.ReferentialTable];
+					properties = model.Properties;
 
-						return "Models." + tb.Schema.ToPascalCase() + "." + mappingRuleManager.TrimPrefix(tb).ToPascalCase() + "Model";
+					for (int i = 0; i < properties.Count; i++)
+					{
+						DiscoverReferenceModelType(model, properties[i], ref i);
 					}
 				}
 			}
-
-			if (columnName.EndsWith("_Id", StringComparison.OrdinalIgnoreCase))
-			{
-				string referenceName = columnName.TrimId();
-
-				foreach (Table tb in database.Tables)
-				{
-					if (mappingRuleManager.TrimPrefix(tb) == referenceName)
-					{
-						return "Models." + tb.Schema.ToPascalCase() + "." + referenceName.ToPascalCase() + "Model";
-					}
-				}
-			}
-
-			CommonType commonType = (databaseObject as IColumns).Columns[columnName].DbType.ToCommonType();
-
-			return MappingHelper.GetCommonTypeString(commonType);
 		}
 
-		private static string GetEnumType(DbType dbType, string columnName)
+		private static Mapping GetMapping(Database.Database database, string connectionStringName, string databaseType)
 		{
-			if (mapping.Database.Enumerations.Contains(columnName))
+			mapping = new Mapping();
+			mapping.ConnectionStringName = connectionStringName;
+			mapping.DatabaseType = databaseType;
+			mapping.Database = database;
+
+			foreach (var table in database.Tables)
 			{
-				return "Enums." + columnName;
+				AddModel(table);
 			}
 
-			return null;
+			foreach (var view in database.Views)
+			{
+				AddModel(view);
+			}
+
+			foreach (var procedure in database.Procedures)
+			{
+				AddDataAccess(procedure);
+			}
+
+			DiscoverReferences();
+
+			return mapping;
 		}
 
 		private static void LoadParameters(NamedCollection<Code.Parameter> parameters, Procedure procedure)
 		{
 			string parameterName;
 
-			foreach (var parameter in procedure.Parameters)
+			var procedureParameters = procedure.Parameters;
+
+			foreach (var parameter in procedureParameters)
 			{
 				parameterName = provider.GetParameterName(parameter.Name);
 
@@ -358,10 +441,10 @@ namespace DbSharper.Schema
 						CamelCaseName = parameterName.ToCamelCase(),
 						SqlName = parameter.Name,
 						DbType = parameter.DbType,
-						Description = parameter.Description,
+						Type = MappingHelper.GetCommonTypeString(parameter.DbType.ToCommonType()),
 						Direction = parameter.Direction,
 						Size = parameter.Size,
-						Type = parameter.DbType.ToCommonType()
+						Description = parameter.Description
 					});
 			}
 		}
@@ -381,56 +464,28 @@ namespace DbSharper.Schema
 				table = databaseObject as Table;
 			}
 
-			string name;
-			string pascalName;
-			Property property;
+			var columns = databaseObject.Columns;
 
-			foreach (Column column in databaseObject.Columns)
+			foreach (var column in columns)
 			{
-				name = GetName(databaseObject, column.Name);
-				pascalName = column.Name.ToPascalCase();
-
-				property = new Property
+				properties.Add(
+					new Property
 					{
-						Name = pascalName,
-						Column = column.Name,
-						CamelCaseName = pascalName.ToCamelCase(),
-						Description = column.Description,
-						Nulls = column.Nullable,
-						Size = column.Size,
+						Name = column.Name.ToPascalCase(),
+						CamelCaseName = column.Name.ToCamelCase(),
+						ColumnName = column.Name,
 						DbType = column.DbType,
 						Type = MappingHelper.GetCommonTypeString(column.DbType.ToCommonType()),
-						EnumType = GetEnumType(column.DbType, column.Name),
-						CanGetItemBy = isView ? false : CanGetItemBy(table, column.Name),
+						EnumType = DiscoverEnumType(column.DbType, column.Name),
+						Nulls = column.Nullable,
+						Size = column.Size,
+						Description = column.Description,
 						CanGetCollectionBy = isView ? false : CanGetCollectionBy(databaseObject, column.Name),
-						IsPrimaryKey = isView ? false : table.PrimaryKey.Columns.Contains(column.Name),
+						CanGetItemBy = isView ? false : CanGetItemBy(table, column.Name),
 						HasDefault = isView ? false : !string.IsNullOrEmpty(column.Default.Trim()),
+						IsPrimaryKey = isView ? false : table.PrimaryKey.Columns.Contains(column.Name),
 						IsExtended = false
-					};
-
-				properties.Add(property);
-
-				if (name != pascalName && !databaseObject.Columns.Contains(name))
-				{
-					properties.Add(
-						new Property
-						{
-							Name = name,
-							Column = column.Name,
-							CamelCaseName = name.ToCamelCase(),
-							Description = column.Description,
-							Nulls = column.Nullable,
-							Size = column.Size,
-							DbType = column.DbType,
-							Type = GetReferenceType(databaseObject, column.Name),
-							EnumType = null,
-							CanGetItemBy = property.CanGetItemBy,
-							CanGetCollectionBy = property.CanGetCollectionBy,
-							IsPrimaryKey = property.IsPrimaryKey,
-							HasDefault = property.HasDefault,
-							IsExtended = true
-						});
-				}
+					});
 			}
 		}
 
@@ -442,17 +497,17 @@ namespace DbSharper.Schema
 
 			if (length == 0 && method.MethodType == MethodType.ExecuteReader)
 			{
-				string typePostfix = regexGetList.IsMatch(method.Name) ? "Collection" : "Item";
+				string typePostfix = regexGetList.IsMatch(method.Name) ? "ModelList" : "Model";
 
-				string modelNameWithSchema = GetModelForMethod(procedure.Schema, modelName);
+				string modelNameWithSchema = DiscoverModelTypeForResult(procedure.Schema, modelName);
 				// TODO: Conflict Names.
 				results.Add(
 					new Result
 					{
-						Name = modelName + typePostfix,
-						TypeName = modelNameWithSchema + typePostfix,
 						Description = string.Empty,
-						IsOutputParameter = false
+						IsOutputParameter = false,
+						Name = modelName + typePostfix,
+						Type = regexGetList.IsMatch(method.Name) ? string.Format(CultureInfo.InvariantCulture, "List<Models.{0}>", modelNameWithSchema) : modelNameWithSchema + "Model"
 					});
 			}
 			else
@@ -463,7 +518,7 @@ namespace DbSharper.Schema
 						new Result
 						{
 							Name = matchResults.Groups["Name"].Captures[i].Value.ToPascalCase(),
-							TypeName = matchResults.Groups["Type"].Captures[i].Value,
+							Type = matchResults.Groups["Type"].Captures[i].Value,
 							Description = string.Empty,
 							IsOutputParameter = false
 						});
@@ -478,12 +533,52 @@ namespace DbSharper.Schema
 						new Result
 						{
 							Name = parameter.Name,
-							TypeName = parameter.Name == "ReturnResult" ? "ReturnResult" : MappingHelper.GetCommonTypeString(parameter.Type),
+							Type = parameter.Name == "ReturnResult" ? "ReturnResult" : parameter.Type,
 							Description = parameter.Description,
 							IsOutputParameter = true
 						});
 				}
 			}
+		}
+
+		private static bool TrySplitColumnName(string mappingName, Property property, out string tableName, out string primaryKeyColumnName)
+		{
+			var tables = mapping.Database.Tables;
+
+			Column column;
+			string trimmedTableName;
+
+			foreach (var table in tables)
+			{
+				if (table.PrimaryKey.Columns.Count == 1)
+				{
+					column = table.PrimaryKey.Columns[0];
+
+					trimmedTableName = mappingRuleManager.TrimPrefix(table);
+					primaryKeyColumnName = column.Name.ToPascalCase();
+
+					if (column.DbType == property.DbType)
+					{
+						if ((
+							string.Compare(primaryKeyColumnName, property.Name, StringComparison.OrdinalIgnoreCase) == 0
+							&& primaryKeyColumnName.StartsWith(table.Name)
+							&& table.ToString() != mappingName
+							)
+							|| string.Compare(trimmedTableName + primaryKeyColumnName, property.Name, StringComparison.OrdinalIgnoreCase) == 0
+							|| string.Compare(trimmedTableName + "_" + primaryKeyColumnName, property.Name, StringComparison.OrdinalIgnoreCase) == 0)
+						{
+							tableName = table.ToString(); // Table name with schema.
+
+							return true;
+						}
+					}
+				}
+			}
+
+			tableName = null;
+			primaryKeyColumnName = null;
+
+			return false;
 		}
 
 		#endregion Methods

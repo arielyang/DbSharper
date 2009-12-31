@@ -74,11 +74,20 @@ namespace DbSharper.Schema.Code
 
 		[XmlAttribute("type")]
 		[ReadOnly(true)]
-		public CommonType Type
+		public string Type
 		{
 			get; set;
 		}
 
 		#endregion Properties
+
+		#region Methods
+
+		public override string ToString()
+		{
+			return this.Name;
+		}
+
+		#endregion Methods
 	}
 }

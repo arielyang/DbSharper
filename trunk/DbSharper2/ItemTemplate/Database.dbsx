@@ -2,7 +2,38 @@
 	<model>
 		<exclude>
 			<table prefix="Ref_" />
+			<!--
+			<schema name="Site" />
+			<table name="User" />
+			<table prefix="Forum_" />
+			<view name="User" />
+			<view prefix="Forum_" />
+			-->
 		</exclude>
+		<!--
+		<include>
+			<schema name="Site" />
+			<table name="User" />
+			<table prefix="Forum_" />
+			<table prefix="Forum_" trimPrefix="true" />
+			<view name="UserView" />
+			<view prefix="Forum_" />
+			<view prefix="Forum_" trimPrefix="true" />
+		</include>
+		-->
 	</model>
-	<dataAccess methodMask="^(?&lt;Class&gt;\w+)_(?&lt;Method&gt;\w+)$" />
+	<dataAccess methodMask="^(?&lt;Class&gt;\w+)_(?&lt;Method&gt;\w+)$">
+		<!--
+		<exclude>
+			<schema name="Site" />
+			<procedure name="User_GetList" />
+			<procedure prefix="User_" />
+		</exclude>
+		<include>
+			<schema name="Site" />
+			<procedure name="User_GetList" />
+			<procedure prefix="User_" />
+		</include>
+		-->
+	</dataAccess>
 </mapping>

@@ -42,12 +42,12 @@
 						<xsl:variable name="previousProperty" select="../property[position()=$previousPosition]" />
 						string secondaryFieldName = GetSecondaryFieldName();
 
-						if (secondaryFieldName != "<xsl:value-of select="script:GetId(@column)" />")
+						if (secondaryFieldName != "<xsl:value-of select="@refPkName" />")
 						{
 							if (<xsl:value-of select="@camelCaseName" /> == null)
 							{
 								<xsl:value-of select="@camelCaseName" /> = new <xsl:value-of select="@type" />();
-								<xsl:value-of select="@camelCaseName" />.<xsl:value-of select="script:GetId(@column)" /> = this.<xsl:value-of select="$previousProperty/@camelCaseName" />;
+								<xsl:value-of select="@camelCaseName" />.<xsl:value-of select="@refPkName" /> = this.<xsl:value-of select="$previousProperty/@camelCaseName" />;
 							}
 
 							<xsl:value-of select="@camelCaseName" />.LoadField(record, secondaryFieldName, index);
@@ -60,11 +60,11 @@
 
 								if (<xsl:value-of select="@camelCaseName" /> != null)
 								{
-									<xsl:value-of select="@camelCaseName" />.<xsl:value-of select="script:GetId(@column)" /> = this.<xsl:value-of select="$previousProperty/@camelCaseName" />;
+									<xsl:value-of select="@camelCaseName" />.<xsl:value-of select="@refPkName" /> = this.<xsl:value-of select="$previousProperty/@camelCaseName" />;
 								}
 							}
 						}
-					</xsl:when>
+						</xsl:when>
 						<xsl:when test="boolean(@enumType)">
 						this.<xsl:value-of select="@camelCaseName" /> = (<xsl:value-of select="@enumType" />)record.Get<xsl:value-of select="@type" />(index);
 						</xsl:when>
@@ -114,9 +114,9 @@
 		public override object GetPropertyValue(string propertyName)
 		{
 			switch (propertyName)
-			{<xsl:for-each select="property"><xsl:if test="@isExtended='false'">
+			{<xsl:for-each select="property[@isExtended='false']">
 				case "<xsl:value-of select="@name" />":
-					return this.<xsl:value-of select="@camelCaseName" />;</xsl:if></xsl:for-each>
+					return this.<xsl:value-of select="@camelCaseName" />;</xsl:for-each>
 				default:
 					throw new ArgumentOutOfRangeException("propertyName");
 			}
@@ -169,7 +169,7 @@
 		
 		#endregion
 		<xsl:if test="@isView='false'">
-		#region Extensibility Methods<xsl:for-each select="property"><xsl:if test="@isExtended='false'">
+		#region Extensibility Methods<xsl:for-each select="property[@isExtended='false']">
 
 		/// &lt;summary&gt;
 		/// Invoked before <xsl:value-of select="@name" /> changed.
@@ -182,7 +182,7 @@
 		/// &lt;summary&gt;
 		/// Invoked after <xsl:value-of select="@name" /> changed.
 		/// &lt;/summary&gt;
-		partial void On<xsl:value-of select="@name" />Changed();</xsl:if></xsl:for-each>
+		partial void On<xsl:value-of select="@name" />Changed();</xsl:for-each>
 
 		#endregion
 		</xsl:if>
@@ -191,6 +191,7 @@
 		/// &lt;summary&gt;
 		/// <xsl:value-of select="@description" /><xsl:if test="@description=''">Summary of <xsl:value-of select="@name" />.</xsl:if>
 		/// &lt;/summary&gt;
+		[DataMember]
 		public <xsl:choose>
 			<xsl:when test="boolean(@enumType)"><xsl:value-of select="@enumType" /></xsl:when>
 			<xsl:otherwise><xsl:value-of select="script:CSharpAlias(@type)" /></xsl:otherwise>

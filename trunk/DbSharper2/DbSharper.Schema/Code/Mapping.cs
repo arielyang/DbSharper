@@ -42,6 +42,13 @@ namespace DbSharper.Schema.Code
 			set;
 		}
 
+		[XmlAttribute("databaseType")]
+		public string DatabaseType
+		{
+			get;
+			set;
+		}
+
 		[XmlArray("models")]
 		[XmlArrayItem("namespace")]
 		public NamedCollection<ModelNamespace> ModelNamespaces
@@ -53,6 +60,19 @@ namespace DbSharper.Schema.Code
 		#endregion Properties
 
 		#region Methods
+
+		internal bool ContainsModel(string name)
+		{
+			foreach (var nameSpace in this.ModelNamespaces)
+			{
+				if (nameSpace.Models.Contains(name))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
 
 		internal Model GetModel(string schema, string name)
 		{
@@ -71,15 +91,19 @@ namespace DbSharper.Schema.Code
 			return nameSpace.Models[name];
 		}
 
-		internal Model GetModel(string name)
+		internal Model GetModel(string mappingTableName)
 		{
-			foreach (var nameSpace in this.ModelNamespaces)
+			NamedCollection<Model> models;
+
+			foreach (var modelNamespace in ModelNamespaces)
 			{
-				foreach (var m in nameSpace.Models)
+				models = modelNamespace.Models;
+
+				foreach (var model in models)
 				{
-					if (m.Name == name)
+					if (model.MappingName == mappingTableName)
 					{
-						return m;
+						return model;
 					}
 				}
 			}
@@ -87,19 +111,25 @@ namespace DbSharper.Schema.Code
 			return null;
 		}
 
-		internal bool ContainsModel(string name)
-		{
-			foreach (var nameSpace in this.ModelNamespaces)
-			{
-				if (nameSpace.Models.Contains(name))
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
 		#endregion Methods
+
+		#region Other
+
+		//internal Model GetModel(string name)
+		//{
+		//	foreach (var nameSpace in this.ModelNamespaces)
+		//	{
+		//		foreach (var m in nameSpace.Models)
+		//		{
+		//			if (m.Name == name)
+		//			{
+		//				return m;
+		//			}
+		//		}
+		//	}
+		//	return null;
+		//}
+
+		#endregion Other
 	}
 }

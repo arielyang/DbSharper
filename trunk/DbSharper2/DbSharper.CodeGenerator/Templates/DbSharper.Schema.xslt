@@ -18,7 +18,7 @@ namespace <xsl:value-of select="$defaultNamespace" />.Schema
 
 		static DbSchema()
 		{<xsl:for-each select="/dbMapping/models/entity">
-			tableSchemas.Add("<xsl:value-of select="./@name" />", <xsl:value-of select="./@name" />);</xsl:for-each>
+			tableSchemas.Add("<xsl:value-of select="@name" />", <xsl:value-of select="@name" />);</xsl:for-each>
 		}
 
 		/// &lt;summary&gt;
@@ -32,9 +32,9 @@ namespace <xsl:value-of select="$defaultNamespace" />.Schema
 		}
 		<xsl:for-each select="/dbMapping/models/entity">
 		/// &lt;summary&gt;
-		/// Schema of table <xsl:value-of select="./@name" />.
+		/// Schema of table <xsl:value-of select="@name" />.
 		/// &lt;/summary&gt;
-		public static readonly <xsl:value-of select="./@name" />Schema <xsl:value-of select="./@name" /> = new <xsl:value-of select="./@name" />Schema("<xsl:value-of select="./@schema" />", "<xsl:value-of select="./@name" />");
+		public static readonly <xsl:value-of select="@name" />Schema <xsl:value-of select="@name" /> = new <xsl:value-of select="@name" />Schema("<xsl:value-of select="@schema" />", "<xsl:value-of select="@name" />");
 	</xsl:for-each>}
 	
 	#endregion
@@ -42,32 +42,32 @@ namespace <xsl:value-of select="$defaultNamespace" />.Schema
 	#region Table Schema Entities
 	<xsl:for-each select="/dbMapping/models/entity">
 	/// &lt;summary&gt;
-	/// Schema entity of table <xsl:value-of select="./@name" />.
+	/// Schema entity of table <xsl:value-of select="@name" />.
 	/// &lt;/summary&gt;
-	public class <xsl:value-of select="./@name" />Schema : TableSchema
-	{<xsl:for-each select="./property">
+	public class <xsl:value-of select="@name" />Schema : TableSchema
+	{<xsl:for-each select="property">
 		/// &lt;summary&gt;
-		/// Schema of column <xsl:value-of select="./@column" />.
+		/// Schema of column <xsl:value-of select="@column" />.
 		/// &lt;/summary&gt;
-		public readonly ColumnSchema <xsl:value-of select="./@column" /> = new ColumnSchema("<xsl:value-of select="./@column" />"<xsl:if test="script:EndsWith(./@referenceType,'Item')">, "<xsl:value-of select="script:RemoveItemPostfix(./@referenceType)"/>", "Id"</xsl:if>);
+		public readonly ColumnSchema <xsl:value-of select="@column" /> = new ColumnSchema("<xsl:value-of select="@column" />"<xsl:if test="script:EndsWith(./@referenceType,'Item')">, "<xsl:value-of select="script:RemoveItemPostfix(./@referenceType)"/>", "Id"</xsl:if>);
 		</xsl:for-each>
 
 		/// &lt;summary&gt;
 		/// Constructor.
 		/// &lt;/summary&gt;
-		/// <param name="schema">Schema of table <xsl:value-of select="./@name" />.</param>
-		/// <param name="name">Name of table <xsl:value-of select="./@name" />.</param>
-		public <xsl:value-of select="./@name" />Schema(string schema, string name) : base(schema, name) { }
+		/// <param name="schema">Schema of table <xsl:value-of select="@name" />.</param>
+		/// <param name="name">Name of table <xsl:value-of select="@name" />.</param>
+		public <xsl:value-of select="@name" />Schema(string schema, string name) : base(schema, name) { }
 
 		/// &lt;summary&gt;
-		/// Get all columns of table <xsl:value-of select="./@name" />.
+		/// Get all columns of table <xsl:value-of select="@name" />.
 		/// &lt;/summary&gt;
 		/// <returns>Column Array.</returns>
 		public override ColumnSchema[] GetColumns()
 		{
 			return new ColumnSchema[]
 				{
-					<xsl:for-each select="./property"><xsl:value-of select="./@column" /><xsl:if test="position()!=last()">,
+					<xsl:for-each select="property"><xsl:value-of select="@column" /><xsl:if test="position()!=last()">,
 					</xsl:if></xsl:for-each>
 				};
 		}

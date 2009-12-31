@@ -59,7 +59,7 @@ namespace DbSharper.Schema
 
 		#region Methods
 
-		internal ClassMethod GetClassMethod(ISchema procedure)
+		internal ClassMethodContainer GetClassMethod(ISchema procedure)
 		{
 			string input = TrimPrefix(procedure);
 
@@ -69,7 +69,7 @@ namespace DbSharper.Schema
 			{
 				case 2:
 					{
-						return new ClassMethod()
+						return new ClassMethodContainer()
 						{
 							ClassName = "_Global",
 							MethodName = match.Groups["Method"].Value.ToPascalCase()
@@ -77,7 +77,7 @@ namespace DbSharper.Schema
 					}
 				case 3:
 					{
-						return new ClassMethod()
+						return new ClassMethodContainer()
 						{
 							ClassName = match.Groups["Class"].Value.ToPascalCase(),
 							MethodName = match.Groups["Method"].Value.ToPascalCase()
@@ -241,31 +241,5 @@ namespace DbSharper.Schema
 		}
 
 		#endregion Methods
-
-		#region Nested Types
-
-		/// <summary>
-		/// 
-		/// </summary>
-		internal class ClassMethod
-		{
-			#region Properties
-
-			internal string ClassName
-			{
-				get;
-				set;
-			}
-
-			internal string MethodName
-			{
-				get;
-				set;
-			}
-
-			#endregion Properties
-		}
-
-		#endregion Nested Types
 	}
 }

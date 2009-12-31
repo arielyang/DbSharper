@@ -10,6 +10,8 @@ namespace DbSharper.Schema.Configuration
 	/// </summary>
 	internal sealed class Rule
 	{
+		#region Constructors
+
 		internal Rule(RuleType ruleType, string name, string prefix, bool? trimPrefix)
 		{
 			// TODO: Embed string into resource file later.
@@ -53,6 +55,8 @@ namespace DbSharper.Schema.Configuration
 			this.TrimPrefix = trimPrefix;
 		}
 
+		#endregion Constructors
+
 		#region Properties
 
 		/// <summary>
@@ -74,18 +78,18 @@ namespace DbSharper.Schema.Configuration
 		}
 
 		/// <summary>
-		/// If trim prefix of an object.
+		/// Rule type.
 		/// </summary>
-		internal bool? TrimPrefix
+		internal RuleType RuleType
 		{
 			get;
 			set;
 		}
 
 		/// <summary>
-		/// Rule type.
+		/// If trim prefix of an object.
 		/// </summary>
-		internal RuleType RuleType
+		internal bool? TrimPrefix
 		{
 			get;
 			set;
