@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Move to DbSharper.Schema.
+/*
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
@@ -652,3 +654,4 @@ namespace DbSharper.Schema
 		#endregion Methods
 	}
 }
+*/

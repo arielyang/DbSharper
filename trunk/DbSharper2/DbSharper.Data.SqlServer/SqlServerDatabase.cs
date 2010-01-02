@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿// Move to DbSharper.Library.
+/*
 using System.Data.SqlClient;
 
 using DbSharper.Library.Data;
@@ -31,3 +32,4 @@ namespace DbSharper.Data.SqlServer
 		#endregion Methods
 	}
 }
+*/
