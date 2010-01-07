@@ -4,19 +4,20 @@
 	{
 		#region Constructors
 
-		public DataAccessSection(string methodMask)
+		public DataAccessSection(string classMethodMask)
 			: base()
 		{
-			this.MethodMask = methodMask;
+			this.ClassMethodMask = classMethodMask;
 		}
 
 		#endregion Constructors
 
 		#region Properties
 
-		public string MethodMask
+		public string ClassMethodMask
 		{
-			get; private set;
+			get;
+			private set;
 		}
 
 		#endregion Properties

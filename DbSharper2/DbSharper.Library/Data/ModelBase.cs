@@ -62,7 +62,7 @@ namespace DbSharper.Library.Data
 		/// </summary>
 		/// <param name="fieldName">Field name.</param>
 		/// <returns>true if contains an field with the specified name; otherwise, false.</returns>
-		public bool ContainsField(string fieldName)
+		public bool Contains(string fieldName)
 		{
 			if (string.IsNullOrEmpty(fieldName))
 			{
@@ -97,7 +97,7 @@ namespace DbSharper.Library.Data
 				throw new ArgumentNullException("fieldName");
 			}
 
-			if (!this.ContainsField(fieldName))
+			if (!this.Contains(fieldName))
 			{
 				throw new ArgumentOutOfRangeException(
 					"fieldName",
@@ -129,7 +129,7 @@ namespace DbSharper.Library.Data
 				throw new ArgumentNullException("fieldName");
 			}
 
-			if (!this.ContainsField(fieldName))
+			if (!this.Contains(fieldName))
 			{
 				throw new ArgumentOutOfRangeException(
 					"fieldName",

@@ -20,8 +20,8 @@ namespace DbSharper.Schema
 		private static Mapping mapping;
 		private static MappingRuleManager mappingRuleManager;
 		private static SchemaProviderBase provider;
-		private static Regex regexGetList = new Regex(@"^Get\w*List", RegexOptions.Compiled | RegexOptions.Singleline);
-		private static Regex regexResults = new Regex(@"--\s*<results>\s*(?:\r\n)+(?:--\s*(?<Type>[A-Z]\w+(?:Item|Collection))\s+(?<Name>[A-Z]\w+);\s*(?:\r\n)+)+--\s*</results>", RegexOptions.Compiled | RegexOptions.Multiline);
+		private static Regex regexGetListMethod = new Regex(@"^Get\w*List", RegexOptions.Compiled | RegexOptions.Singleline);
+		private static Regex regexMethodResults = new Regex(@"--\s*<results>\s*(?:\r\n)+(?:--\s*(?<Type>[A-Z]\w+(?:Item|Collection))\s+(?<Name>[A-Z]\w+);\s*(?:\r\n)+)+--\s*</results>", RegexOptions.Compiled | RegexOptions.Multiline);
 
 		#endregion Fields
 
@@ -81,9 +81,9 @@ namespace DbSharper.Schema
 
 			mapping = GetMapping(database, connectionStringName, provider.GetDatabaseType().FullName);
 
-			MappingExtender extender = new MappingExtender(mapping);
+			//MappingExtender extender = new MappingExtender(mapping);
 
-			extender.Extend();
+			//extender.Extend();
 
 			return mapping;
 		}
@@ -127,6 +127,13 @@ namespace DbSharper.Schema
 
 		private static void AddMethod(DataAccessNamespace nameSpace, ClassMethodContainer classMethod, Procedure procedure)
 		{
+			// No match return result.
+			if (classMethod.MethodName.StartsWith("Get", StringComparison.OrdinalIgnoreCase)
+				&& !mapping.ContainsModel(classMethod.ClassName))
+			{
+				return;
+			}
+
 			Method method = new Method()
 			{
 				Name = classMethod.MethodName.ToPascalCase(),
@@ -137,7 +144,8 @@ namespace DbSharper.Schema
 			};
 
 			LoadParameters(method.Parameters, procedure);
-			LoadResults(method.Results, classMethod.ClassName, method, procedure);
+
+			LoadResults(method, classMethod.ClassName, procedure);
 
 			nameSpace.DataAccesses[classMethod.ClassName].Methods.Add(method);
 		}
@@ -158,7 +166,7 @@ namespace DbSharper.Schema
 				Model model = new Model()
 				{
 					Namespace = schema,
-					Name = mappingRuleManager.TrimPrefix(databaseObject).ToPascalCase(),
+					Name = mappingRuleManager.TrimPrefix(databaseObject).ToPascalCase().ToSingular(),
 					Description = databaseObject.Description,
 					IsView = databaseObject is View,
 					MappingName = databaseObject.ToString()
@@ -230,17 +238,14 @@ namespace DbSharper.Schema
 
 			if (model == null)
 			{
-				if (mapping.ContainsModel(modelName))
-				{
-					return string.Format(
-						CultureInfo.InvariantCulture,
-						"Models.{0}.{1}",
-						schema.ToPascalCase(),
-						modelName);
-				}
+				model = mapping.GetModel(modelName);
 			}
 
-			return modelName;
+			return string.Format(
+				CultureInfo.InvariantCulture,
+				"Models.{0}.{1}",
+				model.Namespace,
+				model.Name);
 		}
 
 		private static void DiscoverReferenceModelType(Model model, Property property, ref int index)
@@ -274,7 +279,7 @@ namespace DbSharper.Schema
 						tableName = fk.ReferentialTableName;
 
 						referenceTable = tables[tableName];
-						referenceModel = mapping.GetModel(tableName);
+						referenceModel = mapping.GetModelByMappingTableName(tableName);
 
 						if (referenceModel == null)
 						{
@@ -328,10 +333,10 @@ namespace DbSharper.Schema
 				return;
 			}
 
-			// Not found foreign key reference. 
+			// Not found foreign key reference.
 			if (TrySplitColumnName(model.MappingName, property, out tableName, out primaryKeyColumnName))
 			{
-				referenceModel = mapping.GetModel(tableName);
+				referenceModel = mapping.GetModelByMappingTableName(tableName);
 
 				if (referenceModel != null)
 				{
@@ -419,7 +424,10 @@ namespace DbSharper.Schema
 				AddDataAccess(procedure);
 			}
 
-			DiscoverReferences();
+			if (mappingRuleManager.IsAutoDiscoverReference())
+			{
+				DiscoverReferences();
+			}
 
 			return mapping;
 		}
@@ -489,25 +497,39 @@ namespace DbSharper.Schema
 			}
 		}
 
-		private static void LoadResults(NamedCollection<Result> results, string modelName, Method method, Procedure procedure)
+		private static void LoadResults(Method method, string modelName, Procedure procedure)
 		{
-			Match matchResults = regexResults.Match(procedure.Definition);
+			Match matchResults = null;
 
-			int length = matchResults.Groups["Name"].Captures.Count;
+			int length;
+
+			if (string.IsNullOrEmpty(procedure.Definition))
+			{
+				length = 0;
+			}
+			else
+			{
+				matchResults = regexMethodResults.Match(procedure.Definition);
+
+				length = matchResults.Groups["Name"].Captures.Count;
+			}
+
+			var results = method.Results;
 
 			if (length == 0 && method.MethodType == MethodType.ExecuteReader)
 			{
-				string typePostfix = regexGetList.IsMatch(method.Name) ? "ModelList" : "Model";
+				bool isGetListMethod = regexGetListMethod.IsMatch(method.Name);
 
+				// Get a model name like "Models.Site.User".
 				string modelNameWithSchema = DiscoverModelTypeForResult(procedure.Schema, modelName);
-				// TODO: Conflict Names.
+
 				results.Add(
 					new Result
 					{
+						Name = modelName + (isGetListMethod ? "List" : string.Empty),
+						Type = isGetListMethod ? string.Format(CultureInfo.InvariantCulture, "System.Collections.Generic.List<{0}Model>", modelNameWithSchema) : modelNameWithSchema + "Model",
 						Description = string.Empty,
-						IsOutputParameter = false,
-						Name = modelName + typePostfix,
-						Type = regexGetList.IsMatch(method.Name) ? string.Format(CultureInfo.InvariantCulture, "List<Models.{0}>", modelNameWithSchema) : modelNameWithSchema + "Model"
+						IsOutputParameter = false
 					});
 			}
 			else
@@ -565,7 +587,9 @@ namespace DbSharper.Schema
 							&& table.ToString() != mappingName
 							)
 							|| string.Compare(trimmedTableName + primaryKeyColumnName, property.Name, StringComparison.OrdinalIgnoreCase) == 0
-							|| string.Compare(trimmedTableName + "_" + primaryKeyColumnName, property.Name, StringComparison.OrdinalIgnoreCase) == 0)
+							|| string.Compare(trimmedTableName + "_" + primaryKeyColumnName, property.Name, StringComparison.OrdinalIgnoreCase) == 0
+							|| string.Compare(trimmedTableName.ToSingular() + primaryKeyColumnName, property.Name, StringComparison.OrdinalIgnoreCase) == 0
+							|| string.Compare(trimmedTableName.ToSingular() + "_" + primaryKeyColumnName, property.Name, StringComparison.OrdinalIgnoreCase) == 0)
 						{
 							tableName = table.ToString(); // Table name with schema.
 

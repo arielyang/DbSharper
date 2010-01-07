@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
@@ -10,29 +11,54 @@ namespace DbSharper.Schema.Provider
 	{
 		#region Fields
 
-		private static Type typeCache;
+		private static string executingDirectory;
+		private static FileSystemWatcher fileSystemWatcher;
+		private static Dictionary<string, Type> typeCaches;
 
 		#endregion Fields
+
+		#region Constructors
+
+		static SchemaProviderFactory()
+		{
+			executingDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+			fileSystemWatcher = new FileSystemWatcher(executingDirectory);
+			fileSystemWatcher.Changed += new FileSystemEventHandler(fileSystemWatcher_Changed);
+		}
+
+		#endregion Constructors
 
 		#region Methods
 
 		public static SchemaProviderBase Create(string providerName)
 		{
-			if (typeCache == null)
+			if (typeCaches == null)
 			{
-				typeCache = GetProviderType(providerName);
+				typeCaches = new Dictionary<string, Type>();
 			}
 
-			SchemaProviderBase provider = (SchemaProviderBase)Activator.CreateInstance(typeCache);
+			Type providerType;
+
+			if (typeCaches.ContainsKey(providerName))
+			{
+				providerType = typeCaches[providerName];
+			}
+			else
+			{
+				providerType = GetProviderType(providerName);
+
+				typeCaches.Add(providerName, providerType);
+			}
+
+			SchemaProviderBase provider = (SchemaProviderBase)Activator.CreateInstance(providerType);
 
 			return provider;
 		}
 
 		private static string[] GetProviderAssemblies()
 		{
-			string executingDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-			string[] assemblies = Directory.GetFiles(executingDirectory, "*.Provider.*.dll");
+			string[] assemblies = Directory.GetFiles(executingDirectory, "*.dll");
 
 			return assemblies;
 		}
@@ -68,9 +94,16 @@ namespace DbSharper.Schema.Provider
 
 			foreach (var assemblyFile in assemblyFiles)
 			{
-				assembly = Assembly.LoadFile(assemblyFile);
+				try
+				{
+					assembly = Assembly.LoadFile(assemblyFile);
 
-				types = assembly.GetTypes();
+					types = assembly.GetTypes();
+				}
+				catch
+				{
+					continue;
+				}
 
 				foreach (var type in types)
 				{
@@ -82,6 +115,11 @@ namespace DbSharper.Schema.Provider
 			}
 
 			return typeCol;
+		}
+
+		private static void fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+		{
+			typeCaches = null;
 		}
 
 		#endregion Methods

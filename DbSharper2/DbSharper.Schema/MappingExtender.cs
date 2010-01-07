@@ -35,7 +35,7 @@ namespace DbSharper.Schema
 				// Extend for all models.
 				foreach (var model in ns.Models)
 				{
-					ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get by id.
+					ExtendMethod(model, ExtendGetByPrimaryKeyMethod); // Get by id.
 					//ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get by id with specific columns.
 					//ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list.
 					//ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list with specific columns.
@@ -57,6 +57,11 @@ namespace DbSharper.Schema
 		/// <returns></returns>
 		private Method ExtendDeleteByPrimaryKeyMethod(Model model)
 		{
+			if (model.IsView)
+			{
+				return null;
+			}
+
 			Method method = new Method
 			{
 				Name = "Delete",
@@ -73,6 +78,21 @@ namespace DbSharper.Schema
 					method.Parameters.Add(MappingExtenderHelper.PropertyToParameter(property));
 				}
 			}
+
+			method.Parameters.Add(
+				new Parameter
+				{
+					Name = "ReturnResult",
+					CamelCaseName = "returnResult",
+					SqlName = "@ReturnResult",
+					Description = "Return result.",
+					EnumType = "ReturnResult",
+					DbType = DbType.Int32,
+					Size = 0,
+					Type = "Int32",
+					Direction = ParameterDirection.ReturnValue,
+
+				});
 
 			// Add result.
 			method.Results.Add(
@@ -119,7 +139,7 @@ namespace DbSharper.Schema
 			return method;
 		}
 
-		private Method ExtendGetItemByPrimaryKeyMethod(Model model)
+		private Method ExtendGetByPrimaryKeyMethod(Model model)
 		{
 			if (model.IsView)
 			{
@@ -143,25 +163,31 @@ namespace DbSharper.Schema
 				}
 			}
 
+			
+
 			// Add result.
 			method.Results.Add(
 				new Result
 				{
-					Name = model.Name + "Item",
-					Type = model.Name + "Model",
-					Description = model.Name + " Item.",
+					Name = model.Name + "Model",
+					Type = string.Format(CultureInfo.InvariantCulture, "Models.{0}.{1}Model", model.Namespace, model.Name),
+					Description = model.Name + " Model.",
 					IsOutputParameter = false
 				});
 
 			StringBuilder sb = new StringBuilder();
+
 			sb.AppendLine("SELECT");
 			sb.AppendLine("FROM");
+
 			foreach (var property in model.Properties)
 			{
 
 			}
+
 			sb.AppendLine();
 			sb.AppendLine("WHERE");
+
 			foreach (var property in model.Properties)
 			{
 				if (property.IsPrimaryKey)
@@ -170,8 +196,10 @@ namespace DbSharper.Schema
 					sb.AppendLine(); // Environment.NewLine
 				}
 			}
+
 			sb.Length = sb.Length - " AND".Length - Environment.NewLine.Length;
 			sb.AppendLine("\t{0} = @{0}");
+
 			return method;
 		}
 

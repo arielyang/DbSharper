@@ -5,8 +5,8 @@
 	<xsl:variable name="tablesCount" select="ceiling(count($tables) div 4)" />
 	<xsl:variable name="views" select="/mapping/database/views/view" />
 	<xsl:variable name="viewsCount" select="ceiling(count($views) div 4)" />
-	<xsl:variable name="storedProcedures" select="/mapping/database/storedProcedures/storedProcedure" />
-	<xsl:variable name="storedProceduresCount" select="ceiling(count($storedProcedures) div 2)" />
+	<xsl:variable name="procedures" select="/mapping/database/procedures/procedure" />
+	<xsl:variable name="proceduresCount" select="ceiling(count($procedures) div 2)" />
 	<xsl:template match="/">
 		<html xmlns="http://www.w3.org/1999/xhtml">
 			<head>
@@ -209,9 +209,9 @@
 				</a>
 				<h2>Stored Procedures</h2>
 				<table class="storedprocedures" cellpadding="1">
-					<xsl:for-each select="$storedProcedures">
-						<xsl:if test="position() &lt;= $storedProceduresCount">
-							<xsl:variable name="p" select="position() + $storedProceduresCount" />
+					<xsl:for-each select="$procedures">
+						<xsl:if test="position() &lt;= $proceduresCount">
+							<xsl:variable name="p" select="position() + $proceduresCount" />
 							<tr>
 								<td>
 									<a>
@@ -229,18 +229,18 @@
 									</a>
 								</td>
 								<td>
-									<xsl:if test="$storedProcedures[$p]">
+									<xsl:if test="$procedures[$p]">
 										<a>
 											<xsl:attribute name="href">
-												<xsl:value-of select="script:GetAnchor($storedProcedures[$p]/@schema,$storedProcedures[$p]/@name)" />
+												<xsl:value-of select="script:GetAnchor($procedures[$p]/@schema,$procedures[$p]/@name)" />
 											</xsl:attribute>
 											<xsl:attribute name="title">
-												<xsl:value-of select="$storedProcedures[$p]/@description" />
+												<xsl:value-of select="$procedures[$p]/@description" />
 											</xsl:attribute>
 											<span class="schema">
-												<xsl:value-of select="$storedProcedures[$p]/@schema" />
+												<xsl:value-of select="$procedures[$p]/@schema" />
 											</span>.<span class="name">
-												<xsl:value-of select="$storedProcedures[$p]/@name" />
+												<xsl:value-of select="$procedures[$p]/@name" />
 											</span>
 										</a>
 									</xsl:if>
@@ -270,7 +270,7 @@
 						</tr>
 						<tr>
 							<td colspan="7" class="tabledesc">
-								<xsl:value-of select="script:GetDescription(@description)" disable-output-escaping="yes" />
+								<xsl:value-of select="script:GetHtmlDescription(@description)" disable-output-escaping="yes" />
 							</td>
 						</tr>
 						<tr class="tableheader">
@@ -288,7 +288,7 @@
 									<xsl:value-of select="@name" />
 								</td>
 								<td class="keyword">
-									<xsl:value-of select="script:ToLower(@specificDbType)" />
+									<xsl:value-of select="@specificDbType" />
 									<xsl:choose>
 										<xsl:when test="@size=-1">(max)</xsl:when>
 										<xsl:when test="@size!=0">
@@ -315,7 +315,7 @@
 									<xsl:value-of select="@default" />
 								</td>
 								<td class="description">
-									<xsl:value-of select="script:GetDescription(@description)" disable-output-escaping="yes" />
+									<xsl:value-of select="script:GetHtmlDescription(@description)" disable-output-escaping="yes" />
 								</td>
 							</tr>
 						</xsl:for-each>
@@ -342,7 +342,7 @@
 						</tr>
 						<tr>
 							<td colspan="4" class="tabledesc">
-								<xsl:value-of select="script:GetDescription(@description)" disable-output-escaping="yes" />
+								<xsl:value-of select="script:GetHtmlDescription(@description)" disable-output-escaping="yes" />
 							</td>
 						</tr>
 						<tr class="tableheader">
@@ -357,7 +357,7 @@
 									<xsl:value-of select="@name" />
 								</td>
 								<td class="keyword">
-									<xsl:value-of select="script:ToLower(@specificDbType)" />
+									<xsl:value-of select="@specificDbType" />
 									<xsl:choose>
 										<xsl:when test="@size=-1">(max)</xsl:when>
 										<xsl:when test="@size!=0">
@@ -371,7 +371,7 @@
 									</xsl:if>
 								</td>
 								<td class="description">
-									<xsl:value-of select="script:GetDescription(@description)" disable-output-escaping="yes" />
+									<xsl:value-of select="script:GetHtmlDescription(@description)" disable-output-escaping="yes" />
 								</td>
 							</tr>
 						</xsl:for-each>
@@ -379,7 +379,7 @@
 				</xsl:for-each>
 				<hr />
 				<h2>Stored Procedures Detail Information</h2>
-				<xsl:for-each select="$storedProcedures">
+				<xsl:for-each select="$procedures">
 					<a>
 						<xsl:attribute name="name">
 							<xsl:value-of select="@schema" />.<xsl:value-of select="@name" />
@@ -398,7 +398,7 @@
 						</tr>
 						<tr>
 							<td colspan="2" class="tabledesc">
-								<xsl:value-of select="script:GetDescription(@description)" disable-output-escaping="yes" />
+								<xsl:value-of select="script:GetHtmlDescription(@description)" disable-output-escaping="yes" />
 							</td>
 						</tr>
 						<tr>
@@ -413,7 +413,7 @@
 													</td>
 													<td class="keyword">
 														<nobr>
-															<xsl:value-of select="script:ToLower(@specificDbType)" />
+															<xsl:value-of select="@specificDbType" />
 															<xsl:choose>
 																<xsl:when test="@size=-1">(max)</xsl:when>
 																<xsl:when test="@size!=0">

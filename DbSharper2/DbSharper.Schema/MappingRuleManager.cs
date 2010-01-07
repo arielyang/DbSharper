@@ -34,7 +34,7 @@ namespace DbSharper.Schema
 
 			this.configuration = configuration;
 
-			this.regexClassMethod = new Regex(this.configuration.DataAccess.MethodMask, RegexOptions.Compiled);
+			this.regexClassMethod = new Regex(this.configuration.DataAccess.ClassMethodMask, RegexOptions.Compiled);
 			this.dataAccessTrimPrefixRules = new Collection<Rule>();
 			this.modelTrimPrefixRules = new Collection<Rule>();
 
@@ -59,16 +59,28 @@ namespace DbSharper.Schema
 
 		#region Methods
 
+		internal bool IsAutoDiscoverReference()
+		{
+			return configuration.Model.AutoDiscoverReference;
+		}
+
 		internal ClassMethodContainer GetClassMethod(ISchema procedure)
 		{
 			string input = TrimPrefix(procedure);
 
 			Match match = this.regexClassMethod.Match(input);
 
+			if (string.IsNullOrEmpty(match.Groups["Method"].Value))
+			{
+				// TODO: Embed string into resource file later.
+				throw new DbSharperException("Can not find method match in method mask.");
+			}
+
 			switch (match.Groups.Count)
 			{
 				case 2:
 					{
+
 						return new ClassMethodContainer()
 						{
 							ClassName = "_Global",
@@ -77,6 +89,12 @@ namespace DbSharper.Schema
 					}
 				case 3:
 					{
+						if (string.IsNullOrEmpty(match.Groups["Class"].Value))
+						{
+							// TODO: Embed string into resource file later.
+							throw new DbSharperException("Can not find class match in class mask.");
+						}
+
 						return new ClassMethodContainer()
 						{
 							ClassName = match.Groups["Class"].Value.ToPascalCase(),

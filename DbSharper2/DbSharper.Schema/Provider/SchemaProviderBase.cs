@@ -9,7 +9,7 @@ namespace DbSharper.Schema.Provider
 
 		public abstract Type GetDatabaseType();
 
-		public abstract DbType GetDbType(string dbType);
+		public abstract DbType GetDbType(string dbTypeString);
 
 		/// <summary>
 		/// Get name of the parameter.

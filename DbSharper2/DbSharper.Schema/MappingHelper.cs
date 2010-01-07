@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Globalization;
 using System.IO;
 
+using DbSharper.Schema.Code;
 using DbSharper.Schema.Infrastructure;
 
 namespace DbSharper.Schema

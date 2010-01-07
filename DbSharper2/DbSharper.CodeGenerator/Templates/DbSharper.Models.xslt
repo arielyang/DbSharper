@@ -5,25 +5,17 @@
 <xsl:output omit-xml-declaration="yes" method="text" />
 <xsl:param name="defaultNamespace" />
 <xsl:param name="schemaNamespace" />
-<xsl:template match="/">using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Runtime.Serialization;
-using System.Text;
-
-using DbSharper.Library.Data;
-
-namespace <xsl:value-of select="$defaultNamespace" />.Models.<xsl:value-of select="$schemaNamespace" />
+<xsl:template match="/">namespace <xsl:value-of select="$defaultNamespace" />.Models.<xsl:value-of select="$schemaNamespace" />
 {<xsl:for-each select="/mapping/models/namespace[@name=$schemaNamespace]/model">
-	#region Model <xsl:value-of select="@name" />
+	#region <xsl:value-of select="@name" /> Model
 
 	/// &lt;summary&gt;
-<xsl:value-of select="script:GetSummary(./@description, 1)" />
+<xsl:value-of select="script:GetSummaryComment(@description, 1)" />
 <xsl:if test="@description=''">	/// Business model used to model <xsl:value-of select="@name" />.</xsl:if>
 	/// &lt;/summary&gt;
-	[Serializable]
-	[DataContract]
-	public partial class <xsl:value-of select="@name" />Model : ModelBase, IJson
+	[global::System.Serializable]
+	[global::System.Runtime.Serialization.DataContract]
+	public partial class <xsl:value-of select="@name" />Model : global::DbSharper.Library.Data.ModelBase, global::DbSharper.Library.Data.IJson
 	{<xsl:call-template name="Model" />
 	}
 

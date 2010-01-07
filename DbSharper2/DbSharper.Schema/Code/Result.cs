@@ -7,7 +7,7 @@ using DbSharper.Schema.Infrastructure;
 
 namespace DbSharper.Schema.Code
 {
-	[XmlType("resultItem")]
+	[XmlType("result")]
 	[DefaultProperty("Description")]
 	public class Result : IName
 	{
