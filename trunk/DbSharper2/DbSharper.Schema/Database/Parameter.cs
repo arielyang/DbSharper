@@ -41,6 +41,13 @@ namespace DbSharper.Schema.Database
 			get; set;
 		}
 
+		[XmlAttribute("specificDbType")]
+		public string SpecificDbType
+		{
+			get;
+			set;
+		}
+
 		#endregion Properties
 
 		#region Methods

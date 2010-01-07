@@ -20,5 +20,14 @@
 		}
 
 		#endregion Properties
+
+		#region Methods
+
+		public override string ToString()
+		{
+			return this.ClassName + "." + this.MethodName;
+		}
+
+		#endregion Methods
 	}
 }

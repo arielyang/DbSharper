@@ -91,7 +91,20 @@ namespace DbSharper.Schema.Code
 			return nameSpace.Models[name];
 		}
 
-		internal Model GetModel(string mappingTableName)
+		internal Model GetModel(string name)
+		{
+			foreach (var nameSpace in this.ModelNamespaces)
+			{
+				if (nameSpace.Models.Contains(name))
+				{
+					return nameSpace.Models[name];
+				}
+			}
+
+			return null;
+		}
+
+		internal Model GetModelByMappingTableName(string mappingTableName)
 		{
 			NamedCollection<Model> models;
 

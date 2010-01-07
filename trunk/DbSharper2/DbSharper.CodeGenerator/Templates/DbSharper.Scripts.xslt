@@ -6,73 +6,69 @@
 	{
 		return str1.EndsWith(str2, StringComparison.OrdinalIgnoreCase);
 	}
-	
+
 	public bool StartsWith(string str1, string str2)
 	{
 		return str1.StartsWith(str2, StringComparison.OrdinalIgnoreCase);
 	}
-	
+
 	public string GetCamelCase(string name)
 	{
 		if (name.Length == 0) return string.Empty;
-		
+
 		if (name.Length == 1) return name[0].ToString().ToLower();
 
 		string camelName = name[0].ToString().ToLower() + name.Substring(1);
-		
+
 		if (IsCSharpKeyword(camelName))
 		{
 			return "_" + camelName;
 		}
-		
+
 		return camelName;
 	}
 
-	public string GetItemType(string collectionType)
+	public string GetModelType(string listType)
 	{
-		return collectionType.Substring(0, collectionType.Length - 10) + "Item";
+		// From System.Collections.Generic.List<Models.Site.UserModel> to Models.Site.UserModel.
+		return listType.Substring(32, listType.Length - 33);
 	}
-	
-	public string RemoveItemPostfix(string item)
-	{
-		return item.Substring(0, item.Length - 4);
-	}
-	
+
 	public string GetAnchor(string schema, string name)
 	{
 		return string.Format("#{0}.{1}", schema, name);
 	}
-	
-	public string GetDescription(string description)
+
+	public string GetHtmlDescription(string description)
 	{
 		if (description == string.Empty)
 		{
 			return string.Empty;
 		}
-	
+
 		return description.Replace("\r\n", "<br/>");
 	}
-	
-	public string GetSummary(string summary, int indent)
+
+	public string GetSummaryComment(string summary, int indent)
 	{
 		if (string.IsNullOrEmpty(summary))
 		{
 			return string.Empty;
 		}
-	
+
 		string[] summaries = summary.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-	
+
 		StringBuilder sb = new StringBuilder();
-			
+
 		foreach (string s in summaries)
 		{
 			sb.Append('\t', indent);
 			sb.Append("/// ");
 			sb.AppendLine(s);
 		}
-		
+
 		sb.Length = sb.Length - 2;
-		
+
 		return sb.ToString();
 	}
 
@@ -84,33 +80,51 @@
 				return "bool";
 			case "Byte":
 				return "byte";
+			case "SByte":
+				return "sbyte";
 			case "Byte[]":
 				return "byte[]";
 			case "Char":
 				return "char";
 			case "Char[]":
 				return "char[]";
+			case "DateTime":
+				return "System.DateTime";
+			case "DateTime2":
+				return "System.DateTime2";
+			case "DateTimeOffset":
+				return "System.DateTimeOffset";
 			case "Decimal":
 				return "decimal";
 			case "Double":
 				return "double";
+			case "Guid":
+				return "System.Guid";
 			case "Int16":
 				return "short";
+			case "UInt16":
+				return "ushort";
 			case "Int32":
 				return "int";
+			case "UInt32":
+				return "uint";
 			case "Int64":
 				return "long";
+			case "UInt64":
+				return "ulong";
 			case "Object":
 				return "object";
 			case "Single":
 				return "float";
 			case "String":
 				return "string";
+			case "TimeSpan":
+				return "System.TimeSpan";
 			default:
 				return name;
 		}
 	}
-	
+
 	private bool IsCSharpKeyword(string name)
 	{
 		switch (name)

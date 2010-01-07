@@ -101,11 +101,21 @@
     <Compile Include="Provider\SchemaProviderBase.cs" />
     <Compile Include="Provider\SchemaProviderFactory.cs" />
     <Compile Include="Utility\Serializer.cs" />
+    <Compile Include="`DbSharper.Provider.SqlServer\SqlServerSchemaProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DbSharper.snk">
       <Link>DbSharper.snk</Link>
     </None>
+    <EmbeddedResource Include="`DbSharper.Provider.SqlServer\Resources\GetDatabaseSchema.sql" />
+    <EmbeddedResource Include="`DbSharper.Provider.SqlServer\Resources\CreateEnumerationTable.sql" />
+    <EmbeddedResource Include="`DbSharper.Provider.SqlServer\Resources\CreateEnumerationMemberTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DbSharper.Library\DbSharper.Library.csproj">
+      <Project>{7B5D9B29-F74E-46BD-AAD8-D0B0B51A8C3F}</Project>
+      <Name>DbSharper.Library</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

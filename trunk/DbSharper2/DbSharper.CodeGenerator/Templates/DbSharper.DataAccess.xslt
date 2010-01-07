@@ -7,29 +7,49 @@
 <xsl:output omit-xml-declaration="yes" method="text" />
 <xsl:param name="defaultNamespace" />
 <xsl:param name="schemaNamespace" />
+<xsl:variable name="dataAccessName" select="../@name" />
 <xsl:variable name="connectionStringName" select="/mapping/@connectionStringName" />
-<xsl:template match="/">using System;
-using System.ServiceModel;
-
-using DbSharper.Library.Caching;
-using DbSharper.Library.Data;
-using DbSharper.Library.Model;
-
-using <xsl:value-of select="$defaultNamespace" />.Enums;
-<xsl:for-each select="/mapping/models/namespace">using <xsl:value-of select="$defaultNamespace" />.Models.<xsl:value-of select="@name"/>;
-</xsl:for-each>
-namespace <xsl:value-of select="$defaultNamespace" />.DataAccess.<xsl:value-of select="$schemaNamespace" />
+<xsl:variable name="model" select="/mapping/models/namespace/model[@name=$dataAccessName]" />
+<xsl:template match="/">namespace <xsl:value-of select="$defaultNamespace" />.DataAccess.<xsl:value-of select="$schemaNamespace" />
 {<xsl:for-each select="/mapping/dataAccesses/namespace[@name=$schemaNamespace]/dataAccess">
 	#region I<xsl:value-of select="@name" /> Interface
 
 	/// &lt;summary&gt;
 	/// Data access interface of <xsl:value-of select="@name" />.
 	/// &lt;/summary&gt;
-	[OperationContract]
+	[global::System.ServiceModel.ServiceContract]
 	public partial interface I<xsl:value-of select="@name" />
 	{<xsl:for-each select="method">
-		</xsl:for-each>
-	}
+		<xsl:variable name="resultsCount" select="count(results/result)" />
+		<xsl:variable name="inputSqlParameters" select="parameters/parameter[@direction='Input']" />
+		/// &lt;summary&gt;
+<xsl:value-of select="script:GetSummaryComment(@description, 2)" />
+<xsl:if test="@description=''">		/// Summary of <xsl:value-of select="@name" />.</xsl:if>
+		/// &lt;/summary&gt;
+		[global::System.ServiceModel.OperationContract]
+		<xsl:choose>
+		<xsl:when test="$resultsCount=0">void</xsl:when>
+		<xsl:when test="$resultsCount=1"><xsl:value-of select="script:CSharpAlias(results/result[1]/@type)" /></xsl:when>
+		<xsl:otherwise><xsl:value-of select="concat(../@name,'.',@name,'Results')" /></xsl:otherwise>
+		</xsl:choose><xsl:text> </xsl:text>
+		<xsl:value-of select="@name" />(<xsl:choose>
+			<xsl:when test="@methodType='ExecuteNonQuery' and count(/mapping/models/namespace/model[@name=$dataAccessName])&gt;0 and (@name='Create' or @name='Update')">Models.<xsl:value-of select="$model/../@name" />.<xsl:value-of select="$model/@name" />Model model<xsl:for-each select="$inputSqlParameters">
+				<xsl:variable name="parameterName" select="@name" />
+				<xsl:if test="not(boolean($model/property[@columnName=$parameterName]))">
+					, <xsl:value-of select="script:CSharpAlias(@type)" /><xsl:text> </xsl:text><xsl:value-of select="@camelCaseName" />
+				</xsl:if>
+			</xsl:for-each>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:for-each select="parameters/parameter[@direction='Input']">
+					<xsl:value-of select="script:CSharpAlias(@type)" />
+					<xsl:text> </xsl:text>
+					<xsl:value-of select="@camelCaseName" />
+					<xsl:if test="position()!=last()">, </xsl:if>
+				</xsl:for-each>
+			</xsl:otherwise>
+			</xsl:choose>);
+	</xsl:for-each>}
 
 	#endregion
 
@@ -45,21 +65,23 @@ namespace <xsl:value-of select="$defaultNamespace" />.DataAccess.<xsl:value-of s
 		/// &lt;summary&gt;
 		/// Cache key of method <xsl:value-of select="@name" />.
 		/// &lt;/summary&gt;
-		public const string <xsl:value-of select="../@name" />_<xsl:value-of select="@name" /> = "<xsl:value-of select="$connectionStringName" />.<xsl:value-of select="$schemaNamespace" />.<xsl:value-of select="../@name" />.<xsl:value-of select="@name" />";
+		internal const string <xsl:value-of select="../@name" />_<xsl:value-of select="@name" /> = "<xsl:value-of select="$connectionStringName" />.<xsl:value-of select="$schemaNamespace" />.<xsl:value-of select="../@name" />.<xsl:value-of select="@name" />";
 		</xsl:for-each>
 		#endregion<xsl:for-each select="method">
 
 		#region Method <xsl:value-of select="@name" />
-		<xsl:if test="count(./results/result)&gt;1">
+		<xsl:if test="count(results/result)&gt;1">
 
 		/// &lt;summary&gt;
 		/// Results of method <xsl:value-of select="@name" />.
 		/// &lt;/summary&gt;
-		[Serializable]
+		[global::System.Serializable]
+		[global::System.Runtime.Serialization.DataContract]
 		public partial class <xsl:value-of select="@name" />Results : IJson
 		{<xsl:for-each select="results/result">
-			public <xsl:value-of select="script:CSharpAlias(./@type)" /><xsl:text> </xsl:text><xsl:value-of select="@name" /> { get; set; }</xsl:for-each>
-
+			[global::System.Runtime.Serialization.DataMember]
+			public <xsl:value-of select="script:CSharpAlias(@type)" /><xsl:text> </xsl:text><xsl:value-of select="@name" /> { get; set; }
+		</xsl:for-each>
 			/// &lt;summary&gt;
 			/// Get JSON string of this result.
 			/// &lt;/summary&gt;
@@ -80,11 +102,12 @@ namespace <xsl:value-of select="$defaultNamespace" />.DataAccess.<xsl:value-of s
 			{
 				return "<xsl:value-of select="@name" />Results";
 			}
-		}</xsl:if><xsl:choose>
-				<xsl:when test="@methodType='ExecuteNonQuery' and count(/mapping/models/namespace/model[@name=../@name])&gt;0 and (./@name='Create' or ./@name='Update')">
+		}</xsl:if>
+			<xsl:choose>
+				<xsl:when test="@methodType='ExecuteNonQuery' and count(/mapping/models/namespace/model[@name=$dataAccessName])&gt;0 and (@name='Create' or @name='Update')">
 					<xsl:call-template name="ExecuteNonQueryForEntity" />
 				</xsl:when>
-				<xsl:when test="@methodType='ExecuteNonQuery' and (count(./results/result)=0 or not(script:StartsWith(./@name, 'Get')))">
+				<xsl:when test="@methodType='ExecuteNonQuery' and count(parameters/parameter[@direction='InputOutput' or @direction='Output'])=0">
 					<xsl:call-template name="ExecuteNonQueryWithoutCache" />
 				</xsl:when>
 				<xsl:when test="@methodType='ExecuteNonQuery'">

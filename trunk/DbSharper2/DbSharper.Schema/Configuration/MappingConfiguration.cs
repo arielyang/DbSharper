@@ -41,14 +41,24 @@ namespace DbSharper.Schema.Configuration
 					this.ConfigFile = configFileNode.Value;
 				}
 
-				this.Model = new ModelSection();
+				XmlNode autoDiscoverReferenceNode = this.doc.SelectSingleNode("/m:mapping/m:model", this.nsmgr);
+
+				bool autoDiscoverReference = GetAttributeBooleanValue(autoDiscoverReferenceNode, "autoDiscoverReference");
+
+				this.Model = new ModelSection(autoDiscoverReference);
 
 				this.LoadRules(this.Model.IncludeRules, "/m:mapping/m:model/m:include/*");
 				this.LoadRules(this.Model.ExcludeRules, "/m:mapping/m:model/m:exclude/*");
 
-				string methodMask = this.doc.SelectSingleNode("/m:mapping/m:dataAccess/@methodMask", this.nsmgr).Value;
+				XmlNode classMethodMaskNode = this.doc.SelectSingleNode("/m:mapping/m:dataAccess/@classMethodMask", this.nsmgr);
 
-				this.DataAccess = new DataAccessSection(methodMask);
+				if (classMethodMaskNode == null || string.IsNullOrEmpty(classMethodMaskNode.Value))
+				{
+					// TODO: Embed string into resource file later.
+					throw new DbSharperException("Attribute \"classMethodMask\" is required.");
+				}
+
+				this.DataAccess = new DataAccessSection(classMethodMaskNode.Value);
 
 				this.LoadRules(this.DataAccess.IncludeRules, "/m:mapping/m:dataAccess/m:include/*");
 				this.LoadRules(this.DataAccess.ExcludeRules, "/m:mapping/m:dataAccess/m:exclude/*");
@@ -86,7 +96,24 @@ namespace DbSharper.Schema.Configuration
 
 		#region Methods
 
-		private static bool? GetAttributeBooleanValue(XmlNode node, string attributeName)
+		private static bool GetAttributeBooleanValue(XmlNode node, string attributeName)
+		{
+			XmlAttribute attribute = node.Attributes[attributeName];
+
+			if (attribute != null)
+			{
+				bool result;
+
+				if (bool.TryParse(attribute.Value, out result))
+				{
+					return result;
+				}
+			}
+
+			return false;
+		}
+
+		private static bool? GetAttributeNullableBooleanValue(XmlNode node, string attributeName)
 		{
 			XmlAttribute attribute = node.Attributes[attributeName];
 
@@ -146,7 +173,7 @@ namespace DbSharper.Schema.Configuration
 						GetRuleType(node),
 						GetAttributeStringValue(node, "name"),
 						GetAttributeStringValue(node, "prefix"),
-						GetAttributeBooleanValue(node, "trimPrefix")
+						GetAttributeNullableBooleanValue(node, "trimPrefix")
 					));
 			}
 		}

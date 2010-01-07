@@ -28,7 +28,7 @@ namespace DbSharper.Schema.Utility
 			}
 			else if (type.GetInterface("System.Collections.IEnumerable") != null)
 			{
-				if (!CompareIEnumerable(source, target))
+				if (!CompareIEnumerableObjects(source, target))
 				{
 					return false;
 				}
@@ -90,7 +90,7 @@ namespace DbSharper.Schema.Utility
 			return true;
 		}
 
-		private static bool CompareIEnumerable(object source, object target)
+		private static bool CompareIEnumerableObjects(object source, object target)
 		{
 			IEnumerator sourceEnumerator = (source as IEnumerable).GetEnumerator();
 			IEnumerator targetEnumerator = (target as IEnumerable).GetEnumerator();

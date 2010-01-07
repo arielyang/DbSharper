@@ -1,11 +1,11 @@
 ﻿namespace DbSharper.Library.Data
 {
-	public static class DatabaseFactory<TDatabase>
-		where TDatabase : Database, new()
+	public static class DatabaseFactory
 	{
 		#region Methods
 
-		public static Database Create(string connectionString)
+		public static Database CreateDatabase<TDatabase>(string connectionString)
+			where TDatabase : Database, new()
 		{
 			Database db = new TDatabase();
 

@@ -19,7 +19,7 @@
 		/// &lt;summary&gt;
 		/// Constructor using IDataRecord.
 		/// &lt;/summary&gt;
-		internal <xsl:value-of select="@name" />Model(IDataRecord record) : base(record) { }
+		internal <xsl:value-of select="@name" />Model(global::System.Data.IDataRecord record) : base(record) { }
 
 		#endregion
 
@@ -31,7 +31,7 @@
 		/// &lt;param name="record"&gt;Data Record.&lt;/param&gt;
 		/// &lt;param name="fieldName"&gt;Field name.&lt;/param&gt;
 		/// &lt;param name="index"&gt;Index of field.&lt;/param&gt;
-		public override void LoadField(IDataRecord record, string fieldName, int index)
+		public override void LoadField(global::System.Data.IDataRecord record, string fieldName, int index)
 		{
 			switch (fieldName)
 			{<xsl:for-each select="property">
@@ -118,7 +118,7 @@
 				case "<xsl:value-of select="@name" />":
 					return this.<xsl:value-of select="@camelCaseName" />;</xsl:for-each>
 				default:
-					throw new ArgumentOutOfRangeException("propertyName");
+					throw new global::System.ArgumentOutOfRangeException("propertyName");
 			}
 		}
 
@@ -144,7 +144,7 @@
 		/// &lt;returns&gt;JSON string.&lt;/returns&gt;
 		public string ToJson()
 		{
-			JsonBuilder jb = new JsonBuilder(this);
+			global::DbSharper.Library.Data.JsonBuilder jb = new global::DbSharper.Library.Data.JsonBuilder(this);
 			<xsl:for-each select="property">
 			jb.Append("<xsl:value-of select="@name" />", this.<xsl:value-of select="@camelCaseName" />);</xsl:for-each>
 
@@ -191,7 +191,7 @@
 		/// &lt;summary&gt;
 		/// <xsl:value-of select="@description" /><xsl:if test="@description=''">Summary of <xsl:value-of select="@name" />.</xsl:if>
 		/// &lt;/summary&gt;
-		[DataMember]
+		[global::System.Runtime.Serialization.DataMember]
 		public <xsl:choose>
 			<xsl:when test="boolean(@enumType)"><xsl:value-of select="@enumType" /></xsl:when>
 			<xsl:otherwise><xsl:value-of select="script:CSharpAlias(@type)" /></xsl:otherwise>

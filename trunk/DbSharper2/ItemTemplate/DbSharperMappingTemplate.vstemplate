@@ -14,9 +14,6 @@
         <Assembly>DbSharper.Library</Assembly>
       </Reference>
       <Reference>
-        <Assembly>DbSharper.Data.SqlServer</Assembly>
-      </Reference>
-      <Reference>
         <Assembly>System</Assembly>
       </Reference>
       <Reference>

@@ -74,7 +74,7 @@ namespace DbSharper.Library.Data
 			DbType dbType,
 			object value)
 		{
-			AddParameter(command, name, dbType, ParameterDirection.Input, String.Empty, DataRowVersion.Default, value);
+			AddParameter(command, name, dbType, 0, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Default, value);
 		}
 
 		/// <summary>
@@ -93,16 +93,39 @@ namespace DbSharper.Library.Data
 		}
 
 		/// <summary>
-		/// Adds a new Out <see cref="DbParameter"/> object to the given <paramref name="command"/>.
+		/// <para>Adds a new instance of a <see cref="DbParameter"/> object to the command.</para>
 		/// </summary>
-		/// <param name="command">The command to add the out parameter.</param>
+		/// <param name="command">The command to add the parameter.</param>
 		/// <param name="name"><para>The name of the parameter.</para></param>
 		/// <param name="dbType"><para>One of the <see cref="DbType"/> values.</para></param>
-		public void AddOutParameter(DbCommand command,
+		/// <param name="size"><para>The maximum size of the data within the column.</para></param>
+		/// <param name="direction"><para>One of the <see cref="ParameterDirection"/> values.</para></param>
+		/// <param name="value"><para>The value of the parameter.</para></param>
+		public void AddParameter(DbCommand command,
 			string name,
-			DbType dbType)
+			DbType dbType,
+			int size,
+			ParameterDirection direction,
+			object value)
 		{
-			AddOutParameter(command, name, dbType, 0);
+			AddParameter(command, name, dbType, 0, direction, false, 0, 0, string.Empty, DataRowVersion.Default, value);
+		}
+
+		/// <summary>
+		/// <para>Adds a new instance of a <see cref="DbParameter"/> object to the command.</para>
+		/// </summary>
+		/// <param name="command">The command to add the parameter.</param>
+		/// <param name="name"><para>The name of the parameter.</para></param>
+		/// <param name="dbType"><para>One of the <see cref="DbType"/> values.</para></param>
+		/// <param name="size"><para>The maximum size of the data within the column.</para></param>
+		/// <param name="direction"><para>One of the <see cref="ParameterDirection"/> values.</para></param>
+		public void AddParameter(DbCommand command,
+			string name,
+			DbType dbType,
+			int size,
+			ParameterDirection direction)
+		{
+			AddParameter(command, name, dbType, 0, direction, false, 0, 0, string.Empty, DataRowVersion.Default, DBNull.Value);
 		}
 
 		/// <summary>
@@ -226,6 +249,18 @@ namespace DbSharper.Library.Data
 			PrepareCommand(command, transaction);
 
 			return DoExecuteReader(command, CommandBehavior.Default);
+		}
+
+		/// <summary>
+		/// Gets a parameter value.
+		/// </summary>
+		/// <param name="command">The command that contains the parameter.</param>
+		/// <param name="name">The name of the parameter.</param>
+		/// <returns>The value of the parameter.</returns>
+		public virtual object GetParameterValue(DbCommand command,
+			string name)
+		{
+			return command.Parameters[BuildParameterName(name)].Value;
 		}
 
 		/// <summary>
@@ -486,27 +521,6 @@ namespace DbSharper.Library.Data
 			IDataReader reader = command.ExecuteReader(cmdBehavior);
 
 			return reader;
-		}
-
-		/// <summary>
-		/// <para>Adds a new instance of a <see cref="DbParameter"/> object to the command.</para>
-		/// </summary>
-		/// <param name="command">The command to add the parameter.</param>
-		/// <param name="name"><para>The name of the parameter.</para></param>
-		/// <param name="dbType"><para>One of the <see cref="DbType"/> values.</para></param>
-		/// <param name="direction"><para>One of the <see cref="ParameterDirection"/> values.</para></param>
-		/// <param name="sourceColumn"><para>The name of the source column mapped to the DataSet and used for loading or returning the <paramref name="value"/>.</para></param>
-		/// <param name="sourceVersion"><para>One of the <see cref="DataRowVersion"/> values.</para></param>
-		/// <param name="value"><para>The value of the parameter.</para></param>
-		private void AddParameter(DbCommand command,
-			string name,
-			DbType dbType,
-			ParameterDirection direction,
-			string sourceColumn,
-			DataRowVersion sourceVersion,
-			object value)
-		{
-			AddParameter(command, name, dbType, 0, direction, false, 0, 0, sourceColumn, sourceVersion, value);
 		}
 
 		private DbCommand CreateCommandByCommandType(CommandType commandType,

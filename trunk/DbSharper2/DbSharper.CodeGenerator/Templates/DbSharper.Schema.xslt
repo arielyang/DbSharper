@@ -49,7 +49,7 @@ namespace <xsl:value-of select="$defaultNamespace" />.Schema
 		/// &lt;summary&gt;
 		/// Schema of column <xsl:value-of select="@column" />.
 		/// &lt;/summary&gt;
-		public readonly ColumnSchema <xsl:value-of select="@column" /> = new ColumnSchema("<xsl:value-of select="@column" />"<xsl:if test="script:EndsWith(./@referenceType,'Item')">, "<xsl:value-of select="script:RemoveItemPostfix(./@referenceType)"/>", "Id"</xsl:if>);
+		public readonly ColumnSchema <xsl:value-of select="@column" /> = new ColumnSchema("<xsl:value-of select="@column" />"<xsl:if test="script:EndsWith(@referenceType,'Item')">, "<xsl:value-of select="script:RemoveItemPostfix(./@referenceType)"/>", "Id"</xsl:if>);
 		</xsl:for-each>
 
 		/// &lt;summary&gt;

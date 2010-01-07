@@ -3,16 +3,15 @@
 <xsl:import href="DbSharper.DataAccess.ExecuteParameters.xslt" />
 <xsl:import href="DbSharper.DataAccess.ExecuteOutputParameters.xslt" />
 <xsl:template name="ExecuteNonQueryWithoutCache" match="/">
-<xsl:variable name="methodName" select="@name" />
 <xsl:variable name="sqlParameters" select="parameters/parameter" />
 <xsl:variable name="sqlParametersCount" select="count($sqlParameters)" />
 <xsl:variable name="inputSqlParameters" select="parameters/parameter[@direction='Input']" />
-<xsl:variable name="resultsCount" select="count(./results/result)" />
-<xsl:variable name="resultType" select="script:CSharpAlias(./results/result[1]/@type)" />
-<xsl:variable name="resultClass" select="concat(./@name, 'Results')" />
+<xsl:variable name="resultsCount" select="count(results/result)" />
+<xsl:variable name="resultType" select="script:CSharpAlias(results/result[1]/@type)" />
+<xsl:variable name="resultClass" select="concat(@name, 'Results')" />
 <xsl:call-template name="ExecuteHeader" />
 		{<xsl:call-template name="ExecuteParameters" />
-	SqlHelper.ExecuteNonQuery(connectionString, global::System.Data.CommandType.<xsl:value-of select="@commandType" />, "<xsl:value-of select="@commandText" />"<xsl:if test="$sqlParametersCount!=0">, parms</xsl:if>);
+				_db.ExecuteNonQuery(_dbCommand);
 
 				<xsl:choose>
 				<xsl:when test="$resultsCount=1">
@@ -24,7 +23,7 @@
 				</xsl:choose>
 				<xsl:call-template name="ExecuteOutputParameters" />
 
-				After_<xsl:value-of select="$methodName" />(<xsl:for-each select="$inputSqlParameters"><xsl:value-of select="script:GetCamelCase(./@name)" /><xsl:if test="position()!=last()">, </xsl:if></xsl:for-each><xsl:if test="$resultsCount&gt;0">, result</xsl:if>);
+				After_<xsl:value-of select="@name" />(<xsl:for-each select="$inputSqlParameters"><xsl:value-of select="@camelCaseName" /><xsl:if test="position()!=last()">, </xsl:if></xsl:for-each><xsl:if test="$resultsCount&gt;0">, result</xsl:if>);
 		<xsl:if test="$resultsCount&gt;0">
 				return result;
 		</xsl:if>}

@@ -17,7 +17,7 @@ namespace DbSharper.FeatureTester
 			RefreshTemplates();
 
 			string inputFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "..\\..\\..\\DbSharperVerifier\\DbSharperVerifier\\Core.dbsx");
-			string outputFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "..\\..\\..\\DbSharperVerifier\\DbSharperVerifier\\Core.Schema.xml");
+			string outputFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "..\\..\\..\\DbSharperVerifier\\DbSharperVerifier\\Core.Mapping.xml");
 
 			string[] files = Directory.GetFiles(Path.GetDirectoryName(inputFilePath));
 
@@ -29,7 +29,7 @@ namespace DbSharper.FeatureTester
 			{
 				fileName = Path.GetFileName(file);
 
-				if (fileName.StartsWith("Core.") && fileName != "Core.dbsx" && fileName != "Core.Schema.xml")
+				if (fileName.StartsWith("Core.") && fileName != "Core.dbsx" && fileName != "Core.Mapping.xml")
 				{
 					fileList.Add(fileName);
 				}
@@ -38,7 +38,7 @@ namespace DbSharper.FeatureTester
 			GeneratorEngine engine = new GeneratorEngine(
 				inputFilePath,
 				File.ReadAllText(inputFilePath),
-				".Schema.xml",
+				".Mapping.xml",
 				"DbSharperVerifier",
 				fileList);
 

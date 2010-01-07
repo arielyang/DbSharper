@@ -25,12 +25,9 @@ namespace DbSharper.Schema.Utility
 		public string ReadResourceAsString(string resourceFileName)
 		{
 			// Return value.
-			string resourceValue = string.Empty;
+			string resourceValue;
 
-			//string[] names = this.GetType().Assembly.GetManifestResourceNames();
-
-			// Get current assembly.
-			//Assembly assembly = Assembly.GetExecutingAssembly();
+			//string[] names = assembly.GetManifestResourceNames();
 
 			// Get current assembly name.
 			string assemblyName = assembly.GetName().Name;

@@ -4,11 +4,22 @@
 	{
 		#region Constructors
 
-		internal ModelSection()
+		public ModelSection(bool autoDiscoverReference)
 			: base()
 		{
+			this.AutoDiscoverReference = autoDiscoverReference;
 		}
 
 		#endregion Constructors
+
+		#region Properties
+
+		public bool AutoDiscoverReference
+		{
+			get;
+			private set;
+		}
+
+		#endregion Properties
 	}
 }

@@ -62,6 +62,7 @@
 								</xs:complexType>
 							</xs:element>
 						</xs:all>
+						<xs:attribute name="autoDiscoverReference" type="xs:boolean" use="required" />
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="dataAccess" minOccurs="1" maxOccurs="1">
@@ -103,7 +104,7 @@
 								</xs:complexType>
 							</xs:element>
 						</xs:all>
-						<xs:attribute name="methodMask" type="xs:string" use="required" />
+						<xs:attribute name="classMethodMask" type="xs:string" use="required" />
 					</xs:complexType>
 				</xs:element>
 			</xs:all>

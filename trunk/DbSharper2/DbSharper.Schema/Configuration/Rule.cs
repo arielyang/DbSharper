@@ -110,6 +110,7 @@ namespace DbSharper.Schema.Configuration
 			{
 				if (this.TrimPrefix.HasValue && this.TrimPrefix.Value)
 				{
+					// TODO: Embed string into resource file later.
 					return string.Format(CultureInfo.InvariantCulture, "{0} = {1} and trim {1}", this.RuleType, this.Prefix);
 				}
 				else
@@ -122,6 +123,7 @@ namespace DbSharper.Schema.Configuration
 				return string.Format(CultureInfo.InvariantCulture, "{0} = {1}", this.RuleType, this.Name);
 			}
 
+			// TODO: Embed string into resource file later.
 			return "Unknown condition.";
 		}
 

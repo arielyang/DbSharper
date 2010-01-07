@@ -2,29 +2,25 @@
 <xsl:import href="DbSharper.Scripts.xslt" />
 <xsl:output omit-xml-declaration="yes" method="text" />
 <xsl:param name="defaultNamespace" />
-<xsl:template match="/">using System;
-using System.ComponentModel;
-using System.Runtime.Serialization;
-
-namespace <xsl:value-of select="$defaultNamespace" />.Enums
+<xsl:template match="/">namespace <xsl:value-of select="$defaultNamespace" />.Enums
 {<xsl:for-each select="/mapping/database/enumerations/enumeration">
 	#region Enum <xsl:value-of select="@name" />
 
 	/// &lt;summary&gt;
-<xsl:value-of select="script:GetSummary(@description, 1)" />
+<xsl:value-of select="script:GetSummaryComment(@description, 1)" />
 <xsl:if test="@description=''">	/// Summary of enum <xsl:value-of select="@name" />.</xsl:if>
 	/// &lt;/summary&gt;<xsl:if test="@hasFlagsAttribute='true'">
-	[Flags]</xsl:if>
-	[Serializable]
-	[DataContract]
+	[global::System.Flags]</xsl:if>
+	[global::System.Serializable]
+	[global::System.Runtime.Serialization.DataContract]
 	public enum <xsl:value-of select="@name" /> : <xsl:value-of select="script:CSharpAlias(@baseType)" />
 	{<xsl:for-each select="member">
 		/// &lt;summary&gt;
-<xsl:value-of select="script:GetSummary(@description, 2)" />
+<xsl:value-of select="script:GetSummaryComment(@description, 2)" />
 <xsl:if test="@description=''">		/// Summary of enum member <xsl:value-of select="@name" />.</xsl:if>
 		/// &lt;/summary&gt;
-		[Description("<xsl:value-of select="@description" />")]
-		[EnumMember]
+		[global::System.ComponentModel.Description("<xsl:value-of select="@description" />")]
+		[global::System.Runtime.Serialization.EnumMember]
 		<xsl:value-of select="@name" /> = <xsl:value-of select="@value" /><xsl:if test="position()!=last()">,<xsl:text></xsl:text></xsl:if><xsl:text>
 	</xsl:text>
 	</xsl:for-each>}

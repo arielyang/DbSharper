@@ -27,7 +27,7 @@ namespace DbSharper.Schema
 
 			foreach (var property in model.Properties)
 			{
-				if (property.IsPrimaryKey)
+				if (property.IsPrimaryKey && !property.IsExtended)
 				{
 					sb.Append(property.Name);
 
@@ -96,6 +96,7 @@ namespace DbSharper.Schema
 				return new Parameter
 				{
 					Name = property.Name,
+					CamelCaseName = property.Name.ToCamelCase(),
 					Description = property.Description,
 					Direction = ParameterDirection.Input,
 					Size = property.Size,
@@ -116,21 +117,21 @@ namespace DbSharper.Schema
 			return PropertyToParameter(property, false);
 		}
 
-		/// <summary>
-		/// Transform a primary key model property to an inserted result.
-		/// </summary>
-		/// <param name="property">Primary key model property.</param>
-		/// <returns>Inserted result.</returns>
-		internal static Result PropertyToResult(Property property)
-		{
-			return new Result
-			{
-				Name = "Inserted" + property.Name,
-				Description = "Inserted " + property.Name,
-				IsOutputParameter = true,
-				Type = property.Type.ToString()
-			};
-		}
+		///// <summary>
+		///// Transform a primary key model property to an inserted result.
+		///// </summary>
+		///// <param name="property">Primary key model property.</param>
+		///// <returns>Inserted result.</returns>
+		//internal static Result PropertyToResult(Property property)
+		//{
+		//    return new Result
+		//    {
+		//        Name = "Inserted" + property.Name,
+		//        Description = "Inserted " + property.Name,
+		//        IsOutputParameter = true,
+		//        Type = property.Type.ToString()
+		//    };
+		//}
 
 		#endregion Methods
 	}
