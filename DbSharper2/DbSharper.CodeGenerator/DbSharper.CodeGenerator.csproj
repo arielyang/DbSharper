@@ -95,7 +95,6 @@
     <Content Include="Templates\DbSharper.Models.Extension.xslt" />
     <Content Include="Templates\DbSharper.Models.Model.xslt" />
     <Content Include="Templates\DbSharper.Models.xslt" />
-    <Content Include="Templates\DbSharper.Schema.xslt" />
     <Content Include="Templates\DbSharper.Scripts.xslt" />
   </ItemGroup>
   <ItemGroup>

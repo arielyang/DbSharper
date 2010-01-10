@@ -11,7 +11,7 @@
 <xsl:variable name="resultClass" select="concat(@name, 'Results')" />
 <xsl:call-template name="ExecuteHeader" />
 		{<xsl:call-template name="ExecuteParameters" />
-				_db.ExecuteNonQuery(_dbCommand);
+				this.db.ExecuteNonQuery(_dbCommand);
 
 				<xsl:choose>
 				<xsl:when test="$resultsCount=1">

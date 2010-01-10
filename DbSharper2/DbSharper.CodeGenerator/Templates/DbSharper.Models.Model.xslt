@@ -139,7 +139,7 @@
 		}
 
 		/// &lt;summary&gt;
-		/// Get JSON string of this item.
+		/// Get JSON string of this model.
 		/// &lt;/summary&gt;
 		/// &lt;returns&gt;JSON string.&lt;/returns&gt;
 		public string ToJson()
@@ -191,6 +191,9 @@
 		/// &lt;summary&gt;
 		/// <xsl:value-of select="@description" /><xsl:if test="@description=''">Summary of <xsl:value-of select="@name" />.</xsl:if>
 		/// &lt;/summary&gt;
+		[global::DbSharper.Library.Schema.Column("<xsl:value-of select="@columnName" />", global::System.Data.DbType.<xsl:value-of select="@dbType" />
+		<xsl:if test="boolean(@primaryKeyName)">, PrimaryKeyName = "<xsl:value-of select="@primaryKeyName" />"</xsl:if>
+		<xsl:if test="boolean(@foreignKeyName)">, ForeignKeyName = "<xsl:value-of select="@foreignKeyName" />"</xsl:if>)]
 		[global::System.Runtime.Serialization.DataMember]
 		public <xsl:choose>
 			<xsl:when test="boolean(@enumType)"><xsl:value-of select="@enumType" /></xsl:when>

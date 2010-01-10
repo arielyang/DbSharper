@@ -37,6 +37,17 @@ namespace DbSharper.Schema.Code
 			set;
 		}
 
+		/// <summary>
+		/// Relative table or view name.
+		/// </summary>
+		[XmlAttribute("mappingName")]
+		[ReadOnly(true)]
+		public string MappingName
+		{
+			get;
+			set;
+		}
+
 		[XmlAttribute("name")]
 		public string Name
 		{
@@ -54,16 +65,6 @@ namespace DbSharper.Schema.Code
 		[XmlElement("property")]
 		[Browsable(false)]
 		public NamedCollection<Property> Properties
-		{
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Relative table or view name.
-		/// </summary>
-		[XmlIgnore]
-		internal string MappingName
 		{
 			get;
 			set;

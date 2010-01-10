@@ -13,6 +13,10 @@
 <xsl:value-of select="script:GetSummaryComment(@description, 1)" />
 <xsl:if test="@description=''">	/// Business model used to model <xsl:value-of select="@name" />.</xsl:if>
 	/// &lt;/summary&gt;
+	[global::DbSharper.Library.Schema.<xsl:choose>
+		<xsl:when test="@isView='true'">View</xsl:when>
+		<xsl:otherwise>Table</xsl:otherwise>
+	</xsl:choose>("<xsl:value-of select="@mappingName" />")]
 	[global::System.Serializable]
 	[global::System.Runtime.Serialization.DataContract]
 	public partial class <xsl:value-of select="@name" />Model : global::DbSharper.Library.Data.ModelBase, global::DbSharper.Library.Data.IJson

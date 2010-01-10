@@ -45,6 +45,11 @@ namespace DbSharper.Library.Data
 
 		#region Properties
 
+		internal IList<string> ChangedProperties
+		{
+			get { return this.changedProperties; }
+		}
+
 		/// <summary>
 		/// Fields is not defined in properties.
 		/// </summary>

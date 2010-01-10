@@ -5,12 +5,38 @@ using System.IO;
 
 using DbSharper.Schema.Code;
 using DbSharper.Schema.Infrastructure;
+using DbSharper.Schema.Database;
 
 namespace DbSharper.Schema
 {
 	internal static class MappingHelper
 	{
 		#region Methods
+
+		internal static string GetPrimaryKeyName(Table table, string columnName)
+		{
+			if (table.PrimaryKey.Columns.Contains(columnName))
+			{
+				return table.PrimaryKey.Name;
+			}
+
+			return null;
+		}
+
+		internal static string GetForeignKeyName(Table table, string columnName)
+		{
+			var foreignKeys = table.ForeignKeys;
+
+			foreach (ForeignKey foreignKey in foreignKeys)
+			{
+				if (foreignKey.Columns.Contains(columnName))
+				{
+					return foreignKey.Name;
+				}
+			}
+
+			return null;
+		}
 
 		/// <summary>
 		/// Get

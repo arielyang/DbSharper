@@ -81,9 +81,9 @@ namespace DbSharper.Schema
 
 			mapping = GetMapping(database, connectionStringName, provider.GetDatabaseType().FullName);
 
-			//MappingExtender extender = new MappingExtender(mapping);
+			MappingExtender extender = new MappingExtender(mapping, provider);
 
-			//extender.Extend();
+			extender.Extend();
 
 			return mapping;
 		}
@@ -222,11 +222,11 @@ namespace DbSharper.Schema
 			return false;
 		}
 
-		private static string DiscoverEnumType(DbType dbType, string columnName)
+		private static string DiscoverEnumType(DbType dbType, string name)
 		{
-			if (mapping.Database.Enumerations.Contains(columnName))
+			if (mapping.Database.Enumerations.Contains(name))
 			{
-				return "Enums." + columnName;
+				return "Enums." + name;
 			}
 
 			return null;
@@ -310,14 +310,14 @@ namespace DbSharper.Schema
 									ColumnName = property.ColumnName,
 									DbType = property.DbType,
 									Type = string.Format(CultureInfo.InvariantCulture, "Models.{0}.{1}Model", referenceModel.Namespace, referenceModel.Name),
-									EnumType = null,
+									//EnumType = null,
 									Nulls = property.Nulls,
 									Size = property.Size,
 									Description = property.Description,
-									CanGetCollectionBy = property.CanGetCollectionBy,
-									CanGetItemBy = property.CanGetItemBy,
+									//CanGetCollectionBy = property.CanGetCollectionBy,
+									//CanGetItemBy = property.CanGetItemBy,
 									HasDefault = property.HasDefault,
-									IsPrimaryKey = property.IsPrimaryKey,
+									//IsPrimaryKey = property.IsPrimaryKey,
 									RefPkName = primaryKeyColumnName,
 									IsExtended = true
 								});
@@ -362,14 +362,14 @@ namespace DbSharper.Schema
 								ColumnName = property.ColumnName,
 								DbType = property.DbType,
 								Type = string.Format(CultureInfo.InvariantCulture, "Models.{0}.{1}Model", referenceModel.Namespace.ToPascalCase(), referenceModel.Name),
-								EnumType = null,
+								//EnumType = null,
 								Nulls = property.Nulls,
 								Size = property.Size,
 								Description = property.Description,
-								CanGetCollectionBy = property.CanGetCollectionBy,
-								CanGetItemBy = property.CanGetItemBy,
+								//CanGetCollectionBy = property.CanGetCollectionBy,
+								//CanGetItemBy = property.CanGetItemBy,
 								HasDefault = property.HasDefault,
-								IsPrimaryKey = property.IsPrimaryKey,
+								//IsPrimaryKey = property.IsPrimaryKey,
 								RefPkName = primaryKeyColumnName,
 								IsExtended = true
 							});
@@ -450,6 +450,7 @@ namespace DbSharper.Schema
 						SqlName = parameter.Name,
 						DbType = parameter.DbType,
 						Type = MappingHelper.GetCommonTypeString(parameter.DbType.ToCommonType()),
+						EnumType = DiscoverEnumType(parameter.DbType, parameterName),
 						Direction = parameter.Direction,
 						Size = parameter.Size,
 						Description = parameter.Description
@@ -488,10 +489,12 @@ namespace DbSharper.Schema
 						Nulls = column.Nullable,
 						Size = column.Size,
 						Description = column.Description,
-						CanGetCollectionBy = isView ? false : CanGetCollectionBy(databaseObject, column.Name),
-						CanGetItemBy = isView ? false : CanGetItemBy(table, column.Name),
+						PrimaryKeyName = isView ? null : MappingHelper.GetPrimaryKeyName(table, column.Name),
+						ForeignKeyName = isView ? null : MappingHelper.GetForeignKeyName(table, column.Name),
+						//CanGetCollectionBy = isView ? false : CanGetCollectionBy(databaseObject, column.Name),
+						//CanGetItemBy = isView ? false : CanGetItemBy(table, column.Name),
 						HasDefault = isView ? false : !string.IsNullOrEmpty(column.Default.Trim()),
-						IsPrimaryKey = isView ? false : table.PrimaryKey.Columns.Contains(column.Name),
+						//IsPrimaryKey = isView ? false : table.PrimaryKey.Columns.Contains(column.Name),
 						IsExtended = false
 					});
 			}
@@ -527,7 +530,7 @@ namespace DbSharper.Schema
 					new Result
 					{
 						Name = modelName + (isGetListMethod ? "List" : string.Empty),
-						Type = isGetListMethod ? string.Format(CultureInfo.InvariantCulture, "System.Collections.Generic.List<{0}Model>", modelNameWithSchema) : modelNameWithSchema + "Model",
+						Type = isGetListMethod ? string.Format(CultureInfo.InvariantCulture, "global::System.Collections.Generic.List<{0}Model>", modelNameWithSchema) : modelNameWithSchema + "Model",
 						Description = string.Empty,
 						IsOutputParameter = false
 					});
@@ -555,7 +558,7 @@ namespace DbSharper.Schema
 						new Result
 						{
 							Name = parameter.Name,
-							Type = parameter.Name == "ReturnResult" ? "ReturnResult" : parameter.Type,
+							Type = parameter.EnumType ?? parameter.Type,
 							Description = parameter.Description,
 							IsOutputParameter = true
 						});

@@ -22,18 +22,34 @@ namespace DbSharper.Schema.Code
 			set;
 		}
 
-		[XmlAttribute("canGetCollectionBy")]
+		//[XmlAttribute("canGetCollectionBy")]
+		//[ReadOnly(true)]
+		//public bool CanGetCollectionBy
+		//{
+		//    get; set;
+		//}
+
+		//[XmlAttribute("canGetItemBy")]
+		//[ReadOnly(true)]
+		//public bool CanGetItemBy
+		//{
+		//    get; set;
+		//}
+
+		[XmlAttribute("primaryKeyName")]
 		[ReadOnly(true)]
-		public bool CanGetCollectionBy
+		public string PrimaryKeyName
 		{
-			get; set;
+			get;
+			set;
 		}
 
-		[XmlAttribute("canGetItemBy")]
+		[XmlAttribute("foreignKeyName")]
 		[ReadOnly(true)]
-		public bool CanGetItemBy
+		public string ForeignKeyName
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("columnName")]
@@ -66,7 +82,8 @@ namespace DbSharper.Schema.Code
 			set;
 		}
 
-		[XmlIgnore]
+		[XmlAttribute("hasDefault")]
+		[ReadOnly(true)]
 		public bool HasDefault
 		{
 			get; set;
@@ -82,7 +99,10 @@ namespace DbSharper.Schema.Code
 		[XmlIgnore]
 		public bool IsPrimaryKey
 		{
-			get; set;
+			get
+			{
+				return !string.IsNullOrEmpty(this.PrimaryKeyName);
+			}
 		}
 
 		[XmlAttribute("name")]
