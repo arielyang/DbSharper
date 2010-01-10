@@ -5,6 +5,7 @@ using System.Text;
 
 using DbSharper.Schema.Code;
 using DbSharper.Schema.Infrastructure;
+using DbSharper.Schema.Provider;
 
 namespace DbSharper.Schema
 {
@@ -13,14 +14,16 @@ namespace DbSharper.Schema
 		#region Fields
 
 		private Mapping mapping;
+		private SchemaProviderBase provider;
 
 		#endregion Fields
 
 		#region Constructors
 
-		internal MappingExtender(Mapping mapping)
+		internal MappingExtender(Mapping mapping, SchemaProviderBase provider)
 		{
 			this.mapping = mapping;
+			this.provider = provider;
 		}
 
 		#endregion Constructors
@@ -43,11 +46,44 @@ namespace DbSharper.Schema
 					//ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list by ids with specific columns.
 					//ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list foreign keys or indexes.
 					//ExtendMethod(model, ExtendGetItemByPrimaryKeyMethod); // Get list foreign keys or indexes with specific columns.
-					ExtendMethod(model, ExtendDeleteByPrimaryKeyMethod); // Delete by primary key(s).
-					ExtendMethod(model, ExtendDeleteByPrimaryKeyMethod); // Delete by ids.
-					//ExtendMethod(model, ExtendDeleteByPrimaryKeyMethod); // Delete by foreign keys or indexes.
+
+					if (!model.IsView)
+					{
+						ExtendMethod(model, ExtendUpdateMethod); // Update.
+						ExtendMethod(model, ExtendDeleteByPrimaryKeyMethod); // Delete by primary key(s).
+						ExtendMethod(model, ExtendDeleteByPrimaryKeysMethod); // Delete by ids.
+						//ExtendMethod(model, ExtendDeleteByPrimaryKeyMethod); // Delete by foreign keys or indexes.
+					}
 				}
 			}
+		}
+
+		private Method ExtendUpdateMethod(Model model)
+		{
+			if (model.IsView)
+			{
+				return null;
+			}
+
+			Method method = new Method
+			{
+				Name = "Update",
+				// TODO: Embed string into resource file later.
+				Description = string.Format(CultureInfo.InvariantCulture, "Update changed {0} columns by primary key. (Auto generated)", model.Name),
+				CommandType = CommandType.Text,
+				MethodType = MethodType.ExecuteNonQuery,
+			};
+
+			//method.Parameters.Add(
+			//    new Parameter
+			//    {
+			//        Name = "Model",
+			//        CamelCaseName = "model",
+			//        Direction = ParameterDirection.Input,
+			//        Type = string.Format(CultureInfo.InvariantCulture, "Models.{0}Model", model.ToString())
+			//    });
+
+			return method;
 		}
 
 		/// <summary>
@@ -65,6 +101,7 @@ namespace DbSharper.Schema
 			Method method = new Method
 			{
 				Name = "Delete",
+				// TODO: Embed string into resource file later.
 				Description = string.Format(CultureInfo.InvariantCulture, "Delete {0} by primary key. (Auto generated)", model.Name),
 				CommandType = CommandType.Text,
 				MethodType = MethodType.ExecuteNonQuery,
@@ -75,34 +112,15 @@ namespace DbSharper.Schema
 			{
 				if (property.IsPrimaryKey && !property.IsExtended)
 				{
-					method.Parameters.Add(MappingExtenderHelper.PropertyToParameter(property));
+					method.Parameters.Add(MappingExtenderHelper.PropertyToParameter(provider, property));
 				}
 			}
 
-			method.Parameters.Add(
-				new Parameter
-				{
-					Name = "ReturnResult",
-					CamelCaseName = "returnResult",
-					SqlName = "@ReturnResult",
-					Description = "Return result.",
-					EnumType = "ReturnResult",
-					DbType = DbType.Int32,
-					Size = 0,
-					Type = "Int32",
-					Direction = ParameterDirection.ReturnValue,
-
-				});
+			// Add return result parameter.
+			//method.Parameters.Add(MappingExtenderHelper.BuildReturnResultParameter(provider));
 
 			// Add result.
-			method.Results.Add(
-				new Result
-				{
-					Name = "ReturnResult",
-					Type = "ReturnResult",
-					Description = "Return result.",
-					IsOutputParameter = true
-				});
+			//method.Results.Add(MappingExtenderHelper.BuildReturnResult(provider));
 
 			return method;
 		}
@@ -112,6 +130,7 @@ namespace DbSharper.Schema
 			Method method = new Method
 			{
 				Name = "DeleteBy" + MappingExtenderHelper.GetPrimaryKeyNamesConnectedWithAnd(model, true),
+				// TODO: Embed string into resource file later.
 				Description = string.Format(CultureInfo.InvariantCulture, "Delete {0}s by primary keys. (Auto generated)", model.Name),
 				CommandType = CommandType.Text,
 				MethodType = MethodType.ExecuteNonQuery,
@@ -122,19 +141,15 @@ namespace DbSharper.Schema
 			{
 				if (property.IsPrimaryKey && !property.IsExtended)
 				{
-					method.Parameters.Add(MappingExtenderHelper.PropertyToParameter(property, true));
+					method.Parameters.Add(MappingExtenderHelper.PropertyToParameter(provider, property, true));
 				}
 			}
 
+			// Add return result parameter.
+			//method.Parameters.Add(MappingExtenderHelper.BuildReturnResultParameter(provider));
+
 			// Add result.
-			method.Results.Add(
-				new Result
-				{
-					Name = "ReturnResult",
-					Type = "ReturnResult",
-					Description = "Return result.",
-					IsOutputParameter = true
-				});
+			//method.Results.Add(MappingExtenderHelper.BuildReturnResult(provider));
 
 			return method;
 		}
@@ -159,11 +174,9 @@ namespace DbSharper.Schema
 			{
 				if (property.IsPrimaryKey)
 				{
-					method.Parameters.Add(MappingExtenderHelper.PropertyToParameter(property));
+					method.Parameters.Add(MappingExtenderHelper.PropertyToParameter(provider, property));
 				}
 			}
-
-			
 
 			// Add result.
 			method.Results.Add(

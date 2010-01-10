@@ -157,6 +157,11 @@ namespace DbSharper.Schema
 			}
 		}
 
+		public override string BuildParameterSqlName(string parameterName)
+		{
+			return "@" + parameterName;
+		}
+
 		public override string GetParameterName(string parameter)
 		{
 			//return parameter.TrimStart('@');

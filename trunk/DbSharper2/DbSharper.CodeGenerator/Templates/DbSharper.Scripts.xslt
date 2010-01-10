@@ -30,8 +30,8 @@
 
 	public string GetModelType(string listType)
 	{
-		// From System.Collections.Generic.List<Models.Site.UserModel> to Models.Site.UserModel.
-		return listType.Substring(32, listType.Length - 33);
+		// From global::System.Collections.Generic.List<Models.Site.UserModel> to Models.Site.UserModel.
+		return listType.Substring(40, listType.Length - 41);
 	}
 
 	public string GetAnchor(string schema, string name)

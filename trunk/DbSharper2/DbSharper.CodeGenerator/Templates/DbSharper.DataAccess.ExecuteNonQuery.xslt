@@ -28,7 +28,7 @@
 
 			if (result == null)
 			{<xsl:call-template name="ExecuteParameters" />
-				_db.ExecuteNonQuery(_dbCommand);
+				this.db.ExecuteNonQuery(_dbCommand);
 				<xsl:if test="$resultsCount&gt;1">
 				result = new <xsl:value-of select="$resultClass" />();
 				</xsl:if>

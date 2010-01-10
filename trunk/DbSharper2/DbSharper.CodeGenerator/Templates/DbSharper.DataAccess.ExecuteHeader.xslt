@@ -32,21 +32,5 @@
 		</xsl:choose><xsl:text> </xsl:text>
 		<xsl:value-of select="@name" />(<xsl:for-each select="$inputSqlParameters">
 		<xsl:value-of select="script:CSharpAlias(@type)" /><xsl:text> </xsl:text><xsl:value-of select="@camelCaseName" />
-		<xsl:if test="position()!=last()">, </xsl:if></xsl:for-each>)
-		{
-			<xsl:if test="$resultsCount&gt;0">return </xsl:if><xsl:value-of select="@name" />(<xsl:for-each select="$inputSqlParameters">
-		<xsl:value-of select="@camelCaseName" />, </xsl:for-each>ConnectionStrings.<xsl:value-of select="/mapping/@connectionStringName" />);
-		}
-
-		/// &lt;summary&gt;
-<xsl:value-of select="script:GetSummaryComment(@description, 2)" />
-<xsl:if test="@description=''">		/// Summary of <xsl:value-of select="@name" />.</xsl:if>
-		/// &lt;/summary&gt;
-		public <xsl:choose>
-		<xsl:when test="$resultsCount=0">void</xsl:when>
-		<xsl:when test="$resultsCount=1"><xsl:value-of select="$resultType" /></xsl:when>
-		<xsl:otherwise><xsl:value-of select="$resultClass" /></xsl:otherwise>
-		</xsl:choose><xsl:text> </xsl:text>
-		<xsl:value-of select="@name" />(<xsl:for-each select="$inputSqlParameters">
-		<xsl:value-of select="script:CSharpAlias(@type)" /><xsl:text> </xsl:text><xsl:value-of select="@camelCaseName" />, </xsl:for-each>string connectionString)</xsl:template>
+		<xsl:if test="position()!=last()">, </xsl:if></xsl:for-each>)</xsl:template>
 </xsl:stylesheet>

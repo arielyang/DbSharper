@@ -13,7 +13,7 @@ namespace DbSharper.Library.Data
 		/// <summary>
 		/// Result list.
 		/// </summary>
-		List<T> Results
+		IList<T> Results
 		{
 			get;
 			set;

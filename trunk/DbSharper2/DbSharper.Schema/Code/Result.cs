@@ -21,6 +21,14 @@ namespace DbSharper.Schema.Code
 			get; set;
 		}
 
+		[XmlAttribute("enumType")]
+		[ReadOnly(true)]
+		public string EnumType
+		{
+			get;
+			set;
+		}
+
 		[XmlAttribute("isOutputParameter")]
 		[ReadOnly(true)]
 		public bool IsOutputParameter

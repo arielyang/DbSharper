@@ -29,7 +29,7 @@
 			{<xsl:call-template name="ExecuteParameters" />
 				result = new <xsl:choose><xsl:when test="$resultsCount=1"><xsl:value-of select="$resultType" /></xsl:when><xsl:when test="$resultsCount&gt;1"><xsl:value-of select="$resultClass" /></xsl:when></xsl:choose>();
 
-				using (System.Data.IDataReader reader = _db.ExecuteReader(_dbCommand))
+				using (global::System.Data.IDataReader reader = this.db.ExecuteReader(_dbCommand))
 				{<xsl:for-each select="$results">
 					<xsl:if test="position()!=1">
 

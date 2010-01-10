@@ -6,12 +6,43 @@ using System.Text;
 
 using DbSharper.Schema.Code;
 using DbSharper.Schema.Infrastructure;
+using DbSharper.Schema.Provider;
 
 namespace DbSharper.Schema
 {
 	internal static class MappingExtenderHelper
 	{
+		private const string returnResult = "ReturnResult";
+
 		#region Methods
+
+		internal static Result BuildReturnResult(SchemaProviderBase provider)
+		{
+			return new Result
+				{
+					Name = returnResult,
+					Type = "global::DbSharper.Library.Data.ReturnResult",
+					Description = "Return result.",
+					IsOutputParameter = true
+				};
+		}
+
+		internal static Parameter BuildReturnResultParameter(SchemaProviderBase provider)
+		{
+			return new Parameter
+				{
+					Name = returnResult,
+					CamelCaseName = returnResult.ToCamelCase(),
+					SqlName = provider.BuildParameterSqlName(returnResult),
+					Description = "Return result.",
+					EnumType = "global::DbSharper.Library.Data.ReturnResult",
+					DbType = DbType.Int32,
+					Size = 0,
+					Type = "global::System.Int32",
+					Direction = ParameterDirection.ReturnValue,
+
+				};
+		}
 
 		internal static string GetPrimaryKeyNamesConnectedWithAnd(Model model)
 		{
@@ -89,20 +120,22 @@ namespace DbSharper.Schema
 		/// <param name="property">Model property.</param>
 		/// <param name="isList"></param>
 		/// <returns>Method paramter.</returns>
-		internal static Parameter PropertyToParameter(Property property, bool isList)
+		internal static Parameter PropertyToParameter(SchemaProviderBase provider, Property property, bool isList)
 		{
 			try
 			{
+				string name = isList ? property.Name + "List" : property.Name;
+
 				return new Parameter
 				{
-					Name = property.Name,
-					CamelCaseName = property.Name.ToCamelCase(),
+					Name = name,
+					CamelCaseName = name.ToCamelCase(),
 					Description = property.Description,
 					Direction = ParameterDirection.Input,
 					Size = property.Size,
 					DbType = property.DbType,
-					SqlName = "@" + property.Name,
-					Type = isList ? string.Format(CultureInfo.InvariantCulture, "IList<{0}>", property.Type) : property.Type
+					SqlName = provider.BuildParameterSqlName(property.Name),
+					Type = isList ? string.Format(CultureInfo.InvariantCulture, "global::System.Collections.Generic.IList<global::System.{0}>", property.Type) : property.Type
 				};
 
 			}
@@ -112,9 +145,9 @@ namespace DbSharper.Schema
 			}
 		}
 
-		internal static Parameter PropertyToParameter(Property property)
+		internal static Parameter PropertyToParameter(SchemaProviderBase provider, Property property)
 		{
-			return PropertyToParameter(property, false);
+			return PropertyToParameter(provider, property, false);
 		}
 
 		///// <summary>

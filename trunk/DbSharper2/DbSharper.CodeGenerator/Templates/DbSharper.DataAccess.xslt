@@ -7,11 +7,11 @@
 <xsl:output omit-xml-declaration="yes" method="text" />
 <xsl:param name="defaultNamespace" />
 <xsl:param name="schemaNamespace" />
-<xsl:variable name="dataAccessName" select="../@name" />
 <xsl:variable name="connectionStringName" select="/mapping/@connectionStringName" />
-<xsl:variable name="model" select="/mapping/models/namespace/model[@name=$dataAccessName]" />
 <xsl:template match="/">namespace <xsl:value-of select="$defaultNamespace" />.DataAccess.<xsl:value-of select="$schemaNamespace" />
 {<xsl:for-each select="/mapping/dataAccesses/namespace[@name=$schemaNamespace]/dataAccess">
+	<xsl:variable name="dataAccessName" select="@name" />
+	<xsl:variable name="model" select="/mapping/models/namespace/model[@name=$dataAccessName]" />
 	#region I<xsl:value-of select="@name" /> Interface
 
 	/// &lt;summary&gt;
@@ -35,8 +35,7 @@
 		<xsl:value-of select="@name" />(<xsl:choose>
 			<xsl:when test="@methodType='ExecuteNonQuery' and count(/mapping/models/namespace/model[@name=$dataAccessName])&gt;0 and (@name='Create' or @name='Update')">Models.<xsl:value-of select="$model/../@name" />.<xsl:value-of select="$model/@name" />Model model<xsl:for-each select="$inputSqlParameters">
 				<xsl:variable name="parameterName" select="@name" />
-				<xsl:if test="not(boolean($model/property[@columnName=$parameterName]))">
-					, <xsl:value-of select="script:CSharpAlias(@type)" /><xsl:text> </xsl:text><xsl:value-of select="@camelCaseName" />
+				<xsl:if test="not(boolean($model/property[@columnName=$parameterName]))">, <xsl:value-of select="script:CSharpAlias(@type)" /><xsl:text> </xsl:text><xsl:value-of select="@camelCaseName" />
 				</xsl:if>
 			</xsl:for-each>
 			</xsl:when>
@@ -58,8 +57,21 @@
 	/// &lt;summary&gt;
 	/// Data access methods of <xsl:value-of select="@name" />.
 	/// &lt;/summary&gt;
-	public partial class <xsl:value-of select="@name" /> : I<xsl:value-of select="@name" />
+	public partial class <xsl:value-of select="@name" /> : global::DbSharper.Library.Data.DataAccess, I<xsl:value-of select="@name" />
 	{
+		#region Constructors
+		
+		public <xsl:value-of select="@name" />()
+			: this(global::<xsl:value-of select="$defaultNamespace" />.DataAccess.ConnectionStrings.<xsl:value-of select="/mapping/@connectionStringName" />)
+		{ }
+
+		public <xsl:value-of select="@name" />(string connectionString)
+		{
+			this.db = global::DbSharper.Library.Data.DatabaseFactory.CreateDatabase&lt;<xsl:value-of select="/mapping/@databaseType" />&gt;(connectionString);
+		}
+
+		#endregion
+
 		#region Cache keys of methods.
 		<xsl:for-each select="method">
 		/// &lt;summary&gt;
@@ -77,10 +89,14 @@
 		/// &lt;/summary&gt;
 		[global::System.Serializable]
 		[global::System.Runtime.Serialization.DataContract]
-		public partial class <xsl:value-of select="@name" />Results : IJson
+		public partial class <xsl:value-of select="@name" />Results : global::DbSharper.Library.Data.IJson
 		{<xsl:for-each select="results/result">
 			[global::System.Runtime.Serialization.DataMember]
-			public <xsl:value-of select="script:CSharpAlias(@type)" /><xsl:text> </xsl:text><xsl:value-of select="@name" /> { get; set; }
+			public <xsl:choose>
+			<xsl:when test="boolean(@enumType)"><xsl:value-of select="@enumType" /></xsl:when>
+			<xsl:otherwise><xsl:value-of select="script:CSharpAlias(@type)" /></xsl:otherwise>
+			</xsl:choose>
+			<xsl:text> </xsl:text><xsl:value-of select="@name" /> { get; set; }
 		</xsl:for-each>
 			/// &lt;summary&gt;
 			/// Get JSON string of this result.
@@ -88,7 +104,7 @@
 			/// &lt;returns&gt;JSON string.&lt;/returns&gt;
 			public string ToJson()
 			{
-				JsonBuilder jb = new JsonBuilder(this);
+				global::DbSharper.Library.Data.JsonBuilder jb = new global::DbSharper.Library.Data.JsonBuilder(this);
 				<xsl:for-each select="results/result">
 				jb.Append("<xsl:value-of select="@name" />", this.<xsl:value-of select="@name" />);</xsl:for-each>
 

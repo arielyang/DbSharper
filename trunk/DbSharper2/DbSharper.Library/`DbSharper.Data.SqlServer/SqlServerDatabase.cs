@@ -14,5 +14,19 @@ namespace DbSharper.Data.SqlServer
 		}
 
 		#endregion Constructors
+
+		#region Methods
+
+		public override string BuildParameterName(string name)
+		{
+			if (name[0] != '@')
+			{
+				return "@" + name;
+			}
+
+			return name;
+		}
+
+		#endregion Methods
 	}
 }
