@@ -528,6 +528,7 @@ namespace DbSharper.Schema
 				case "void":
 				case "volatile":
 				case "while":
+				case "yield":
 					return true;
 			}
 

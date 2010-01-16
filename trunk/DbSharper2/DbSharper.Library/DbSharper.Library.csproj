@@ -69,6 +69,7 @@
     <Compile Include="Data\IPagedResults.cs" />
     <Compile Include="Data\ModelBase.cs" />
     <Compile Include="Data\JsonBuilder.cs" />
+    <Compile Include="Data\ModelBaseExtensions.cs" />
     <Compile Include="Data\ReturnResult.cs" />
     <Compile Include="Data\TransactionScopeConnections.cs" />
     <Compile Include="Data\XmlBuilder.cs" />

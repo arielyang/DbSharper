@@ -9,18 +9,18 @@ namespace DbSharper.Library.Schema
 		#region Fields
 
 		private DbType dbType;
-		private string foreignKeyName;
+		private bool isPrimaryKey;
 		private string name;
-		private string primaryKeyName;
 
 		#endregion Fields
 
 		#region Constructors
 
-		public ColumnAttribute(string name, DbType dbType)
+		public ColumnAttribute(string name, DbType dbType, bool isPrimaryKey)
 		{
 			this.name = name;
 			this.dbType = dbType;
+			this.isPrimaryKey = isPrimaryKey;
 		}
 
 		#endregion Constructors
@@ -33,22 +33,16 @@ namespace DbSharper.Library.Schema
 			set { dbType = value; }
 		}
 
-		public string ForeignKeyName
+		public bool IsPrimaryKey
 		{
-			get { return foreignKeyName; }
-			set { foreignKeyName = value; }
+			get { return isPrimaryKey; }
+			set { isPrimaryKey = value; }
 		}
 
 		public string Name
 		{
 			get { return name; }
 			set { name = value; }
-		}
-
-		public string PrimaryKeyName
-		{
-			get { return primaryKeyName; }
-			set { primaryKeyName = value; }
 		}
 
 		#endregion Properties

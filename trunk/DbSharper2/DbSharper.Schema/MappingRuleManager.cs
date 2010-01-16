@@ -59,11 +59,6 @@ namespace DbSharper.Schema
 
 		#region Methods
 
-		internal bool IsAutoDiscoverReference()
-		{
-			return configuration.Model.AutoDiscoverReference;
-		}
-
 		internal ClassMethodContainer GetClassMethod(ISchema procedure)
 		{
 			string input = TrimPrefix(procedure);
@@ -106,6 +101,11 @@ namespace DbSharper.Schema
 						return null;
 					}
 			}
+		}
+
+		internal bool IsAutoDiscoverReference()
+		{
+			return configuration.Model.AutoDiscoverReference;
 		}
 
 		/// <summary>

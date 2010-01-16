@@ -54,13 +54,12 @@
 				<xsl:if test="not(boolean($model/property[@columnName=$parameterName]))">, ref <xsl:value-of select="@camelCaseName" />
 				</xsl:if>
 			</xsl:for-each>);
-			
 			<xsl:choose>
 			<xsl:when test="@name='Update' and @commandType='Text'">
 			global::DbSharper.Library.Data.DataAccessHelper.Update&lt;Models.<xsl:value-of select="$model/../@name" />.<xsl:value-of select="$model/@name" />Model&gt;(this.db, model);
 			</xsl:when>
 			<xsl:otherwise>
-			global::System.Data.Common.DbCommand _dbCommand = this.db.<xsl:choose>
+			var _dbCommand = this.db.<xsl:choose>
 				<xsl:when test="@commandType='StoredProcedure'">GetStoredProcCommand</xsl:when>
 				<xsl:when test="@commandType='Text'">GetSqlStringCommand</xsl:when>
 			</xsl:choose>("<xsl:value-of select="@commandText" />");
@@ -77,26 +76,29 @@
 			</xsl:choose>
 			</xsl:for-each>
 			this.db.ExecuteNonQuery(_dbCommand);
-			<xsl:if test="$resultsCount&gt;1"><xsl:text>
-			</xsl:text>
-			<xsl:value-of select="$resultClass" /> result = new <xsl:value-of select="$resultClass" />();
-			</xsl:if>
-			<xsl:if test="$resultsCount=1"><xsl:text>
+			<xsl:choose>
+			<xsl:when test="$resultsCount=1"><xsl:text>
 			</xsl:text>
 			<xsl:value-of select="$resultType" /> result;
-			</xsl:if>
+			</xsl:when>
+			<xsl:when test="$resultsCount&gt;1">
+			var result = new <xsl:value-of select="$resultClass" />();
+			</xsl:when>
+			</xsl:choose>
 			<xsl:for-each select="$sqlParameters">
 			<xsl:if test="@direction!='Input'">
 			result<xsl:if test="$resultsCount!=1">.<xsl:value-of select="@name" /></xsl:if> = <xsl:choose>
-			<xsl:when test="@type='Guid'">new global::System.Guid(this.db.GetParameterValue(_dbCommand, "<xsl:value-of select="@sqlName" />").ToString());</xsl:when>
-			<xsl:when test="@type='Single'">global::System.Convert.ToFloat(this.db.GetParameterValue(_dbCommand, "<xsl:value-of select="@sqlName" />"));</xsl:when>
-			<xsl:otherwise>global::System.Convert.To<xsl:value-of select="@type" />(this.db.GetParameterValue(_dbCommand, "<xsl:value-of select="@sqlName" />"));</xsl:otherwise>
+			<xsl:when test="@type='Guid'">new global::System.Guid(this.db.GetParameterValue(_dbCommand, "<xsl:value-of select="@sqlName" />").ToString());
+			</xsl:when>
+			<xsl:when test="@type='Single'">global::System.Convert.ToFloat(this.db.GetParameterValue(_dbCommand, "<xsl:value-of select="@sqlName" />"));
+			</xsl:when>
+			<xsl:otherwise>global::System.Convert.To<xsl:value-of select="@type" />(this.db.GetParameterValue(_dbCommand, "<xsl:value-of select="@sqlName" />"));
+			</xsl:otherwise>
 			</xsl:choose>
 			</xsl:if>
 			</xsl:for-each>
 			</xsl:otherwise>
 			</xsl:choose>
-
 			After_<xsl:value-of select="@name" />(model<xsl:for-each select="$inputSqlParameters">
 				<xsl:variable name="parameterName" select="@name" />
 				<xsl:if test="not(boolean($model/property[@columnName=$parameterName]))">, <xsl:value-of select="@camelCaseName" />

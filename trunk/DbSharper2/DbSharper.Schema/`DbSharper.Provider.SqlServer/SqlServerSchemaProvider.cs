@@ -28,6 +28,11 @@ namespace DbSharper.Schema
 
 		#region Methods
 
+		public override string BuildParameterSqlName(string parameterName)
+		{
+			return "@" + parameterName;
+		}
+
 		public override Type GetDatabaseType()
 		{
 			return typeof(SqlServerDatabase);
@@ -155,11 +160,6 @@ namespace DbSharper.Schema
 				default:
 					throw new ArgumentException("Unknown dbType.", "dbType");
 			}
-		}
-
-		public override string BuildParameterSqlName(string parameterName)
-		{
-			return "@" + parameterName;
 		}
 
 		public override string GetParameterName(string parameter)

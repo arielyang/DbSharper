@@ -3,7 +3,7 @@
 <xsl:output omit-xml-declaration="yes" method="text" />
 <xsl:param name="defaultNamespace" />
 <xsl:variable name="connectionStringName" select="/mapping/@connectionStringName" />
-<xsl:variable name="camelCaseConnectionStringName" select="script:GetCamelCase($connectionStringName)" />
+<xsl:variable name="camelCaseConnectionStringName" select="/mapping/@camelCaseConnectionStringName" />
 <xsl:template match="/">namespace <xsl:value-of select="$defaultNamespace" />.DataAccess
 {
 	public static partial class ConnectionStrings

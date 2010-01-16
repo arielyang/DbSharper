@@ -21,7 +21,8 @@ namespace DbSharper.Schema
 		private static MappingRuleManager mappingRuleManager;
 		private static SchemaProviderBase provider;
 		private static Regex regexGetListMethod = new Regex(@"^Get\w*List", RegexOptions.Compiled | RegexOptions.Singleline);
-		private static Regex regexMethodResults = new Regex(@"--\s*<results>\s*(?:\r\n)+(?:--\s*(?<Type>[A-Z]\w+(?:Item|Collection))\s+(?<Name>[A-Z]\w+);\s*(?:\r\n)+)+--\s*</results>", RegexOptions.Compiled | RegexOptions.Multiline);
+		private static Regex regexListType = new Regex("List<(?<Type>.+)>$", RegexOptions.Compiled | RegexOptions.Singleline);
+		private static Regex regexMethodResults = new Regex(@"--\s*<results>\s*(?:\r\n)+(?:--\s*(?<Type>[A-Z]\w+.[A-Z]\w+Model|List<[A-Z]\w+.[A-Z]\w+Model>)\s*(?<Name>[A-Z]\w+);\s*(?:\r\n)+)+--\s*</results>", RegexOptions.Compiled | RegexOptions.Multiline);
 
 		#endregion Fields
 
@@ -83,7 +84,7 @@ namespace DbSharper.Schema
 
 			MappingExtender extender = new MappingExtender(mapping, provider);
 
-			extender.Extend();
+			//extender.Extend();
 
 			return mapping;
 		}
@@ -406,6 +407,7 @@ namespace DbSharper.Schema
 		{
 			mapping = new Mapping();
 			mapping.ConnectionStringName = connectionStringName;
+			mapping.CamelCaseConnectionStringName = connectionStringName.ToCamelCase();
 			mapping.DatabaseType = databaseType;
 			mapping.Database = database;
 
@@ -502,48 +504,78 @@ namespace DbSharper.Schema
 
 		private static void LoadResults(Method method, string modelName, Procedure procedure)
 		{
-			Match matchResults = null;
-
-			int length;
-
-			if (string.IsNullOrEmpty(procedure.Definition))
-			{
-				length = 0;
-			}
-			else
-			{
-				matchResults = regexMethodResults.Match(procedure.Definition);
-
-				length = matchResults.Groups["Name"].Captures.Count;
-			}
-
 			var results = method.Results;
 
-			if (length == 0 && method.MethodType == MethodType.ExecuteReader)
+			if (method.MethodType == MethodType.ExecuteReader)
 			{
-				bool isGetListMethod = regexGetListMethod.IsMatch(method.Name);
+				Match matchResults = null;
 
-				// Get a model name like "Models.Site.User".
-				string modelNameWithSchema = DiscoverModelTypeForResult(procedure.Schema, modelName);
+				int length;
 
-				results.Add(
-					new Result
-					{
-						Name = modelName + (isGetListMethod ? "List" : string.Empty),
-						Type = isGetListMethod ? string.Format(CultureInfo.InvariantCulture, "global::System.Collections.Generic.List<{0}Model>", modelNameWithSchema) : modelNameWithSchema + "Model",
-						Description = string.Empty,
-						IsOutputParameter = false
-					});
-			}
-			else
-			{
-				for (int i = 0; i < length; i++)
+				if (string.IsNullOrEmpty(procedure.Definition))
 				{
+					length = 0;
+				}
+				else
+				{
+					matchResults = regexMethodResults.Match(procedure.Definition);
+
+					length = matchResults.Groups["Name"].Captures.Count;
+				}
+
+				if (length != 0) // As definition in procedure.
+				{
+					string type;
+
+					Match matchListType;
+
+					for (int i = 0; i < length; i++)
+					{
+						type = matchResults.Groups["Type"].Captures[i].Value;
+
+						matchListType = regexListType.Match(type);
+
+						if (matchListType.Success)
+						{
+							type = matchListType.Groups["Type"].Value;
+
+							if (!type.StartsWith("Models.", StringComparison.OrdinalIgnoreCase))
+							{
+								type = "Models." + type;
+							}
+
+							type = string.Format(CultureInfo.InvariantCulture, "global::System.Collections.Generic.List<{0}>", type);
+						}
+						else
+						{
+							if (!type.StartsWith("Models.", StringComparison.OrdinalIgnoreCase))
+							{
+								type = "Models." + type;
+							}
+						}
+
+						results.Add(
+							new Result
+							{
+								Name = matchResults.Groups["Name"].Captures[i].Value.ToPascalCase(),
+								Type = type,
+								Description = string.Empty,
+								IsOutputParameter = false
+							});
+					}
+				}
+				else // As procedure name.
+				{
+					bool isGetListMethod = regexGetListMethod.IsMatch(method.Name);
+
+					// Get a model name like "Models.Site.User".
+					string modelNameWithSchema = DiscoverModelTypeForResult(procedure.Schema, modelName);
+
 					results.Add(
 						new Result
 						{
-							Name = matchResults.Groups["Name"].Captures[i].Value.ToPascalCase(),
-							Type = matchResults.Groups["Type"].Captures[i].Value,
+							Name = modelName + (isGetListMethod ? "List" : string.Empty),
+							Type = isGetListMethod ? string.Format(CultureInfo.InvariantCulture, "global::System.Collections.Generic.List<{0}Model>", modelNameWithSchema) : modelNameWithSchema + "Model",
 							Description = string.Empty,
 							IsOutputParameter = false
 						});

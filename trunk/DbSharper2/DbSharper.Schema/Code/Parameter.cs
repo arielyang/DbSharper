@@ -26,7 +26,8 @@ namespace DbSharper.Schema.Code
 		[ReadOnly(true)]
 		public DbType DbType
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("description")]
@@ -34,49 +35,56 @@ namespace DbSharper.Schema.Code
 		[Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
 		public string Description
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("direction")]
 		[ReadOnly(true)]
 		public ParameterDirection Direction
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("enumType")]
 		[ReadOnly(true)]
 		public string EnumType
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("name")]
 		[ReadOnly(true)]
 		public string Name
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("size")]
 		[ReadOnly(true)]
 		public int Size
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("sqlName")]
 		[ReadOnly(true)]
 		public string SqlName
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("type")]
 		[ReadOnly(true)]
 		public string Type
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		#endregion Properties

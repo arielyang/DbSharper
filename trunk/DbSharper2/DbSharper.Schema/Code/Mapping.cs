@@ -20,6 +20,13 @@ namespace DbSharper.Schema.Code
 
 		#region Properties
 
+		[XmlAttribute("camelCaseConnectionStringName")]
+		public string CamelCaseConnectionStringName
+		{
+			get;
+			set;
+		}
+
 		[XmlAttribute("connectionStringName")]
 		public string ConnectionStringName
 		{

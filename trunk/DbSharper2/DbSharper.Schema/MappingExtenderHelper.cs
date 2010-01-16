@@ -12,7 +12,11 @@ namespace DbSharper.Schema
 {
 	internal static class MappingExtenderHelper
 	{
+		#region Fields
+
 		private const string returnResult = "ReturnResult";
+
+		#endregion Fields
 
 		#region Methods
 
@@ -135,7 +139,7 @@ namespace DbSharper.Schema
 					Size = property.Size,
 					DbType = property.DbType,
 					SqlName = provider.BuildParameterSqlName(property.Name),
-					Type = isList ? string.Format(CultureInfo.InvariantCulture, "global::System.Collections.Generic.IList<global::System.{0}>", property.Type) : property.Type
+					Type = isList ? string.Format(CultureInfo.InvariantCulture, "global::System.Collections.Generic.List<global::System.{0}>", property.Type) : property.Type
 				};
 
 			}
@@ -150,6 +154,10 @@ namespace DbSharper.Schema
 			return PropertyToParameter(provider, property, false);
 		}
 
+		#endregion Methods
+
+		#region Other
+
 		///// <summary>
 		///// Transform a primary key model property to an inserted result.
 		///// </summary>
@@ -157,15 +165,15 @@ namespace DbSharper.Schema
 		///// <returns>Inserted result.</returns>
 		//internal static Result PropertyToResult(Property property)
 		//{
-		//    return new Result
-		//    {
-		//        Name = "Inserted" + property.Name,
-		//        Description = "Inserted " + property.Name,
-		//        IsOutputParameter = true,
-		//        Type = property.Type.ToString()
-		//    };
+		//	return new Result
+		//	{
+		//		Name = "Inserted" + property.Name,
+		//		Description = "Inserted " + property.Name,
+		//		IsOutputParameter = true,
+		//		Type = property.Type.ToString()
+		//	};
 		//}
 
-		#endregion Methods
+		#endregion Other
 	}
 }
