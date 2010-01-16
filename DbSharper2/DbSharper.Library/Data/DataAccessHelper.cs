@@ -49,7 +49,7 @@ namespace DbSharper.Library.Data
 					model.GetPropertyValue(propertyName)
 					);
 
-				if (string.IsNullOrEmpty(column.PrimaryKeyName))
+				if (column.IsPrimaryKey)
 				{
 					sb.AppendLine();
 					sb.Append('\t');
@@ -69,7 +69,7 @@ namespace DbSharper.Library.Data
 			{
 				column = kvp.Value;
 
-				if (!string.IsNullOrEmpty(column.PrimaryKeyName))
+				if (!column.IsPrimaryKey)
 				{
 					if (!model.ChangedProperties.Contains(column.Name))
 					{

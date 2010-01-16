@@ -92,7 +92,7 @@
     <Content Include="Templates\DbSharper.DataAccess.xslt" />
     <Content Include="Templates\DbSharper.Document.xslt" />
     <Content Include="Templates\DbSharper.Enums.xslt" />
-    <Content Include="Templates\DbSharper.Models.Extension.xslt" />
+    <Content Include="Templates\DbSharper.Models.Extensions.xslt" />
     <Content Include="Templates\DbSharper.Models.Model.xslt" />
     <Content Include="Templates\DbSharper.Models.xslt" />
     <Content Include="Templates\DbSharper.Scripts.xslt" />

@@ -104,7 +104,7 @@
 			/// &lt;returns&gt;JSON string.&lt;/returns&gt;
 			public string ToJson()
 			{
-				global::DbSharper.Library.Data.JsonBuilder jb = new global::DbSharper.Library.Data.JsonBuilder(this);
+				var jb = new global::DbSharper.Library.Data.JsonBuilder(this);
 				<xsl:for-each select="results/result">
 				jb.Append("<xsl:value-of select="@name" />", this.<xsl:value-of select="@name" />);</xsl:for-each>
 

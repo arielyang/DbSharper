@@ -22,23 +22,34 @@ namespace DbSharper.Schema.Code
 			set;
 		}
 
-		//[XmlAttribute("canGetCollectionBy")]
-		//[ReadOnly(true)]
-		//public bool CanGetCollectionBy
-		//{
-		//    get; set;
-		//}
-
-		//[XmlAttribute("canGetItemBy")]
-		//[ReadOnly(true)]
-		//public bool CanGetItemBy
-		//{
-		//    get; set;
-		//}
-
-		[XmlAttribute("primaryKeyName")]
+		[XmlAttribute("columnName")]
 		[ReadOnly(true)]
-		public string PrimaryKeyName
+		public string ColumnName
+		{
+			get;
+			set;
+		}
+
+		[XmlAttribute("dbType")]
+		[ReadOnly(true)]
+		public DbType DbType
+		{
+			get;
+			set;
+		}
+
+		[XmlAttribute("description")]
+		[Category("Extension")]
+		[Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
+		public string Description
+		{
+			get;
+			set;
+		}
+
+		[XmlAttribute("enumType")]
+		[ReadOnly(true)]
+		public string EnumType
 		{
 			get;
 			set;
@@ -52,48 +63,20 @@ namespace DbSharper.Schema.Code
 			set;
 		}
 
-		[XmlAttribute("columnName")]
-		[ReadOnly(true)]
-		public string ColumnName
-		{
-			get; set;
-		}
-
-		[XmlAttribute("dbType")]
-		[ReadOnly(true)]
-		public DbType DbType
-		{
-			get; set;
-		}
-
-		[XmlAttribute("description")]
-		[Category("Extension")]
-		[Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
-		public string Description
-		{
-			get; set;
-		}
-
-		[XmlAttribute("enumType")]
-		[ReadOnly(true)]
-		public string EnumType
-		{
-			get;
-			set;
-		}
-
 		[XmlAttribute("hasDefault")]
 		[ReadOnly(true)]
 		public bool HasDefault
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("isExtended")]
 		[ReadOnly(true)]
 		public bool IsExtended
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlIgnore]
@@ -109,14 +92,36 @@ namespace DbSharper.Schema.Code
 		[ReadOnly(true)]
 		public string Name
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("nulls")]
 		[ReadOnly(true)]
 		public bool Nulls
 		{
-			get; set;
+			get;
+			set;
+		}
+
+		//[XmlAttribute("canGetCollectionBy")]
+		//[ReadOnly(true)]
+		//public bool CanGetCollectionBy
+		//{
+		//	get; set;
+		//}
+		//[XmlAttribute("canGetItemBy")]
+		//[ReadOnly(true)]
+		//public bool CanGetItemBy
+		//{
+		//	get; set;
+		//}
+		[XmlAttribute("primaryKeyName")]
+		[ReadOnly(true)]
+		public string PrimaryKeyName
+		{
+			get;
+			set;
 		}
 
 		[XmlAttribute("refPkName")]
@@ -131,14 +136,16 @@ namespace DbSharper.Schema.Code
 		[ReadOnly(true)]
 		public int Size
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("type")]
 		[ReadOnly(true)]
 		public string Type
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		#endregion Properties

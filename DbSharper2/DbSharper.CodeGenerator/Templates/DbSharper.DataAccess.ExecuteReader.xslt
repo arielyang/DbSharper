@@ -13,23 +13,23 @@
 <xsl:variable name="resultClass" select="concat(@name, 'Results')" />
 <xsl:call-template name="ExecuteHeader" />
 		{
-			global::DbSharper.Library.Caching.CachingService cache = new global::DbSharper.Library.Caching.CachingService(<xsl:value-of select="$cacheKey" /><xsl:for-each select="$inputSqlParameters">, <xsl:value-of select="@camelCaseName" />
+			var cache = new global::DbSharper.Library.Caching.CachingService(<xsl:value-of select="$cacheKey" /><xsl:for-each select="$inputSqlParameters">, <xsl:value-of select="@camelCaseName" />
 				<xsl:choose>
 					<xsl:when test="@type='DateTime'">.ToShortDateString()</xsl:when>
 					<xsl:when test="@type!='String'">.ToString()</xsl:when>
 				</xsl:choose>
 			</xsl:for-each>);
 
-			<xsl:choose>
-				<xsl:when test="$resultsCount=1"><xsl:value-of select="$resultType" /> result = cache.Get() as <xsl:value-of select="$resultType" />;</xsl:when>
-				<xsl:otherwise><xsl:value-of select="$resultClass" /> result = cache.Get() as <xsl:value-of select="$resultClass" />;</xsl:otherwise>
-			</xsl:choose>
+			var result = cache.Get() as <xsl:choose>
+				<xsl:when test="$resultsCount=1"><xsl:value-of select="$resultType" /></xsl:when>
+				<xsl:otherwise><xsl:value-of select="$resultClass" /></xsl:otherwise>
+			</xsl:choose>;
 
 			if (result == null)
 			{<xsl:call-template name="ExecuteParameters" />
 				result = new <xsl:choose><xsl:when test="$resultsCount=1"><xsl:value-of select="$resultType" /></xsl:when><xsl:when test="$resultsCount&gt;1"><xsl:value-of select="$resultClass" /></xsl:when></xsl:choose>();
 
-				using (global::System.Data.IDataReader reader = this.db.ExecuteReader(_dbCommand))
+				using (var reader = this.db.ExecuteReader(_dbCommand))
 				{<xsl:for-each select="$results">
 					<xsl:if test="position()!=1">
 
@@ -56,10 +56,7 @@
 				</xsl:for-each>
 				}
 				<xsl:call-template name="ExecuteOutputParameters" />
-				After_<xsl:value-of select="@name" />(<xsl:for-each select="$inputSqlParameters"><xsl:value-of select="@camelCaseName" /><xsl:if test="position()!=last()">, </xsl:if></xsl:for-each><xsl:if test="$inputSqlParametersCount&gt;0 and $resultsCount&gt;0">, </xsl:if>result as <xsl:choose>
-					<xsl:when test="$resultsCount=1"><xsl:value-of select="$resultType" /></xsl:when>
-					<xsl:when test="$resultsCount&gt;1"><xsl:value-of select="$resultClass" /></xsl:when>
-				</xsl:choose>);
+				After_<xsl:value-of select="@name" />(<xsl:for-each select="$inputSqlParameters"><xsl:value-of select="@camelCaseName" /><xsl:if test="position()!=last()">, </xsl:if></xsl:for-each><xsl:if test="$inputSqlParametersCount&gt;0 and $resultsCount&gt;0">, </xsl:if>result);
 
 				cache.Insert(result);
 			}
@@ -72,7 +69,7 @@
 		/// &lt;/summary&gt;
 		internal void Remove_<xsl:value-of select="@name" />()
 		{
-			global::DbSharper.Library.Caching.CachingService cache = new global::DbSharper.Library.Caching.CachingService(<xsl:value-of select="$cacheKey" />);
+			var cache = new global::DbSharper.Library.Caching.CachingService(<xsl:value-of select="$cacheKey" />);
 
 			<xsl:choose>
 				<xsl:when test="$inputSqlParametersCount=0">cache.Remove();</xsl:when>
@@ -93,7 +90,7 @@
 				</xsl:if>
 			</xsl:for-each>)
 		{
-			global::DbSharper.Library.Caching.CachingService cache = new global::DbSharper.Library.Caching.CachingService(<xsl:value-of select="$cacheKey" /><xsl:for-each select="$inputSqlParameters">
+			var cache = new global::DbSharper.Library.Caching.CachingService(<xsl:value-of select="$cacheKey" /><xsl:for-each select="$inputSqlParameters">
 				<xsl:if test="position()&lt;=$cacheKeyPosition">, <xsl:value-of select="@camelCaseName" />
 				<xsl:choose>
 					<xsl:when test="@type='DateTime'">.ToShortDateString()</xsl:when>

@@ -53,7 +53,7 @@ namespace DbSharper.Library.Data
 		/// <summary>
 		/// Fields is not defined in properties.
 		/// </summary>
-		protected Dictionary<string, object> ExtendedFields
+		protected IDictionary<string, object> ExtendedFields
 		{
 			get { return this.extendedFields; }
 		}
@@ -63,89 +63,11 @@ namespace DbSharper.Library.Data
 		#region Methods
 
 		/// <summary>
-		/// Determines whether contains the specified field.
-		/// </summary>
-		/// <param name="fieldName">Field name.</param>
-		/// <returns>true if contains an field with the specified name; otherwise, false.</returns>
-		public bool Contains(string fieldName)
-		{
-			if (string.IsNullOrEmpty(fieldName))
-			{
-				throw new ArgumentNullException("fieldName");
-			}
-
-			if (this.extendedFields == null)
-			{
-				return false;
-			}
-
-			return this.extendedFields.ContainsKey(fieldName);
-		}
-
-		/// <summary>
 		/// Get value of property by property name.
 		/// </summary>
 		/// <param name="propertyName">Property name.</param>
 		/// <returns>Value of property.</returns>
 		public abstract object GetPropertyValue(string propertyName);
-
-		/// <summary>
-		/// Return the value of the specified field not defined in property.
-		/// </summary>
-		/// <typeparam name="T">Type of value.</typeparam>
-		/// <param name="fieldName">Field name.</param>
-		/// <returns>Value of field.</returns>
-		public T GetValue<T>(string fieldName)
-		{
-			if (string.IsNullOrEmpty(fieldName))
-			{
-				throw new ArgumentNullException("fieldName");
-			}
-
-			if (!this.Contains(fieldName))
-			{
-				throw new ArgumentOutOfRangeException(
-					"fieldName",
-					string.Format(
-						CultureInfo.InvariantCulture,
-						"Field '{0}' does not exists.",
-						fieldName));
-			}
-
-			object field = this.extendedFields[fieldName];
-
-			if (field == DBNull.Value)
-			{
-				return default(T);
-			}
-
-			return (T)field;
-		}
-
-		/// <summary>
-		/// Return whether the specified field is set to null.
-		/// </summary>
-		/// <param name="fieldName">Field name.</param>
-		/// <returns>true if the specified field is set to null; otherwise, false.</returns>
-		public bool IsDBNull(string fieldName)
-		{
-			if (string.IsNullOrEmpty(fieldName))
-			{
-				throw new ArgumentNullException("fieldName");
-			}
-
-			if (!this.Contains(fieldName))
-			{
-				throw new ArgumentOutOfRangeException(
-					"fieldName",
-					string.Format(
-						CultureInfo.InvariantCulture,
-						"Field '{0}' does not exists.",
-						fieldName));
-			}
-
-			return this.extendedFields[fieldName] == DBNull.Value;
-		}
 
 		/// <summary>
 		/// Evalute field value to relative property.
@@ -190,6 +112,26 @@ namespace DbSharper.Library.Data
 		}
 
 		/// <summary>
+		/// Determines whether contains the specified field.
+		/// </summary>
+		/// <param name="fieldName">Field name.</param>
+		/// <returns>true if contains an field with the specified name; otherwise, false.</returns>
+		protected bool Contains(string fieldName)
+		{
+			if (string.IsNullOrEmpty(fieldName))
+			{
+				throw new ArgumentNullException("fieldName");
+			}
+
+			if (this.extendedFields == null)
+			{
+				return false;
+			}
+
+			return this.extendedFields.ContainsKey(fieldName);
+		}
+
+		/// <summary>
 		/// Return part of field name after "_", e.g. "Id" of "Member_Id".
 		/// </summary>
 		/// <returns>string.Empty if thre is no "_" in field name.</returns>
@@ -203,6 +145,94 @@ namespace DbSharper.Library.Data
 			}
 
 			return this.currentFieldName.Substring(index + 1);
+		}
+
+		/// <summary>
+		/// Return the value of the specified field not defined in property.
+		/// </summary>
+		/// <typeparam name="T">Type of value.</typeparam>
+		/// <param name="fieldName">Field name.</param>
+		/// <returns>Value of field.</returns>
+		protected T GetValue<T>(string fieldName)
+		{
+			if (string.IsNullOrEmpty(fieldName))
+			{
+				throw new ArgumentNullException("fieldName");
+			}
+
+			if (!this.Contains(fieldName))
+			{
+				throw new ArgumentOutOfRangeException(
+					"fieldName",
+					// TODO: Embed string into resource file later.
+					string.Format(
+						CultureInfo.InvariantCulture,
+						"Field '{0}' does not exists.",
+						fieldName));
+			}
+
+			object field = this.extendedFields[fieldName];
+
+			if (field == DBNull.Value)
+			{
+				return default(T);
+			}
+
+			return (T)field;
+		}
+
+		/// <summary>
+		/// Return the value of the specified field not defined in property.
+		/// </summary>
+		/// <param name="fieldName">Field name.</param>
+		/// <returns>Value of field.</returns>
+		protected object GetValue(string fieldName)
+		{
+			if (string.IsNullOrEmpty(fieldName))
+			{
+				throw new ArgumentNullException("fieldName");
+			}
+
+			if (!this.Contains(fieldName))
+			{
+				throw new ArgumentOutOfRangeException(
+					"fieldName",
+					// TODO: Embed string into resource file later.
+					string.Format(
+						CultureInfo.InvariantCulture,
+						"Field '{0}' does not exists.",
+						fieldName));
+			}
+
+			object field = this.extendedFields[fieldName];
+
+			return field;
+		}
+
+		/// <summary>
+		/// Return whether the specified field is set to null.
+		/// </summary>
+		/// <param name="fieldName">Field name.</param>
+		/// <returns>true if the specified field is set to null; otherwise, false.</returns>
+		protected bool IsDBNull(string fieldName)
+		{
+			if (string.IsNullOrEmpty(fieldName))
+			{
+				throw new ArgumentNullException("fieldName");
+			}
+
+			if (!this.Contains(fieldName))
+			{
+				throw new ArgumentOutOfRangeException(
+					"fieldName",
+					// TODO: Embed string into resource file later.
+					string.Format(
+						CultureInfo.InvariantCulture,
+						"Field '{0}' does not exists.",
+						fieldName));
+			}
+
+			return this.extendedFields[fieldName] == DBNull.Value;
 		}
 
 		/// <summary>
@@ -238,6 +268,7 @@ namespace DbSharper.Library.Data
 			if (index == 0)
 			{
 				throw new InvalidOperationException(
+					// TODO: Embed string into resource file later.
 					string.Format(
 						CultureInfo.InvariantCulture,
 						"Can not find primary field name \"{0}\" before '_'.",

@@ -18,7 +18,8 @@ namespace DbSharper.Schema.Code
 		[Editor(typeof(MultilineStringEditor), typeof(UITypeEditor))]
 		public string Description
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("enumType")]
@@ -33,21 +34,24 @@ namespace DbSharper.Schema.Code
 		[ReadOnly(true)]
 		public bool IsOutputParameter
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("name")]
 		[ReadOnly(true)]
 		public string Name
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		[XmlAttribute("type")]
 		[ReadOnly(true)]
 		public string Type
 		{
-			get; set;
+			get;
+			set;
 		}
 
 		#endregion Properties

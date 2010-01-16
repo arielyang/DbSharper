@@ -5,9 +5,12 @@
 				<xsl:for-each select="$sqlParameters">
 				<xsl:if test="@direction!='Input'">
 				result<xsl:if test="$resultsCount!=1">.<xsl:value-of select="@name" /></xsl:if> = <xsl:choose>
-				<xsl:when test="@type='Guid'">new global::System.Guid(this.db.GetParameterValue(_dbCommand, "<xsl:value-of select="@sqlName" />").ToString());</xsl:when>
-				<xsl:when test="@type='Single'">global::System.Convert.ToFloat(this.db.GetParameterValue(_dbCommand, "<xsl:value-of select="@sqlName" />"));</xsl:when>
-				<xsl:otherwise><xsl:if test="boolean(@enumType)">(<xsl:value-of select="@enumType" />)</xsl:if>global::System.Convert.To<xsl:value-of select="@type" />(this.db.GetParameterValue(_dbCommand, "<xsl:value-of select="@sqlName" />"));</xsl:otherwise>
+				<xsl:when test="@type='Guid'">new global::System.Guid(this.db.GetParameterValue(_dbCommand, "<xsl:value-of select="@sqlName" />").ToString());
+				</xsl:when>
+				<xsl:when test="@type='Single'">global::System.Convert.ToFloat(this.db.GetParameterValue(_dbCommand, "<xsl:value-of select="@sqlName" />"));
+				</xsl:when>
+				<xsl:otherwise><xsl:if test="boolean(@enumType)">(<xsl:value-of select="@enumType" />)</xsl:if>global::System.Convert.To<xsl:value-of select="@type" />(this.db.GetParameterValue(_dbCommand, "<xsl:value-of select="@sqlName" />"));
+				</xsl:otherwise>
 				</xsl:choose>
 				</xsl:if>
 				</xsl:for-each>

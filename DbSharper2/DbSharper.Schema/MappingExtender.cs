@@ -51,39 +51,11 @@ namespace DbSharper.Schema
 					{
 						ExtendMethod(model, ExtendUpdateMethod); // Update.
 						ExtendMethod(model, ExtendDeleteByPrimaryKeyMethod); // Delete by primary key(s).
-						ExtendMethod(model, ExtendDeleteByPrimaryKeysMethod); // Delete by ids.
+						//ExtendMethod(model, ExtendDeleteByPrimaryKeysMethod); // Delete by ids.
 						//ExtendMethod(model, ExtendDeleteByPrimaryKeyMethod); // Delete by foreign keys or indexes.
 					}
 				}
 			}
-		}
-
-		private Method ExtendUpdateMethod(Model model)
-		{
-			if (model.IsView)
-			{
-				return null;
-			}
-
-			Method method = new Method
-			{
-				Name = "Update",
-				// TODO: Embed string into resource file later.
-				Description = string.Format(CultureInfo.InvariantCulture, "Update changed {0} columns by primary key. (Auto generated)", model.Name),
-				CommandType = CommandType.Text,
-				MethodType = MethodType.ExecuteNonQuery,
-			};
-
-			//method.Parameters.Add(
-			//    new Parameter
-			//    {
-			//        Name = "Model",
-			//        CamelCaseName = "model",
-			//        Direction = ParameterDirection.Input,
-			//        Type = string.Format(CultureInfo.InvariantCulture, "Models.{0}Model", model.ToString())
-			//    });
-
-			return method;
 		}
 
 		/// <summary>
@@ -267,6 +239,34 @@ namespace DbSharper.Schema
 			{
 				dataAccess.Methods.Add(method);
 			}
+		}
+
+		private Method ExtendUpdateMethod(Model model)
+		{
+			if (model.IsView)
+			{
+				return null;
+			}
+
+			Method method = new Method
+			{
+				Name = "Update",
+				// TODO: Embed string into resource file later.
+				Description = string.Format(CultureInfo.InvariantCulture, "Update changed {0} columns by primary key. (Auto generated)", model.Name),
+				CommandType = CommandType.Text,
+				MethodType = MethodType.ExecuteNonQuery,
+			};
+
+			//method.Parameters.Add(
+			//    new Parameter
+			//    {
+			//        Name = "Model",
+			//        CamelCaseName = "model",
+			//        Direction = ParameterDirection.Input,
+			//        Type = string.Format(CultureInfo.InvariantCulture, "Models.{0}Model", model.ToString())
+			//    });
+
+			return method;
 		}
 
 		#endregion Methods

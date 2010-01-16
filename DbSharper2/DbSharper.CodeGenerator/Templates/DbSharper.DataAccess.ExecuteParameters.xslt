@@ -8,7 +8,7 @@
 				<xsl:if test="$inputSqlParametersCount&gt;0">
 				Before_<xsl:value-of select="@name" />(<xsl:for-each select="$inputSqlParameters">ref <xsl:value-of select="@camelCaseName" /><xsl:if test="position()!=last()">, </xsl:if></xsl:for-each>);
 				</xsl:if>
-				global::System.Data.Common.DbCommand _dbCommand = this.db.<xsl:choose>
+				var _dbCommand = this.db.<xsl:choose>
 					<xsl:when test="@commandType='StoredProcedure'">GetStoredProcCommand</xsl:when>
 					<xsl:when test="@commandType='Text'">GetSqlStringCommand</xsl:when>
 				</xsl:choose>("<xsl:value-of select="@commandText" />");

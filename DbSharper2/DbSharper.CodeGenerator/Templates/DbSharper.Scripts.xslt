@@ -6,12 +6,7 @@
 	{
 		return str1.EndsWith(str2, StringComparison.OrdinalIgnoreCase);
 	}
-
-	public bool StartsWith(string str1, string str2)
-	{
-		return str1.StartsWith(str2, StringComparison.OrdinalIgnoreCase);
-	}
-
+	
 	public string GetCamelCase(string name)
 	{
 		if (name.Length == 0) return string.Empty;
@@ -30,8 +25,14 @@
 
 	public string GetModelType(string listType)
 	{
-		// From global::System.Collections.Generic.List<Models.Site.UserModel> to Models.Site.UserModel.
-		return listType.Substring(40, listType.Length - 41);
+		if (listType.StartsWith("global::System.Collections.Generic.List<", StringComparison.OrdinalIgnoreCase)
+			&& listType.EndsWith("Model>", StringComparison.OrdinalIgnoreCase))
+		{
+			// From global::System.Collections.Generic.List<Models.Site.UserModel> to Models.Site.UserModel.
+			return listType.Substring(40, listType.Length - 41);
+		}
+
+		return listType;
 	}
 
 	public string GetAnchor(string schema, string name)
@@ -89,17 +90,17 @@
 			case "Char[]":
 				return "char[]";
 			case "DateTime":
-				return "System.DateTime";
+				return "global::System.DateTime";
 			case "DateTime2":
-				return "System.DateTime2";
+				return "global::System.DateTime2";
 			case "DateTimeOffset":
-				return "System.DateTimeOffset";
+				return "global::System.DateTimeOffset";
 			case "Decimal":
 				return "decimal";
 			case "Double":
 				return "double";
 			case "Guid":
-				return "System.Guid";
+				return "global::System.Guid";
 			case "Int16":
 				return "short";
 			case "UInt16":
@@ -119,7 +120,7 @@
 			case "String":
 				return "string";
 			case "TimeSpan":
-				return "System.TimeSpan";
+				return "global::System.TimeSpan";
 			default:
 				return name;
 		}
@@ -206,7 +207,7 @@
 			case "void":
 			case "volatile":
 			case "while":
-			case "":
+			case "yield":
 				return true;
 		}
 

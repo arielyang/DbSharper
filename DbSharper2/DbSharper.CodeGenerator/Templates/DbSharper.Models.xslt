@@ -1,7 +1,7 @@
 ﻿<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns:script="urn:scripts">
 <xsl:import href="DbSharper.Scripts.xslt" />
 <xsl:import href="DbSharper.Models.Model.xslt" />
-<xsl:import href="DbSharper.Models.Extension.xslt" />
+<xsl:import href="DbSharper.Models.Extensions.xslt" />
 <xsl:output omit-xml-declaration="yes" method="text" />
 <xsl:param name="defaultNamespace" />
 <xsl:param name="schemaNamespace" />
@@ -27,7 +27,7 @@
 	/// Extensions of List&lt;<xsl:value-of select="@name" />&lt; type.
 	/// &lt;/summary&gt;
 	public static partial class <xsl:value-of select="@name" />Extensions
-	{
+	{<xsl:call-template name="Extensions" />
 	}
 
 	#endregion
