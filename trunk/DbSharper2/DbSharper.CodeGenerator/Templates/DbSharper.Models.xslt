@@ -24,7 +24,7 @@
 	}
 
 	/// &lt;summary&gt;
-	/// Extensions of List&lt;<xsl:value-of select="@name" />&lt; type.
+	/// Extensions of List&lt;<xsl:value-of select="@name" />&gt; type.
 	/// &lt;/summary&gt;
 	public static partial class <xsl:value-of select="@name" />Extensions
 	{<xsl:call-template name="Extensions" />

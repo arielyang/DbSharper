@@ -70,7 +70,6 @@
     <Compile Include="Data\ModelBase.cs" />
     <Compile Include="Data\JsonBuilder.cs" />
     <Compile Include="Data\ModelBaseExtensions.cs" />
-    <Compile Include="Data\ReturnResult.cs" />
     <Compile Include="Data\TransactionScopeConnections.cs" />
     <Compile Include="Data\XmlBuilder.cs" />
     <Compile Include="Schema\ViewAttribute.cs" />
@@ -85,9 +84,7 @@
     <Compile Include="Providers\CacheProviderCollection.cs" />
     <Compile Include="Providers\InProcessCacheProvider.cs" />
     <Compile Include="Schema\TableAttribute.cs" />
-    <Compile Include="Schema\ModelSchema.cs" />
     <Compile Include="Schema\ColumnAttribute.cs" />
-    <Compile Include="Schema\PropertySchema.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

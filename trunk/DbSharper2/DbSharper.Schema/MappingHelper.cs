@@ -71,21 +71,18 @@ namespace DbSharper.Schema
 			return settings;
 		}
 
-		internal static string GetForeignKeyName(Table table, string columnName)
-		{
-			var foreignKeys = table.ForeignKeys;
-
-			foreach (ForeignKey foreignKey in foreignKeys)
-			{
-				if (foreignKey.Columns.Contains(columnName))
-				{
-					return foreignKey.Name;
-				}
-			}
-
-			return null;
-		}
-
+		//internal static string GetForeignKeyName(Table table, string columnName)
+		//{
+		//	var foreignKeys = table.ForeignKeys;
+		//	foreach (ForeignKey foreignKey in foreignKeys)
+		//	{
+		//		if (foreignKey.Columns.Contains(columnName))
+		//		{
+		//			return foreignKey.Name;
+		//		}
+		//	}
+		//	return null;
+		//}
 		/// <summary>
 		/// Get method type by method name.
 		/// </summary>
@@ -96,16 +93,19 @@ namespace DbSharper.Schema
 			return methodName.StartsWith("Get", StringComparison.OrdinalIgnoreCase) ? MethodType.ExecuteReader : MethodType.ExecuteNonQuery;
 		}
 
-		internal static string GetPrimaryKeyName(Table table, string columnName)
-		{
-			if (table.PrimaryKey.Columns.Contains(columnName))
-			{
-				return table.PrimaryKey.Name;
-			}
-
-			return null;
-		}
-
 		#endregion Methods
+
+		#region Other
+
+		//internal static string GetPrimaryKeyName(Table table, string columnName)
+		//{
+		//	if (table.PrimaryKey.Columns.Contains(columnName))
+		//	{
+		//		return table.PrimaryKey.Name;
+		//	}
+		//	return null;
+		//}
+
+		#endregion Other
 	}
 }
