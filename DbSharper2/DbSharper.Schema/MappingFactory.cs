@@ -312,13 +312,13 @@ namespace DbSharper.Schema
 									DbType = property.DbType,
 									Type = string.Format(CultureInfo.InvariantCulture, "Models.{0}.{1}Model", referenceModel.Namespace, referenceModel.Name),
 									//EnumType = null,
-									Nulls = property.Nulls,
+									Nulls = false,
 									Size = property.Size,
 									Description = property.Description,
 									//CanGetCollectionBy = property.CanGetCollectionBy,
 									//CanGetItemBy = property.CanGetItemBy,
 									HasDefault = property.HasDefault,
-									//IsPrimaryKey = property.IsPrimaryKey,
+									IsPrimaryKey = property.IsPrimaryKey,
 									RefPkName = primaryKeyColumnName,
 									IsExtended = true
 								});
@@ -364,13 +364,13 @@ namespace DbSharper.Schema
 								DbType = property.DbType,
 								Type = string.Format(CultureInfo.InvariantCulture, "Models.{0}.{1}Model", referenceModel.Namespace.ToPascalCase(), referenceModel.Name),
 								//EnumType = null,
-								Nulls = property.Nulls,
+								Nulls = false,
 								Size = property.Size,
 								Description = property.Description,
 								//CanGetCollectionBy = property.CanGetCollectionBy,
 								//CanGetItemBy = property.CanGetItemBy,
 								HasDefault = property.HasDefault,
-								//IsPrimaryKey = property.IsPrimaryKey,
+								IsPrimaryKey = property.IsPrimaryKey,
 								RefPkName = primaryKeyColumnName,
 								IsExtended = true
 							});
@@ -477,8 +477,12 @@ namespace DbSharper.Schema
 
 			var columns = databaseObject.Columns;
 
+			CommonType commonType;
+
 			foreach (var column in columns)
 			{
+				commonType = column.DbType.ToCommonType();
+
 				properties.Add(
 					new Property
 					{
@@ -486,17 +490,17 @@ namespace DbSharper.Schema
 						CamelCaseName = column.Name.ToCamelCase(),
 						ColumnName = column.Name,
 						DbType = column.DbType,
-						Type = MappingHelper.GetCommonTypeString(column.DbType.ToCommonType()),
+						Type = MappingHelper.GetCommonTypeString(commonType),
 						EnumType = DiscoverEnumType(column.DbType, column.Name),
-						Nulls = column.Nullable,
+						Nulls = (commonType == CommonType.String || commonType == CommonType.Object) ? false : column.Nullable,
 						Size = column.Size,
 						Description = column.Description,
-						PrimaryKeyName = isView ? null : MappingHelper.GetPrimaryKeyName(table, column.Name),
-						ForeignKeyName = isView ? null : MappingHelper.GetForeignKeyName(table, column.Name),
+						//PrimaryKeyName = isView ? null : MappingHelper.GetPrimaryKeyName(table, column.Name),
+						//ForeignKeyName = isView ? null : MappingHelper.GetForeignKeyName(table, column.Name),
 						//CanGetCollectionBy = isView ? false : CanGetCollectionBy(databaseObject, column.Name),
 						//CanGetItemBy = isView ? false : CanGetItemBy(table, column.Name),
 						HasDefault = isView ? false : !string.IsNullOrEmpty(column.Default.Trim()),
-						//IsPrimaryKey = isView ? false : table.PrimaryKey.Columns.Contains(column.Name),
+						IsPrimaryKey = isView ? false : table.PrimaryKey.Columns.Contains(column.Name),
 						IsExtended = false
 					});
 			}

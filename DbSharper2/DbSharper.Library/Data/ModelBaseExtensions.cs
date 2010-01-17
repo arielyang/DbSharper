@@ -85,6 +85,35 @@ namespace DbSharper.Library.Data
 			return sb.ToString();
 		}
 
+		public static string ToXml<T>(this List<T> list, string[] propertyNames)
+			where T : ModelBase
+		{
+			object value;
+
+			int length = propertyNames.Length;
+
+			string[] propertyValues = new string[length];
+
+			var xb = new XmlBuilder();
+
+			foreach (var model in list)
+			{
+				for (int i = 0; i < length; i++)
+				{
+					value = model.GetPropertyValue(propertyNames[i]);
+
+					if (value != null)
+					{
+						propertyValues[i] = Convert.ToString(value);
+					}
+				}
+
+				xb.Append(propertyNames, propertyValues);
+			}
+
+			return xb.ToString();
+		}
+
 		#endregion Methods
 	}
 }

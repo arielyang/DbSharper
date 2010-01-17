@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 using System.Xml;
 
@@ -20,22 +21,23 @@ namespace DbSharper.Library.Data
 		public XmlBuilder()
 			: this("t", "r")
 		{
+			// TODO: XML control char validation.
 		}
 
-		public XmlBuilder(string tableElement, string rowElement)
+		public XmlBuilder(string tableElementName, string rowElementName)
 		{
-			if (string.IsNullOrEmpty(tableElement))
+			if (string.IsNullOrEmpty(tableElementName))
 			{
 				throw new ArgumentNullException("tableElement");
 			}
 
-			if (string.IsNullOrEmpty(rowElement))
+			if (string.IsNullOrEmpty(rowElementName))
 			{
 				throw new ArgumentNullException("rowElement");
 			}
 
-			this.tableElement = tableElement;
-			this.rowElement = rowElement;
+			this.tableElement = tableElementName;
+			this.rowElement = rowElementName;
 
 			sb = new StringBuilder();
 
@@ -49,7 +51,7 @@ namespace DbSharper.Library.Data
 
 		#region Methods
 
-		public void Append(string name, object value)
+		public void Append(string name, string value)
 		{
 			if (string.IsNullOrEmpty(name))
 			{
@@ -57,20 +59,11 @@ namespace DbSharper.Library.Data
 			}
 
 			xmlWriter.WriteStartElement(this.rowElement);
-
-			if (value != null)
-			{
-				xmlWriter.WriteAttributeString(name, value.ToString());
-			}
-			else
-			{
-				xmlWriter.WriteAttributeString(name, string.Empty);
-			}
-
+			xmlWriter.WriteAttributeString(name, value ?? string.Empty);
 			xmlWriter.WriteEndElement();
 		}
 
-		public void Append(string[] names, object[] values)
+		public void Append(string[] names, string[] values)
 		{
 			int length = names.Length;
 
@@ -83,7 +76,14 @@ namespace DbSharper.Library.Data
 			{
 				if (string.IsNullOrEmpty(names[i]))
 				{
-					throw new ArgumentNullException("names");
+					// TODO: Embed string into resource file later.
+					throw new ArgumentNullException(
+						"names",
+						string.Format(
+							CultureInfo.InvariantCulture,
+							"There are null name in the names, position: {0}.",
+							length)
+						);
 				}
 			}
 
@@ -91,16 +91,7 @@ namespace DbSharper.Library.Data
 
 			for (int i = 0; i < length; i++)
 			{
-				xmlWriter.WriteAttributeString(names[i], values[i].ToString());
-
-				if (values[i] != null)
-				{
-					xmlWriter.WriteAttributeString(names[i], values[i].ToString());
-				}
-				else
-				{
-					xmlWriter.WriteAttributeString(names[i], string.Empty);
-				}
+				xmlWriter.WriteAttributeString(names[i], values[i] ?? string.Empty);
 			}
 
 			xmlWriter.WriteEndElement();

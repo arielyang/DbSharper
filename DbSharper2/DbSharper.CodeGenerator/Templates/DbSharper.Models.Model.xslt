@@ -5,7 +5,9 @@
 		private <xsl:choose>
 			<xsl:when test="boolean(@enumType)"><xsl:value-of select="@enumType" /></xsl:when>
 			<xsl:otherwise><xsl:value-of select="script:CSharpAlias(@type)" /></xsl:otherwise>
-		</xsl:choose><xsl:text> </xsl:text><xsl:value-of select="@camelCaseName" />;</xsl:for-each>
+		</xsl:choose>
+		<xsl:if test="@nulls='true'">?</xsl:if>
+		<xsl:text> </xsl:text><xsl:value-of select="@camelCaseName" />;</xsl:for-each>
 
 		#endregion
 
@@ -36,7 +38,9 @@
 		public <xsl:choose>
 			<xsl:when test="boolean(@enumType)"><xsl:value-of select="@enumType" /></xsl:when>
 			<xsl:otherwise><xsl:value-of select="script:CSharpAlias(@type)" /></xsl:otherwise>
-		</xsl:choose><xsl:text> </xsl:text><xsl:value-of select="@name" />
+		</xsl:choose>
+		<xsl:if test="@nulls='true'">?</xsl:if>
+		<xsl:text> </xsl:text><xsl:value-of select="@name" />
 		{
 			get
 			{
@@ -124,7 +128,7 @@
 							if (<xsl:value-of select="@camelCaseName" /> == null)
 							{
 								<xsl:value-of select="@camelCaseName" /> = new <xsl:value-of select="@type" />();
-								<xsl:value-of select="@camelCaseName" />.<xsl:value-of select="@refPkName" /> = this.<xsl:value-of select="$previousProperty/@camelCaseName" />;
+								<xsl:value-of select="@camelCaseName" />.<xsl:value-of select="@refPkName" /> = this.<xsl:value-of select="$previousProperty/@camelCaseName" /><xsl:if test="$previousProperty/@nulls='true'">.Value</xsl:if>;
 							}
 
 							<xsl:value-of select="@camelCaseName" />.LoadField(record, secondaryFieldName, index);
@@ -137,7 +141,7 @@
 
 								if (<xsl:value-of select="@camelCaseName" /> != null)
 								{
-									<xsl:value-of select="@camelCaseName" />.<xsl:value-of select="@refPkName" /> = this.<xsl:value-of select="$previousProperty/@camelCaseName" />;
+									<xsl:value-of select="@camelCaseName" />.<xsl:value-of select="@refPkName" /> = this.<xsl:value-of select="$previousProperty/@camelCaseName" /><xsl:if test="$previousProperty/@nulls='true'">.Value</xsl:if>;
 								}
 							}
 						}
@@ -214,7 +218,7 @@
 		partial void On<xsl:value-of select="@name" />Changing(<xsl:choose>
 			<xsl:when test="boolean(@enumType)"><xsl:value-of select="@enumType" /></xsl:when>
 			<xsl:otherwise><xsl:value-of select="script:CSharpAlias(@type)" /></xsl:otherwise>
-		</xsl:choose> value);
+		</xsl:choose><xsl:if test="@nulls='true'">?</xsl:if> value);
 
 		/// &lt;summary&gt;
 		/// Invoked after <xsl:value-of select="@name" /> changed.

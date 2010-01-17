@@ -55,14 +55,13 @@ namespace DbSharper.Schema.Code
 			set;
 		}
 
-		[XmlAttribute("foreignKeyName")]
-		[ReadOnly(true)]
-		public string ForeignKeyName
-		{
-			get;
-			set;
-		}
-
+		//[XmlAttribute("foreignKeyName")]
+		//[ReadOnly(true)]
+		//public string ForeignKeyName
+		//{
+		//	get;
+		//	set;
+		//}
 		[XmlAttribute("hasDefault")]
 		[ReadOnly(true)]
 		public bool HasDefault
@@ -82,10 +81,8 @@ namespace DbSharper.Schema.Code
 		[XmlIgnore]
 		public bool IsPrimaryKey
 		{
-			get
-			{
-				return !string.IsNullOrEmpty(this.PrimaryKeyName);
-			}
+			get;
+			set;
 		}
 
 		[XmlAttribute("name")]
@@ -116,14 +113,13 @@ namespace DbSharper.Schema.Code
 		//{
 		//	get; set;
 		//}
-		[XmlAttribute("primaryKeyName")]
-		[ReadOnly(true)]
-		public string PrimaryKeyName
-		{
-			get;
-			set;
-		}
-
+		//[XmlAttribute("primaryKeyName")]
+		//[ReadOnly(true)]
+		//public string PrimaryKeyName
+		//{
+		//	get;
+		//	set;
+		//}
 		[XmlAttribute("refPkName")]
 		[ReadOnly(true)]
 		public string RefPkName
