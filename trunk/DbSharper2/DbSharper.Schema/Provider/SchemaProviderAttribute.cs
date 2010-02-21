@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DbSharper.Schema
+namespace DbSharper2.Schema
 {
 	[AttributeUsage(AttributeTargets.Class)]
 	public sealed class SchemaProviderAttribute : Attribute

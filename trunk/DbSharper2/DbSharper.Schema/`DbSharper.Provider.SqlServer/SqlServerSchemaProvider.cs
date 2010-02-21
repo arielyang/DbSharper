@@ -5,13 +5,14 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 
-using DbSharper.Data.SqlServer;
-using DbSharper.Schema.Database;
-using DbSharper.Schema.Infrastructure;
-using DbSharper.Schema.Provider;
-using DbSharper.Schema.Utility;
+using DbSharper2.Data.SqlServer;
+using DbSharper2.Schema.Database;
+using DbSharper2.Schema.Infrastructure;
+using DbSharper2.Schema.Provider;
+using DbSharper2.Schema.Utility;
+using DbSharper2.Schema.Code;
 
-namespace DbSharper.Schema
+namespace DbSharper2.Schema
 {
 	[SchemaProvider("System.Data.SqlClient")]
 	public class SqlServerSchemaProvider : SchemaProviderBase
@@ -180,49 +181,7 @@ namespace DbSharper.Schema
 
 			this.LoadDatabaseSchema(ds);
 
-			this.InitializeDescriptionForEnumColumn();
-
 			return this.database;
-		}
-
-		/// <summary>
-		/// Build description of enum-type-column according to description of enum.
-		/// </summary>
-		/// <param name="description">Origin description of column</param>
-		/// <param name="enumeration">Enumeration info</param>
-		/// <returns>Description of enum-type-column</returns>
-		private static string BuildEnumColumnDescription(string description, Enumeration enumeration)
-		{
-			StringBuilder sb = new StringBuilder();
-
-			sb.Append(description);
-
-			if (sb.Length != 0)
-			{
-				sb.Append(' ');
-			}
-
-			sb.Append(enumeration.Description);
-
-			if (enumeration.Members.Count > 0)
-			{
-				if (sb.Length != 0)
-				{
-					sb.Append(": ");
-				}
-
-				foreach (var member in enumeration.Members)
-				{
-					sb.Append(member.Value);
-					sb.Append('.');
-					sb.Append(member.Description);
-					sb.Append(", ");
-				}
-
-				sb.Length = sb.Length - 2;
-			}
-
-			return sb.ToString();
 		}
 
 		private void ExecuteSql(string commandText)
@@ -267,22 +226,6 @@ namespace DbSharper.Schema
 			da.Fill(ds);
 
 			return ds;
-		}
-
-		private void InitializeDescriptionForEnumColumn()
-		{
-			NamedCollection<Enumeration> enumerations = this.database.Enumerations;
-
-			foreach (var table in this.database.Tables)
-			{
-				foreach (var column in table.Columns)
-				{
-					if (enumerations.Contains(column.Name))
-					{
-						column.Description = BuildEnumColumnDescription(column.Description, enumerations[column.Name]);
-					}
-				}
-			}
 		}
 
 		private void InitializeEnumTables()
@@ -608,51 +551,6 @@ namespace DbSharper.Schema
 							break;
 						}
 				}
-			}
-
-			#endregion
-
-			#region [10] Enumeratioins
-
-			drs = ds.Tables[10].Rows;
-
-			if (drs.Count > 0)
-			{
-				if (drs[0][0].ToString() == "-1")
-				{
-					InitializeEnumTables();
-
-					return;
-				}
-			}
-
-			foreach (DataRow dr in drs)
-			{
-				this.database.Enumerations.Add(
-					new Enumeration
-					{
-						Name = dr["Name"].ToString(),
-						BaseType = dr["BaseType"].ToString(),
-						HasFlagsAttribute = Convert.ToBoolean(dr["HasFlagsAttribute"].ToString(), CultureInfo.InvariantCulture),
-						Description = dr["Description"].ToString() ?? string.Empty
-					});
-			}
-
-			#endregion
-
-			#region [11] EnumeratioinMembers
-
-			drs = ds.Tables[11].Rows;
-
-			foreach (DataRow dr in drs)
-			{
-				this.database.Enumerations[dr["EnumerationName"].ToString()].Members.Add(
-					new EnumerationMember
-					{
-						Name = dr["Name"].ToString(),
-						Value = Convert.ToInt32(dr["Value"].ToString(), CultureInfo.InvariantCulture),
-						Description = dr["Description"].ToString() ?? string.Empty
-					});
 			}
 
 			#endregion

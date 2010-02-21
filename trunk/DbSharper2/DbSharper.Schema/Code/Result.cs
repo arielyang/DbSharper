@@ -3,9 +3,9 @@ using System.ComponentModel.Design;
 using System.Drawing.Design;
 using System.Xml.Serialization;
 
-using DbSharper.Schema.Infrastructure;
+using DbSharper2.Schema.Infrastructure;
 
-namespace DbSharper.Schema.Code
+namespace DbSharper2.Schema.Code
 {
 	[XmlType("result")]
 	[DefaultProperty("Description")]

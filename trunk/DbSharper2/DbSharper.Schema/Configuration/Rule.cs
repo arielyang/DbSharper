@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
 
-using DbSharper.Schema.Infrastructure;
+using DbSharper2.Schema.Infrastructure;
 
-namespace DbSharper.Schema.Configuration
+namespace DbSharper2.Schema.Configuration
 {
 	/// <summary>
 	/// Mapping rule.

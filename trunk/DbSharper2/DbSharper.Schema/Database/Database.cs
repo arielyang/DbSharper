@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-using DbSharper.Schema.Infrastructure;
+using DbSharper2.Schema.Infrastructure;
 
-namespace DbSharper.Schema.Database
+namespace DbSharper2.Schema.Database
 {
 	[XmlType("database")]
 	public class Database
 	{
 		#region Fields
 
-		private NamedCollection<Enumeration> enumerations;
 		private SchemaNamedCollection<Procedure> procedures;
 		private SchemaNamedCollection<Table> tables;
 		private SchemaNamedCollection<View> views;
@@ -24,20 +23,11 @@ namespace DbSharper.Schema.Database
 			this.tables = new SchemaNamedCollection<Table>();
 			this.views = new SchemaNamedCollection<View>();
 			this.procedures = new SchemaNamedCollection<Procedure>();
-			this.enumerations = new NamedCollection<Enumeration>();
 		}
 
 		#endregion Constructors
 
 		#region Properties
-
-		[XmlArray("enumerations")]
-		[XmlArrayItem("enumeration")]
-		public NamedCollection<Enumeration> Enumerations
-		{
-			get { return enumerations; }
-			set { throw new NotImplementedException(); }
-		}
 
 		[XmlArray("procedures")]
 		[XmlArrayItem("procedure")]

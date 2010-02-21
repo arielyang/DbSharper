@@ -3,9 +3,9 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Xml;
 
-using DbSharper.Schema.Infrastructure;
+using DbSharper2.Schema.Infrastructure;
 
-namespace DbSharper.Schema.Configuration
+namespace DbSharper2.Schema.Configuration
 {
 	internal sealed class MappingConfiguration
 	{

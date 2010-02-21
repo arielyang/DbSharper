@@ -1,4 +1,4 @@
-﻿namespace DbSharper.Schema.Infrastructure
+﻿namespace DbSharper2.Schema.Infrastructure
 {
 	/// <summary>
 	/// Container of a class name and a method name.

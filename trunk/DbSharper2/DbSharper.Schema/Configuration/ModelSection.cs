@@ -1,4 +1,4 @@
-﻿namespace DbSharper.Schema.Configuration
+﻿namespace DbSharper2.Schema.Configuration
 {
 	internal sealed class ModelSection : SectionBase
 	{

@@ -3,14 +3,24 @@ using System.Configuration;
 using System.Globalization;
 using System.IO;
 
-using DbSharper.Schema.Code;
-using DbSharper.Schema.Database;
-using DbSharper.Schema.Infrastructure;
+using DbSharper2.Schema.Infrastructure;
 
-namespace DbSharper.Schema
+namespace DbSharper2.Schema
 {
 	internal static class MappingHelper
 	{
+		internal static string RemoveNamespace(string typeFullName)
+		{
+			int index = typeFullName.LastIndexOf('.');
+
+			if (index < 0)
+			{
+				return typeFullName;
+			}
+
+			return typeFullName.Substring(index + 1);
+		}
+
 		#region Methods
 
 		/// <summary>

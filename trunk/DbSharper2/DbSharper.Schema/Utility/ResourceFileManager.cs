@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 
-namespace DbSharper.Schema.Utility
+namespace DbSharper2.Schema.Utility
 {
 	public sealed class ResourceFileManager
 	{

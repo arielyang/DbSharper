@@ -1,8 +1,8 @@
 ﻿using System.Xml.Serialization;
 
-using DbSharper.Schema.Infrastructure;
+using DbSharper2.Schema.Infrastructure;
 
-namespace DbSharper.Schema.Code
+namespace DbSharper2.Schema.Code
 {
 	public class DataAccessNamespace : IName
 	{

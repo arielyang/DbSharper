@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace DbSharper.Schema.Database
+namespace DbSharper2.Schema.Database
 {
 	[XmlType("foreignKey")]
 	public class ForeignKey : Constraint

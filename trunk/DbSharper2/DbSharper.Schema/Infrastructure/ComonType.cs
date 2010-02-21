@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace DbSharper.Schema.Infrastructure
+namespace DbSharper2.Schema.Infrastructure
 {
 	#region Enumerations
 
@@ -9,6 +9,7 @@ namespace DbSharper.Schema.Infrastructure
 	/// </summary>
 	public enum CommonType : int
 	{
+		Unknown,
 		Boolean,
 		Byte,
 		[XmlEnum("Byte[]")]

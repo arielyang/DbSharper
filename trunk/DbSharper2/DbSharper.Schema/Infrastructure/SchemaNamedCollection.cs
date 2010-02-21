@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace DbSharper.Schema.Infrastructure
+namespace DbSharper2.Schema.Infrastructure
 {
 	/// <summary>
 	/// A collection contains object which implements ISchema interface.
