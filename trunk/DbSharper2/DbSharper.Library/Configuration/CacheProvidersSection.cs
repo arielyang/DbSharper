@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
 using System.Configuration.Provider;
 
-namespace DbSharper.Library.Configuration
+namespace DbSharper2.Library.Configuration
 {
 	public class CacheProvidersSection : ConfigurationSection
 	{

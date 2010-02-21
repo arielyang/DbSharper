@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DbSharper.Library.Data
+namespace DbSharper2.Library.Data
 {
 	/// <summary>
 	/// Implemented by types who has uniform paged results.

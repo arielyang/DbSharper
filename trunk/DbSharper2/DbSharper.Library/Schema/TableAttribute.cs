@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DbSharper.Library.Schema
+namespace DbSharper2.Library.Schema
 {
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 	public sealed class TableAttribute : Attribute

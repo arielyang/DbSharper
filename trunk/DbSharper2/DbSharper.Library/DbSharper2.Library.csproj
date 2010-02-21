@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7B5D9B29-F74E-46BD-AAD8-D0B0B51A8C3F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DbSharper2.Library</RootNamespace>
+    <AssemblyName>DbSharper2.Library</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\DbSharper.snk</AssemblyOriginatorKeyFile>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
+    <ApplicationIcon>DbSharper.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\DbSharper2.Library.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ProductInfo.cs">
+      <Link>ProductInfo.cs</Link>
+    </Compile>
+    <Compile Include="Caching\CachingService.cs" />
+    <Compile Include="Configuration\CacheProvidersSection.cs" />
+    <Compile Include="Configuration\CacheSetting.cs" />
+    <Compile Include="Configuration\CacheSettingCollection.cs" />
+    <Compile Include="Configuration\CacheSettingsSection.cs" />
+    <Compile Include="Configuration\CachingServiceSetionGroup.cs" />
+    <Compile Include="Configuration\DbSharperSectionGroup.cs" />
+    <Compile Include="Data\DataAccess.cs" />
+    <Compile Include="Data\DatabaseSchema.cs" />
+    <Compile Include="Data\DataAccessHelper.cs" />
+    <Compile Include="Data\Database.cs" />
+    <Compile Include="Data\DatabaseFactory.cs" />
+    <Compile Include="Data\EnumHelper.cs" />
+    <Compile Include="Data\IJson.cs" />
+    <Compile Include="Data\IPagedResults.cs" />
+    <Compile Include="Data\ModelBase.cs" />
+    <Compile Include="Data\JsonBuilder.cs" />
+    <Compile Include="Data\ModelBaseExtensions.cs" />
+    <Compile Include="Data\TransactionScopeConnections.cs" />
+    <Compile Include="Data\XmlBuilder.cs" />
+    <Compile Include="Schema\ViewAttribute.cs" />
+    <Compile Include="Web\MethodHttpHandler.cs" />
+    <Compile Include="Web\ResultType.cs" />
+    <Compile Include="`DbSharper.Data.SqlServer\SqlServerDatabase.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Providers\CacheProvider.cs" />
+    <Compile Include="Providers\CacheProviderCollection.cs" />
+    <Compile Include="Providers\InProcessCacheProvider.cs" />
+    <Compile Include="Schema\TableAttribute.cs" />
+    <Compile Include="Schema\ColumnAttribute.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\DbSharper.snk">
+      <Link>DbSharper.snk</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DbSharper.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Validation\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

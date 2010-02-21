@@ -1,4 +1,4 @@
-﻿namespace DbSharper.Library.Data
+﻿namespace DbSharper2.Library.Data
 {
 	public abstract class DataAccess
 	{

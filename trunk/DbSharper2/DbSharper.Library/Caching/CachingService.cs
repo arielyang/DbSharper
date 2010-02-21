@@ -2,10 +2,10 @@
 using System.Text;
 using System.Web.Configuration;
 
-using DbSharper.Library.Configuration;
-using DbSharper.Library.Providers;
+using DbSharper2.Library.Configuration;
+using DbSharper2.Library.Providers;
 
-namespace DbSharper.Library.Caching
+namespace DbSharper2.Library.Caching
 {
 	/// <summary>
 	/// Caching service.

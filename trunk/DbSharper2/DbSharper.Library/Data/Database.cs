@@ -3,10 +3,10 @@ using System.Data;
 using System.Data.Common;
 using System.Transactions;
 
-using DbSharper.Library.Properties;
+using DbSharper2.Library.Properties;
 
-//using DbSharper.Library.Properties;
-namespace DbSharper.Library.Data
+//using DbSharper2.Library.Properties;
+namespace DbSharper2.Library.Data
 {
 	/// <summary>
 	/// Represents an abstract database that commands can be run against.

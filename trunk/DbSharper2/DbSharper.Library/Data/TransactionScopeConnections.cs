@@ -2,7 +2,7 @@
 using System.Data.Common;
 using System.Transactions;
 
-namespace DbSharper.Library.Data
+namespace DbSharper2.Library.Data
 {
 	/// <summary>
 	///	This class manages the connections that will be used when transactions are active

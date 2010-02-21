@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
 
-namespace DbSharper.Library.Data
+namespace DbSharper2.Library.Data
 {
 	/// <summary>
 	/// A helper class to get additional information from an enum type.

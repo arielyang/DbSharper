@@ -3,7 +3,7 @@ using System.Collections;
 using System.Globalization;
 using System.Text;
 
-namespace DbSharper.Library.Data
+namespace DbSharper2.Library.Data
 {
 	/// <summary>
 	/// Build Json string.

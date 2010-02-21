@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
-using DbSharper.Library.Schema;
+using DbSharper2.Library.Schema;
 
-namespace DbSharper.Library.Data
+namespace DbSharper2.Library.Data
 {
 	public sealed class DatabaseSchema
 	{

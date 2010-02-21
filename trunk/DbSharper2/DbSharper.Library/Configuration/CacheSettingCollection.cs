@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Configuration;
 
-namespace DbSharper.Library.Configuration
+namespace DbSharper2.Library.Configuration
 {
 	public sealed class CacheSettingCollection : ConfigurationElementCollection
 	{

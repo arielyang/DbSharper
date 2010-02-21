@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Xml;
 
-namespace DbSharper.Library.Data
+namespace DbSharper2.Library.Data
 {
 	public class XmlBuilder
 	{

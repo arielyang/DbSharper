@@ -5,7 +5,7 @@ using System.Configuration.Provider;
 using System.Web;
 using System.Web.Caching;
 
-namespace DbSharper.Library.Providers
+namespace DbSharper2.Library.Providers
 {
 	/// <summary>
 	/// Cache provider using System.Web.HttpRuntime.Cache.
