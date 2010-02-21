@@ -3,7 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 
-namespace DbSharper.CodeGenerator
+namespace DbSharper2.CodeGenerator
 {
 	/// <summary>
 	/// Generated file item.

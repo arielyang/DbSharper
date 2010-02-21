@@ -1,4 +1,4 @@
-﻿namespace DbSharper.CodeGenerator
+﻿namespace DbSharper2.CodeGenerator
 {
 	#region Enumerations
 

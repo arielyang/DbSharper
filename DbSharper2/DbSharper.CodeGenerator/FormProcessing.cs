@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace DbSharper.CodeGenerator
+namespace DbSharper2.CodeGenerator
 {
 	internal partial class FormProcessing : Form
 	{
