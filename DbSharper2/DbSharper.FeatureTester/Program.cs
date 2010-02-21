@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using DbSharper.Library.Data;
-using DbSharper.Schema;
-using DbSharper.Schema.Code;
-using DbSharper.Schema.Utility;
-using DbSharper.CodeGenerator;
+using DbSharper2.Library.Data;
+using DbSharper2.Schema;
+using DbSharper2.Schema.Code;
+using DbSharper2.Schema.Utility;
+using DbSharper2.CodeGenerator;
 using System.Collections.Generic;
 
-namespace DbSharper.FeatureTester
+namespace DbSharper2.FeatureTester
 {
 	public class Program
 	{
@@ -35,11 +35,18 @@ namespace DbSharper.FeatureTester
 				}
 			}
 
+			var references = new List<string>();
+
+			//references.Add(@"D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper.Library\bin\Debug\DbSharper.Library.dll");
+			//references.Add(@"D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharperVerifier\DbSharperVerifierRef\bin\Debug\DbSharperVerifierRef.exe");
+			references.Add(@"D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharperVerifier\DbSharperVerifier\bin\Debug\DbSharperVerifier.exe");
+
 			GeneratorEngine engine = new GeneratorEngine(
 				inputFilePath,
 				File.ReadAllText(inputFilePath),
 				".Mapping.xml",
 				"DbSharperVerifier",
+				references,
 				fileList);
 
 			engine.ProgressChanged = (progress) => { Console.WriteLine("Progress {0}.", progress); };
