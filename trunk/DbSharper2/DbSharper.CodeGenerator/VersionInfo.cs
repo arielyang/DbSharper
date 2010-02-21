@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DbSharper.CodeGenerator
+namespace DbSharper2.CodeGenerator
 {
 	/// <summary>
 	/// Version info.

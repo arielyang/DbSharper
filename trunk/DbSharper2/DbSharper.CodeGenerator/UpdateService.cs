@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 
-namespace DbSharper.CodeGenerator
+namespace DbSharper2.CodeGenerator
 {
 	internal sealed class UpdateService
 	{
