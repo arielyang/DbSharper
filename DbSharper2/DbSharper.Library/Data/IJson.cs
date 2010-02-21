@@ -1,4 +1,4 @@
-﻿namespace DbSharper.Library.Data
+﻿namespace DbSharper2.Library.Data
 {
 	/// <summary>
 	/// Implemented by types whose values can be converted to JSON format string.

@@ -2,9 +2,9 @@
 using System.Data.Common;
 using System.Text;
 
-using DbSharper.Library.Schema;
+using DbSharper2.Library.Schema;
 
-namespace DbSharper.Library.Data
+namespace DbSharper2.Library.Data
 {
 	public static class DataAccessHelper
 	{

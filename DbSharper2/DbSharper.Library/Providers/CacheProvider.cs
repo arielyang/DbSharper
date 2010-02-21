@@ -1,6 +1,6 @@
 ﻿using System.Configuration.Provider;
 
-namespace DbSharper.Library.Providers
+namespace DbSharper2.Library.Providers
 {
 	/// <summary>
 	/// Abstract CacheProvider class.

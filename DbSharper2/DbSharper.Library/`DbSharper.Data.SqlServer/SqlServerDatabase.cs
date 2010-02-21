@@ -1,8 +1,8 @@
 ﻿using System.Data.SqlClient;
 
-using DbSharper.Library.Data;
+using DbSharper2.Library.Data;
 
-namespace DbSharper.Data.SqlServer
+namespace DbSharper2.Data.SqlServer
 {
 	public class SqlServerDatabase : Database
 	{

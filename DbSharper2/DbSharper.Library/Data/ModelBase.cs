@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 
-namespace DbSharper.Library.Data
+namespace DbSharper2.Library.Data
 {
 	/// <summary>
 	/// Base class of item.

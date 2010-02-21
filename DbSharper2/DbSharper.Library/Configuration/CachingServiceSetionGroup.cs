@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace DbSharper.Library.Configuration
+namespace DbSharper2.Library.Configuration
 {
 	public class CachingServiceSectionGroup : ConfigurationSectionGroup
 	{

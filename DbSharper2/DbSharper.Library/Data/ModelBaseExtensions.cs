@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DbSharper.Library.Data
+namespace DbSharper2.Library.Data
 {
 	public static class ModelBaseExtensions
 	{

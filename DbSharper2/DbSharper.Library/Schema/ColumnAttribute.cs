@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 
-namespace DbSharper.Library.Schema
+namespace DbSharper2.Library.Schema
 {
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
 	public sealed class ColumnAttribute : Attribute
