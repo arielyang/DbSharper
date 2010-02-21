@@ -5,7 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 
-namespace DbSharper.Schema.Provider
+namespace DbSharper2.Schema.Provider
 {
 	public static class SchemaProviderFactory
 	{

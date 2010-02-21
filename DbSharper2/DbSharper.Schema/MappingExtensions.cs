@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 
-using DbSharper.Schema.Infrastructure;
+using DbSharper2.Schema.Infrastructure;
 
-namespace DbSharper.Schema
+namespace DbSharper2.Schema
 {
 	internal static class MappingExtensions
 	{
@@ -150,6 +150,36 @@ namespace DbSharper.Schema
 		/// <summary>
 		/// Get common type from according to a dbType.
 		/// </summary>
+		/// <param name="type">Type.</param>
+		/// <returns>Common Type.</returns>
+		internal static CommonType ToCommonType(this Type type)
+		{
+			switch (Type.GetTypeCode(type))
+			{
+				case TypeCode.SByte:
+					return CommonType.Byte;
+				case TypeCode.Int16:
+					return CommonType.Int16;
+				case TypeCode.Int32:
+					return CommonType.Int32;
+				case TypeCode.Int64:
+					return CommonType.Int64;
+				case TypeCode.Byte:
+					return CommonType.Int16;
+				case TypeCode.UInt16:
+					return CommonType.Int32;
+				case TypeCode.UInt32:
+					return CommonType.Int64;
+				case TypeCode.UInt64:
+					return CommonType.Decimal;
+				default:
+					return CommonType.Unknown;
+			}
+		}
+
+		/// <summary>
+		/// Get common type from according to a dbType.
+		/// </summary>
 		/// <param name="dbType">DbType.</param>
 		/// <returns>Common Type.</returns>
 		internal static CommonType ToCommonType(this DbType dbType)
@@ -166,8 +196,6 @@ namespace DbSharper.Schema
 					return CommonType.ByteArray;
 				case DbType.Boolean:
 					return CommonType.Boolean;
-				case DbType.Byte:
-					return CommonType.Byte;
 				case DbType.Currency:
 				case DbType.Decimal:
 					return CommonType.Decimal;
@@ -183,6 +211,8 @@ namespace DbSharper.Schema
 					return CommonType.Double;
 				case DbType.Guid:
 					return CommonType.Guid;
+				case DbType.SByte:
+					return CommonType.Byte;
 				case DbType.Int16:
 					return CommonType.Int16;
 				case DbType.Int32:
@@ -193,10 +223,14 @@ namespace DbSharper.Schema
 					return CommonType.Object;
 				case DbType.Single:
 					return CommonType.Single;
-				case DbType.SByte:
+				case DbType.Byte:
+					return CommonType.Int16;
 				case DbType.UInt16:
+					return CommonType.Int32;
 				case DbType.UInt32:
+					return CommonType.Int64;
 				case DbType.UInt64:
+					return CommonType.Decimal;
 				case DbType.VarNumeric:
 				default:
 					// TODO: Embed string into resource file later.

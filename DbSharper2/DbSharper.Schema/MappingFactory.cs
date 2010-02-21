@@ -1,17 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 
-using DbSharper.Schema.Code;
-using DbSharper.Schema.Configuration;
-using DbSharper.Schema.Database;
-using DbSharper.Schema.Infrastructure;
-using DbSharper.Schema.Provider;
+using DbSharper2.Schema.Code;
+using DbSharper2.Schema.Configuration;
+using DbSharper2.Schema.Database;
+using DbSharper2.Schema.Infrastructure;
+using DbSharper2.Schema.Provider;
 
-namespace DbSharper.Schema
+namespace DbSharper2.Schema
 {
 	public static class MappingFactory
 	{
@@ -34,7 +35,7 @@ namespace DbSharper.Schema
 		/// <param name="mappingConfigFile">Mapping configuration file.</param>
 		/// <param name="mappingConfigContent">Mapping configuration file content.</param>
 		/// <returns>Mapping.</returns>
-		public static Mapping CreateMapping(string mappingConfigFile, string mappingConfigContent)
+		public static Mapping CreateMapping(string mappingConfigFile, string mappingConfigContent, NamedCollection<Enumeration> enumerations)
 		{
 			if (string.IsNullOrEmpty(mappingConfigFile))
 			{
@@ -80,7 +81,7 @@ namespace DbSharper.Schema
 
 			Database.Database database = provider.GetSchema(settings.ConnectionString);
 
-			mapping = GetMapping(database, connectionStringName, provider.GetDatabaseType().FullName);
+			mapping = GetMapping(database, connectionStringName, provider.GetDatabaseType().FullName, enumerations);
 
 			MappingExtender extender = new MappingExtender(mapping, provider);
 
@@ -128,7 +129,7 @@ namespace DbSharper.Schema
 
 		private static void AddMethod(DataAccessNamespace nameSpace, ClassMethodContainer classMethod, Procedure procedure)
 		{
-			// No match return result.
+			// No matched return result.
 			if (classMethod.MethodName.StartsWith("Get", StringComparison.OrdinalIgnoreCase)
 				&& !mapping.ContainsModel(classMethod.ClassName))
 			{
@@ -179,55 +180,16 @@ namespace DbSharper.Schema
 			}
 		}
 
-		private static bool CanGetCollectionBy(IColumns databaseObject, string columnName)
+		private static string DiscoverEnumType(CommonType commonType, string name)
 		{
-			if (databaseObject is Table)
+			if (mapping.Enumerations.Contains(name))
 			{
-				Table table = databaseObject as Table;
+				Enumeration enumeration = mapping.Enumerations[name];
 
-				foreach (ForeignKey fk in table.ForeignKeys)
+				if (enumeration.CommonType == commonType)
 				{
-					if (fk.Columns.Count == 1 && fk.Columns[0].Name == columnName)
-					{
-						return true;
-					}
+					return "global::" + enumeration.FullName;
 				}
-			}
-
-			foreach (Index idx in databaseObject.Indexes)
-			{
-				if (idx.Columns.Count == 1 && idx.Columns[0].Name == columnName)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		private static bool CanGetItemBy(Table table, string columnName)
-		{
-			if (table.PrimaryKey.Columns.Count == 1 && table.PrimaryKey.Columns[0].Name == columnName)
-			{
-				return true;
-			}
-
-			foreach (UniqueKey uk in table.UniqueKeys)
-			{
-				if (uk.Columns.Count == 1 && uk.Columns[0].Name == columnName)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		private static string DiscoverEnumType(DbType dbType, string name)
-		{
-			if (mapping.Database.Enumerations.Contains(name))
-			{
-				return "Enums." + name;
 			}
 
 			return null;
@@ -311,12 +273,10 @@ namespace DbSharper.Schema
 									ColumnName = property.ColumnName,
 									DbType = property.DbType,
 									Type = string.Format(CultureInfo.InvariantCulture, "Models.{0}.{1}Model", referenceModel.Namespace, referenceModel.Name),
-									//EnumType = null,
+									EnumType = null,
 									Nulls = false,
 									Size = property.Size,
 									Description = property.Description,
-									//CanGetCollectionBy = property.CanGetCollectionBy,
-									//CanGetItemBy = property.CanGetItemBy,
 									HasDefault = property.HasDefault,
 									IsPrimaryKey = property.IsPrimaryKey,
 									RefPkName = primaryKeyColumnName,
@@ -363,12 +323,10 @@ namespace DbSharper.Schema
 								ColumnName = property.ColumnName,
 								DbType = property.DbType,
 								Type = string.Format(CultureInfo.InvariantCulture, "Models.{0}.{1}Model", referenceModel.Namespace.ToPascalCase(), referenceModel.Name),
-								//EnumType = null,
+								EnumType = null,
 								Nulls = false,
 								Size = property.Size,
 								Description = property.Description,
-								//CanGetCollectionBy = property.CanGetCollectionBy,
-								//CanGetItemBy = property.CanGetItemBy,
 								HasDefault = property.HasDefault,
 								IsPrimaryKey = property.IsPrimaryKey,
 								RefPkName = primaryKeyColumnName,
@@ -403,13 +361,14 @@ namespace DbSharper.Schema
 			}
 		}
 
-		private static Mapping GetMapping(Database.Database database, string connectionStringName, string databaseType)
+		private static Mapping GetMapping(Database.Database database, string connectionStringName, string databaseType, NamedCollection<Enumeration> enumerations)
 		{
 			mapping = new Mapping();
 			mapping.ConnectionStringName = connectionStringName;
 			mapping.CamelCaseConnectionStringName = connectionStringName.ToCamelCase();
 			mapping.DatabaseType = databaseType;
 			mapping.Database = database;
+			mapping.Enumerations = enumerations;
 
 			foreach (var table in database.Tables)
 			{
@@ -452,7 +411,7 @@ namespace DbSharper.Schema
 						SqlName = parameter.Name,
 						DbType = parameter.DbType,
 						Type = MappingHelper.GetCommonTypeString(parameter.DbType.ToCommonType()),
-						EnumType = DiscoverEnumType(parameter.DbType, parameterName),
+						EnumType = DiscoverEnumType(parameter.DbType.ToCommonType(), parameterName),
 						Direction = parameter.Direction,
 						Size = parameter.Size,
 						Description = parameter.Description
@@ -477,28 +436,26 @@ namespace DbSharper.Schema
 
 			var columns = databaseObject.Columns;
 
+			string name;
 			CommonType commonType;
 
 			foreach (var column in columns)
 			{
+				name = column.Name.ToPascalCase();
 				commonType = column.DbType.ToCommonType();
 
 				properties.Add(
 					new Property
 					{
-						Name = column.Name.ToPascalCase(),
+						Name = name,
 						CamelCaseName = column.Name.ToCamelCase(),
 						ColumnName = column.Name,
 						DbType = column.DbType,
 						Type = MappingHelper.GetCommonTypeString(commonType),
-						EnumType = DiscoverEnumType(column.DbType, column.Name),
+						EnumType = DiscoverEnumType(commonType, name),
 						Nulls = (commonType == CommonType.String || commonType == CommonType.Object) ? false : column.Nullable,
 						Size = column.Size,
 						Description = column.Description,
-						//PrimaryKeyName = isView ? null : MappingHelper.GetPrimaryKeyName(table, column.Name),
-						//ForeignKeyName = isView ? null : MappingHelper.GetForeignKeyName(table, column.Name),
-						//CanGetCollectionBy = isView ? false : CanGetCollectionBy(databaseObject, column.Name),
-						//CanGetItemBy = isView ? false : CanGetItemBy(table, column.Name),
 						HasDefault = isView ? false : !string.IsNullOrEmpty(column.Default.Trim()),
 						IsPrimaryKey = isView ? false : table.PrimaryKey.Columns.Contains(column.Name),
 						IsExtended = false

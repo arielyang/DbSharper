@@ -3,7 +3,7 @@ using System.Collections;
 using System.Reflection;
 using System.Xml.Serialization;
 
-namespace DbSharper.Schema.Utility
+namespace DbSharper2.Schema.Utility
 {
 	public static class Equalizer
 	{

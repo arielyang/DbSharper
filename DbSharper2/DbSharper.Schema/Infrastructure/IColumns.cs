@@ -1,7 +1,7 @@
-﻿using DbSharper.Schema.Database;
-using DbSharper.Schema.Infrastructure;
+﻿using DbSharper2.Schema.Database;
+using DbSharper2.Schema.Infrastructure;
 
-namespace DbSharper.Schema.Infrastructure
+namespace DbSharper2.Schema.Infrastructure
 {
 	public interface IColumns : ISchema
 	{

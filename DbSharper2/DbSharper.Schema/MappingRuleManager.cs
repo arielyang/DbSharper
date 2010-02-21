@@ -2,11 +2,11 @@
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 
-using DbSharper.Schema.Configuration;
-using DbSharper.Schema.Database;
-using DbSharper.Schema.Infrastructure;
+using DbSharper2.Schema.Configuration;
+using DbSharper2.Schema.Database;
+using DbSharper2.Schema.Infrastructure;
 
-namespace DbSharper.Schema
+namespace DbSharper2.Schema
 {
 	internal class MappingRuleManager
 	{

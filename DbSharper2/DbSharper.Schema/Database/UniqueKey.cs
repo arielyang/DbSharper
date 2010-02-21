@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace DbSharper.Schema.Database
+namespace DbSharper2.Schema.Database
 {
 	[XmlType("uniqueKey")]
 	public class UniqueKey : Constraint

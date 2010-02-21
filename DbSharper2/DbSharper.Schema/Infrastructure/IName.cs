@@ -1,4 +1,4 @@
-﻿namespace DbSharper.Schema.Infrastructure
+﻿namespace DbSharper2.Schema.Infrastructure
 {
 	public interface IName
 	{

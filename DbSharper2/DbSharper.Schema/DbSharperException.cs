@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace DbSharper.Schema
+namespace DbSharper2.Schema
 {
 	[Serializable]
 	public sealed class DbSharperException : Exception

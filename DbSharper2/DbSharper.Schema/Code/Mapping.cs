@@ -1,9 +1,9 @@
 ﻿using System.Xml.Serialization;
 
-using DbSharper.Schema.Database;
-using DbSharper.Schema.Infrastructure;
+using DbSharper2.Schema.Database;
+using DbSharper2.Schema.Infrastructure;
 
-namespace DbSharper.Schema.Code
+namespace DbSharper2.Schema.Code
 {
 	[XmlRoot("mapping")]
 	public class Mapping
@@ -19,6 +19,14 @@ namespace DbSharper.Schema.Code
 		#endregion Constructors
 
 		#region Properties
+
+		[XmlArray("enumerations")]
+		[XmlArrayItem("enumeration")]
+		public NamedCollection<Enumeration> Enumerations
+		{
+			get;
+			set;
+		}
 
 		[XmlAttribute("camelCaseConnectionStringName")]
 		public string CamelCaseConnectionStringName

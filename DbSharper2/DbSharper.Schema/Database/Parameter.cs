@@ -2,9 +2,9 @@
 using System.Globalization;
 using System.Xml.Serialization;
 
-using DbSharper.Schema.Infrastructure;
+using DbSharper2.Schema.Infrastructure;
 
-namespace DbSharper.Schema.Database
+namespace DbSharper2.Schema.Database
 {
 	[XmlType("sqlParameter")]
 	public class Parameter : IName

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 
-namespace DbSharper.Schema.Provider
+namespace DbSharper2.Schema.Provider
 {
 	public abstract class SchemaProviderBase
 	{

@@ -4,11 +4,11 @@ using System.Data;
 using System.Globalization;
 using System.Text;
 
-using DbSharper.Schema.Code;
-using DbSharper.Schema.Infrastructure;
-using DbSharper.Schema.Provider;
+using DbSharper2.Schema.Code;
+using DbSharper2.Schema.Infrastructure;
+using DbSharper2.Schema.Provider;
 
-namespace DbSharper.Schema
+namespace DbSharper2.Schema
 {
 	internal static class MappingExtenderHelper
 	{

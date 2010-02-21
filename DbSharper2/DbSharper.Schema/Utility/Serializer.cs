@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace DbSharper.Schema.Utility
+namespace DbSharper2.Schema.Utility
 {
 	public static class Serializer
 	{
