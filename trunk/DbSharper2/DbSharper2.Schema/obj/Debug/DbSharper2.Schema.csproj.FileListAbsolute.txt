@@ -1,0 +1,8 @@
+D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper2.Schema\obj\Debug\ResolveAssemblyReference.cache
+D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper2.Schema\bin\Debug\DbSharper2.Schema.dll
+D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper2.Schema\bin\Debug\DbSharper2.Schema.pdb
+D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper2.Schema\bin\Debug\DbSharper2.Library.dll
+D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper2.Schema\bin\Debug\DbSharper2.Library.pdb
+D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper2.Schema\bin\Debug\DbSharper2.Library.xml
+D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper2.Schema\obj\Debug\DbSharper2.Schema.dll
+D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper2.Schema\obj\Debug\DbSharper2.Schema.pdb
