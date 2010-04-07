@@ -35,6 +35,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper2.Schema", "DbShar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper2.FeatureTester", "DbSharper2.FeatureTester\DbSharper2.FeatureTester.csproj", "{C29650E1-4B86-44FA-9603-0FFF3A5A2A24}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper2.Data.MySql", "DbSharper2.Data.MySql\DbSharper2.Data.MySql.csproj", "{4E4DA1A9-3924-40A7-B414-759C2765255E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbSharper2.Provider.MySql", "DbSharper2.Provider.MySql\DbSharper2.Provider.MySql.csproj", "{39BD11FF-7FB6-4B75-8ADC-326DDD8C5430}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,14 @@ Global
 		{C29650E1-4B86-44FA-9603-0FFF3A5A2A24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C29650E1-4B86-44FA-9603-0FFF3A5A2A24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C29650E1-4B86-44FA-9603-0FFF3A5A2A24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E4DA1A9-3924-40A7-B414-759C2765255E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E4DA1A9-3924-40A7-B414-759C2765255E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E4DA1A9-3924-40A7-B414-759C2765255E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E4DA1A9-3924-40A7-B414-759C2765255E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39BD11FF-7FB6-4B75-8ADC-326DDD8C5430}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39BD11FF-7FB6-4B75-8ADC-326DDD8C5430}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39BD11FF-7FB6-4B75-8ADC-326DDD8C5430}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39BD11FF-7FB6-4B75-8ADC-326DDD8C5430}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
