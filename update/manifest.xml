@@ -1,0 +1,105 @@
+<manifest>
+	<version value="0.8.11">
+		<fileName>DbSharper.Setup.0.8.11.msi</fileName>
+		<summary>Performance improvements.</summary>
+		<description>
+1. Only update files who have changed.
+2. Will not try to create emum tables every time.
+		</description>
+	</version>
+	<version value="0.8.10">
+		<fileName>DbSharper.Setup.0.8.10.msi</fileName>
+		<summary>Fixed a bug about loading value to item property.</summary>
+		<description>
+1. Item proerty will load correct column value.
+2. Changing HttpContext.Current.Cache to HttpRuntime.Cache to support cache in windows application.
+		</description>
+	</version>
+	<version value="0.8.9">
+		<fileName>DbSharper.Setup.0.8.9.msi</fileName>
+		<summary>Fixed a bug about loading value to item property.</summary>
+		<description>
+1. Item proerty will load correct column value.
+		</description>
+	</version>
+	<version value="0.8.8">
+		<fileName>DbSharper.Setup.0.8.8.msi</fileName>
+		<summary>Update a logic about item property.</summary>
+		<description>
+1. A property will not be mapped to an unknown item type.
+		</description>
+	</version>
+	<version value="0.8.7">
+		<fileName>DbSharper.Setup.0.8.7.msi</fileName>
+		<summary>Update code template.</summary>
+		<description>
+1. Change sub-item type property of item to public.
+2. Now, can pass through a connectioin string into a data access method.
+3. Add a partial keyword to the data access results class.
+		</description>
+	</version>
+	<version value="0.8.6">
+		<fileName>DbSharper.Setup.0.8.6.msi</fileName>
+		<summary>Update code template and cache policy.</summary>
+		<description>
+1. Fixed a bug when getting item by primary key from a collection.
+2. Fixed a bug about cache expiration.
+		</description>
+	</version>
+	<version value="0.8.5">
+		<fileName>DbSharper.Setup.0.8.5.msi</fileName>
+		<summary>Update DbSharper Library.</summary>
+		<description>
+1. Fixed a bug about JsonBuilder class can not convert a enum in some case.
+		</description>
+	</version>
+	<version value="0.8.4">
+		<fileName>DbSharper.Setup.0.8.4.msi</fileName>
+		<summary>Update template and change Updater UI.</summary>
+		<description>
+1. Add update summary to DbSharper Updater.
+2. Remove cache when the dataaccess method does not start with "Get".
+3. Add Serializable attribute to result class.
+4. Fixed a bug about dbsx rules.
+5. Fixed a bug about throw exception where procedure does not match mask.
+		</description>
+	</version>
+	<version value="0.8.3">
+		<fileName>DbSharper.Setup.0.8.3.msi</fileName>
+		<summary>Fix bug, update API and change UI.</summary>
+		<description>
+1. Processing form size changed.
+2. ItemBase class remove the old property named "Fields".
+3. Fixed a bug about ItemBase class Clone method.
+4. Add a database name prefix to cache key(code and cache config template).
+5. Use addtional parameters in Update, Create method when the parameter is not a item property.
+6. Fixed a bug about inserting a null to cache.
+		</description>
+	</version>
+	<version value="0.8.2">
+		<fileName>DbSharper.Setup.0.8.2.msi</fileName>
+		<summary>Fix bug, update API and change UI.</summary>
+		<description>
+1. Processing form size changed.
+2. ItemBase class adds a new property named "ExtendedFields" to replace the old "Fields" property.
+3. Fixed a bug about ItemBase class throwing exception in JavaScriptSerializer class.
+4. Seperate namespace by first letter in code template.
+		</description>
+	</version>
+	<version value="0.8.1">
+		<fileName>DbSharper.Setup.0.8.1.msi</fileName>
+		<summary>Fix bug and change UI.</summary>
+		<description>
+1. Processing form size changed.
+2. Fix a bug about code generator template.
+		</description>
+	</version>
+	<version value="0.8.0">
+		<fileName>DbSharper.Setup.0.8.0.msi</fileName>
+		<summary>Update test.</summary>
+		<description>
+Here is description.
+Nothing here.
+		</description>
+	</version>
+</manifest>
