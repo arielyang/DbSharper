@@ -1,7 +1,0 @@
-D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper.Library\obj\Debug\ResolveAssemblyReference.cache
-D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper.Library\obj\Debug\DbSharper.Library.Properties.Resources.resources
-D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper.Library\obj\Debug\DbSharper.Library.csproj.GenerateResource.Cache
-D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper.Library\bin\Debug\DbSharper.Library.dll
-D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper.Library\bin\Debug\DbSharper.Library.pdb
-D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper.Library\obj\Debug\DbSharper.Library.dll
-D:\Projects\DbSharper4GoogleCode\trunk\DbSharper2\DbSharper.Library\obj\Debug\DbSharper.Library.pdb
