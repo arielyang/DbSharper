@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7EA88513-4A69-48C8-8783-284D04A731FC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DbSharper.Schema</RootNamespace>
+    <AssemblyName>DbSharper.Schema</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\DbSharper.snk</AssemblyOriginatorKeyFile>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <ApplicationIcon>..\Resources\Dbsx.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
+    <CodeAnalysisRules>
+    </CodeAnalysisRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\DbSharper.Schema.XML</DocumentationFile>
+    <CodeAnalysisRules>
+    </CodeAnalysisRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ProductInfo.cs">
+      <Link>ProductInfo.cs</Link>
+    </Compile>
+    <Compile Include="Configuration\Condition.cs" />
+    <Compile Include="Configuration\SectionBase.cs" />
+    <Compile Include="Database\Enumeration.cs" />
+    <Compile Include="Database\EnumerationMember.cs" />
+    <Compile Include="DbSharperException.cs" />
+    <Compile Include="Enums\ConditionType.cs" />
+    <Compile Include="Equalizer.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="IColumns.cs" />
+    <Compile Include="MappingExtender.cs" />
+    <Compile Include="MappingFactory.cs" />
+    <Compile Include="Code\Method.cs" />
+    <Compile Include="MappingHelper.cs" />
+    <Compile Include="Collections\SchemaNamedCollection.cs" />
+    <Compile Include="ISchema.cs" />
+    <Compile Include="IName.cs" />
+    <Compile Include="Code\DataAccess.cs" />
+    <Compile Include="Code\DataAccessNamespace.cs" />
+    <Compile Include="Code\Mapping.cs" />
+    <Compile Include="Code\Model.cs" />
+    <Compile Include="Code\ModelNamespace.cs" />
+    <Compile Include="Collections\NamedCollection.cs" />
+    <Compile Include="Code\Result.cs" />
+    <Compile Include="Database\Constraint.cs" />
+    <Compile Include="Database\UniqueKey.cs" />
+    <Compile Include="Database\View.cs" />
+    <Compile Include="Database\PrimaryKey.cs" />
+    <Compile Include="Database\ForeignKey.cs" />
+    <Compile Include="Database\Parameter.cs" />
+    <Compile Include="Database\Index.cs" />
+    <Compile Include="Database\Column.cs" />
+    <Compile Include="Database\StoredProcedure.cs" />
+    <Compile Include="Database\Table.cs" />
+    <Compile Include="Database\Database.cs" />
+    <Compile Include="ProviderNameAttribute.cs" />
+    <Compile Include="ResourceFileManager.cs" />
+    <Compile Include="SchemaProvider.cs" />
+    <Compile Include="Enums\MethodType.cs" />
+    <Compile Include="Enums\ComonType.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Configuration\DataAccessSection.cs" />
+    <Compile Include="Configuration\MappingConfiguration.cs" />
+    <Compile Include="Code\Enum.cs" />
+    <Compile Include="Code\EnumMember.cs" />
+    <Compile Include="Configuration\ModelSection.cs" />
+    <Compile Include="Code\Parameter.cs" />
+    <Compile Include="Code\Property.cs" />
+    <Compile Include="SchemaProviderBase.cs" />
+    <Compile Include="SchemaProviderFactory.cs" />
+    <Compile Include="Serializer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\DbSharper.snk">
+      <Link>DbSharper.snk</Link>
+    </None>
+    <EmbeddedResource Include="Resources\GetDatabaseSchema.sql" />
+    <EmbeddedResource Include="Resources\CreateEnumerationMemberTable.sql" />
+    <EmbeddedResource Include="Resources\CreateEnumerationTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\Resources\Dbsx.ico">
+      <Link>Dbsx.ico</Link>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
