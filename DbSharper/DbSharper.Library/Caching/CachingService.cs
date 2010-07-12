@@ -154,6 +154,16 @@ namespace DbSharper.Library.Caching
 		/// <returns>Internal key.</returns>
 		private static string GetInternalKey(string key, string[] parms)
 		{
+			//fanweixiao@gmail.com modified at 07/13/2010
+			//if parms is null, don't create StringBuilder for saving the 
+			//creation cost of this object.
+			if (parms.Length == 0)
+			{
+				return internalKeyPrefix + key;
+			}
+
+			//if have parms, excutes original process below
+
 			StringBuilder sb = new StringBuilder(64);
 
 			sb.Append(internalKeyPrefix);
