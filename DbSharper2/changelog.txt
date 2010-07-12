@@ -1,0 +1,2 @@
+10:48 PM 7/12/2010 fanweixiao@gmail.com
+1. Tring to modify InProcessCache store mechanism to solve the problem of high cpu of enumerating cache for deleting related caches
